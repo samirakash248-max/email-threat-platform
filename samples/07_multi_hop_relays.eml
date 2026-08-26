@@ -1,0 +1,33 @@
+Received: from edge-filter-02.internal.network ([10.200.1.5])
+	by mail-exchange.company.com with ESMTP id hop4
+	for <recipient@company.com>;
+	Wed, 26 Aug 2026 13:00:04 +0000 (UTC)
+Received: from gateway.cloud-sec-filter.com (gateway.cloud-sec-filter.com [198.51.100.99])
+	by edge-filter-02.internal.network with ESMTPS id hop3
+	for <recipient@company.com>;
+	Wed, 26 Aug 2026 13:00:03 +0000 (UTC)
+Received: from mta-out.sender-isp.com (mta-out.sender-isp.com [192.0.2.150])
+	by gateway.cloud-sec-filter.com with ESMTPS id hop2
+	for <recipient@company.com>;
+	Wed, 26 Aug 2026 13:00:02 +0000 (UTC)
+Received: from client-origin.workstation.local (client-origin.workstation.local [203.0.113.15])
+	by mta-out.sender-isp.com with ESMTPA id hop1
+	for <recipient@company.com>;
+	Wed, 26 Aug 2026 13:00:00 +0000 (UTC)
+From: External Collaborator <collab@sender-isp.com>
+To: recipient@company.com
+Subject: Project Alpha Multi-Hop Transit Forensics Test
+Date: Wed, 26 Aug 2026 13:00:00 +0000
+Message-ID: <relay-trace-001@sender-isp.com>
+Content-Type: text/plain; charset=UTF-8
+
+Hello,
+
+This is a multi-hop test email traversing:
+1. Originating client: 203.0.113.15
+2. Sender ISP MTA: 192.0.2.150
+3. Cloud Gateway: 198.51.100.99
+4. Edge Filter: 10.200.1.5 (internal)
+
+Best regards,
+Transit Test Script

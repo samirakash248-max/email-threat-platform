@@ -1,0 +1,50 @@
+Received: from mail-out.techcorp.com (mail-out.techcorp.com [198.51.100.25])
+	by mx.receiver-domain.org with ESMTPS id abc12345
+	for <security-team@receiver-domain.org>;
+	Wed, 26 Aug 2026 10:15:30 +0000 (UTC)
+Authentication-Results: mx.receiver-domain.org;
+	spf=pass (receiver-domain.org: domain of techcorp.com designates 198.51.100.25 as permitted sender) smtp.mailfrom=newsletter@techcorp.com;
+	dkim=pass (signature verified) header.i=@techcorp.com header.d=techcorp.com;
+	dmarc=pass (p=reject sp=reject dis=none) header.from=techcorp.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=techcorp.com; s=k1;
+	h=from:to:subject:date:message-id:content-type;
+	bh=k4lM2n8O9P...=; b=XyZ...==
+From: TechCorp Engineering <newsletter@techcorp.com>
+To: Cybersecurity Team <security-team@receiver-domain.org>
+Reply-To: TechCorp Support <support@techcorp.com>
+Return-Path: <newsletter@techcorp.com>
+Subject: TechCorp Monthly Engineering & Security Update - August 2026
+Date: Wed, 26 Aug 2026 10:15:00 +0000
+Message-ID: <20260826101500.998877@techcorp.com>
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="----=_Part_1234_5678"
+
+------=_Part_1234_5678
+Content-Type: text/plain; charset=UTF-8
+
+Hello Security Team,
+
+Welcome to the August 2026 edition of the TechCorp Engineering Update.
+In this issue, we review best practices for API rate limiting, RFC compliance, and multi-factor authentication architecture.
+
+Read the full engineering blog post:
+https://techcorp.com/blog/august-2026-update
+
+Best regards,
+The TechCorp Engineering Team
+https://techcorp.com
+
+------=_Part_1234_5678
+Content-Type: text/html; charset=UTF-8
+
+<!DOCTYPE html>
+<html>
+<body>
+  <h2>TechCorp Monthly Engineering Update</h2>
+  <p>Hello Security Team,</p>
+  <p>Welcome to the August 2026 edition of the TechCorp Engineering Update. We review API rate limiting and MFA architectures.</p>
+  <p><a href="https://techcorp.com/blog/august-2026-update">Read the full engineering blog post</a></p>
+  <p>Best regards,<br/>The TechCorp Engineering Team</p>
+</body>
+</html>
+------=_Part_1234_5678--

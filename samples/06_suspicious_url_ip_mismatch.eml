@@ -1,0 +1,26 @@
+Received: from mailer.web-server.net (mailer.web-server.net [203.0.113.101])
+	by mx.company.org with ESMTP id urlmismatch88
+	for <employee@company.org>;
+	Wed, 26 Aug 2026 14:10:00 +0000 (UTC)
+From: IT Helpdesk <helpdesk@company.org>
+To: employee@company.org
+Subject: Urgent: Password Expiration Notice - Action Required
+Date: Wed, 26 Aug 2026 14:10:00 +0000
+Message-ID: <pwd-reset-9922@web-server.net>
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+
+<!DOCTYPE html>
+<html>
+<body>
+  <h3>Company IT Notification: Password Expiry</h3>
+  <p>Your network password will expire today. Immediate action is required to avoid system lockout.</p>
+  <p>Please reset your password by following this link:</p>
+  <p>
+    <!-- Anchor text displays legitimate URL, but href points to numeric IP destination -->
+    <a href="http://198.51.100.42/corporate-portal/login.php">https://portal.company.org/password-reset</a>
+  </p>
+  <p>Also check external guidelines: <a href="http://bit.ly/fake-update-link">http://bit.ly/fake-update-link</a></p>
+  <p>IT Support Services</p>
+</body>
+</html>

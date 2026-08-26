@@ -1,0 +1,50 @@
+Received: from vps-mailer.attacker-node.xyz (vps-mailer.attacker-node.xyz [203.0.113.88])
+	by mx.enterprise-gateway.com with ESMTP id bad998877
+	for <victim.employee@company.org>;
+	Wed, 26 Aug 2026 11:20:10 +0000 (UTC)
+Authentication-Results: mx.enterprise-gateway.com;
+	spf=fail (enterprise-gateway.com: domain of microsoft.com does not designate 203.0.113.88 as permitted sender) smtp.mailfrom=security-alert@microsoft.com;
+	dkim=fail (signature missing or corrupted);
+	dmarc=fail (p=reject action=none) header.from=microsoft.com
+From: "Microsoft Security Center" <security-alert@microsoft.com>
+To: victim.employee@company.org
+Reply-To: security-verify@micros0ft-security-update.com
+Return-Path: <bounce@attacker-node.xyz>
+Subject: URGENT: Your Microsoft 365 Account Will Be Suspended Within 24 Hours
+Date: Wed, 26 Aug 2026 11:19:40 +0000
+Message-ID: <998877665544@vps-mailer.attacker-node.xyz>
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="----=_Phish_Boundary_9988"
+
+------=_Phish_Boundary_9988
+Content-Type: text/plain; charset=UTF-8
+
+IMMEDIATE ACTION REQUIRED: Account Suspension Notice
+
+We have detected unauthorized login attempts to your corporate Microsoft 365 account.
+Your account access will be terminated within 24 hours unless you verify your identity and confirm your password.
+
+Click here to verify your account immediately:
+http://micros0ft-security-update.com/login/auth-verify.php
+
+Failure to verify will result in immediate deactivation.
+
+Microsoft Security Team
+------=_Phish_Boundary_9988
+Content-Type: text/html; charset=UTF-8
+
+<!DOCTYPE html>
+<html>
+<body>
+  <div style="font-family: Arial, sans-serif; color: #333;">
+    <h3 style="color: #d9534f;">CRITICAL SECURITY ALERT: Account Deactivation Notice</h3>
+    <p>Dear Corporate User,</p>
+    <p>Immediate action required! We have detected suspicious activity from an unknown IP on your Microsoft 365 account.</p>
+    <p>To avoid immediate account termination within 24 hours, you must verify your identity and password credentials.</p>
+    <p><a href="http://micros0ft-security-update.com/login/auth-verify.php" style="background:#0078d4;color:#fff;padding:10px 15px;text-decoration:none;border-radius:4px;">Verify Your Account Immediately</a></p>
+    <p>Failure to respond immediately will result in permanent legal account suspension.</p>
+    <p>Microsoft 365 Identity Protection Services</p>
+  </div>
+</body>
+</html>
+------=_Phish_Boundary_9988--

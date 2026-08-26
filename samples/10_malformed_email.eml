@@ -1,0 +1,8 @@
+From: "Corrupted Header Sender" <corrupted@broken-mailer.test
+Subject: Malformed Stream Test
+Content-Type: multipart/mixed; boundary="broken_bound"
+
+--broken_bound
+Content-Type: text/plain
+
+This is a malformed raw stream with missing closing boundary and truncated RFC headers to test engine resilience.

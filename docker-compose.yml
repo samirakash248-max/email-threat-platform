@@ -1,0 +1,19 @@
+services:
+  threatsentinel:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    ports:
+      - "8000:8000"
+
+    env_file:
+      - .env
+
+    volumes:
+      - threatsentinel_data:/app/backend
+
+    restart: unless-stopped
+
+volumes:
+  threatsentinel_data:

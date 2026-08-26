@@ -1,0 +1,21 @@
+Received: from rogue-relay.untrusted.cc (rogue-relay.untrusted.cc [198.51.100.222])
+	by inbound.receiver-mx.org with ESMTP id authfail01
+	for <user@receiver-mx.org>;
+	Wed, 26 Aug 2026 08:45:00 +0000 (UTC)
+Authentication-Results: inbound.receiver-mx.org;
+	spf=fail (inbound.receiver-mx.org: domain of paypal.com does not designate 198.51.100.222 as permitted sender) smtp.mailfrom=service@paypal.com;
+	dkim=fail (bad signature timestamp / body hash mismatch) header.i=@paypal.com header.d=paypal.com;
+	dmarc=fail (p=reject action=quarantine) header.from=paypal.com
+From: PayPal Security Alert <service@paypal.com>
+To: user@receiver-mx.org
+Subject: Important Notification Regarding Your Account
+Date: Wed, 26 Aug 2026 08:45:00 +0000
+Message-ID: <unauthorized-spoof-8877@rogue-relay.untrusted.cc>
+Content-Type: text/plain; charset=UTF-8
+
+Dear Customer,
+
+We detected an issue with your account.
+Please verify your information immediately.
+
+PayPal Customer Operations
