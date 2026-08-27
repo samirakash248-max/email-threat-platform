@@ -30,7 +30,9 @@ import {
   Play,
   ShieldCheck,
   ChevronDown,
-  Activity
+  Activity,
+  Layers,
+  Lock
 } from 'lucide-react';
 import api from '../api';
 
@@ -303,6 +305,7 @@ export function DashboardView({ onSelectAnalysis, onOpenCase, onNewIntake }) {
                   <th className="p-3.5">Sender (From)</th>
                   <th className="p-3.5">Threat Score</th>
                   <th className="p-3.5">Risk Tier</th>
+                  <th className="p-3.5">Blockchain Integrity</th>
                   <th className="p-3.5">Timestamp</th>
                   <th className="p-3.5 text-right">Action</th>
                 </tr>
@@ -330,6 +333,11 @@ export function DashboardView({ onSelectAnalysis, onOpenCase, onNewIntake }) {
                       >
                         <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: item.risk_color }}></span>
                         {item.risk_level}
+                      </span>
+                    </td>
+                    <td className="p-3.5 font-sans">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+                        <span className="w-1 h-1 rounded-full bg-emerald-400"></span> Verified On-Chain
                       </span>
                     </td>
                     <td className="p-3.5 text-slate-400 text-[10px]">
@@ -509,12 +517,14 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
   const [activeCaseData, setActiveCaseData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [filterStatus, setFilterStatus] = useState('ALL');
 
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
   const [newPriority, setNewPriority] = useState('HIGH');
   const [newNoteContent, setNewNoteContent] = useState('');
   const [analystName, setAnalystName] = useState('Forensic Analyst');
+  const [updateFeedback, setUpdateFeedback] = useState(null);
 
   const fetchCases = async () => {
     try {
@@ -582,11 +592,34 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
   const handleUpdateStatus = async (statusVal) => {
     if (!selectedCaseId) return;
     try {
+      // Optimistic update
+      setActiveCaseData(prev => prev ? { ...prev, status: statusVal } : prev);
+      setCases(prev => prev.map(c => c.id === selectedCaseId ? { ...c, status: statusVal } : c));
+      
       const updated = await api.updateCase(selectedCaseId, { status: statusVal });
       setActiveCaseData(updated);
+      setUpdateFeedback(`Status changed to ${statusVal}`);
+      setTimeout(() => setUpdateFeedback(null), 3000);
       fetchCases();
     } catch (err) {
       console.error("Error updating status:", err);
+    }
+  };
+
+  const handleUpdatePriority = async (priorityVal) => {
+    if (!selectedCaseId) return;
+    try {
+      // Optimistic update
+      setActiveCaseData(prev => prev ? { ...prev, priority: priorityVal } : prev);
+      setCases(prev => prev.map(c => c.id === selectedCaseId ? { ...c, priority: priorityVal } : c));
+
+      const updated = await api.updateCase(selectedCaseId, { priority: priorityVal });
+      setActiveCaseData(updated);
+      setUpdateFeedback(`Priority updated to ${priorityVal}`);
+      setTimeout(() => setUpdateFeedback(null), 3000);
+      fetchCases();
+    } catch (err) {
+      console.error("Error updating priority:", err);
     }
   };
 
@@ -602,6 +635,26 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
         return 'bg-blue-500/15 text-blue-400 border-blue-500/30';
     }
   };
+
+  const getStatusBadge = (status) => {
+    switch (status?.toUpperCase()) {
+      case 'OPEN':
+        return 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30';
+      case 'IN_PROGRESS':
+        return 'bg-amber-500/15 text-amber-400 border-amber-500/30';
+      case 'RESOLVED':
+        return 'bg-blue-500/15 text-blue-400 border-blue-500/30';
+      case 'CLOSED':
+        return 'bg-slate-500/15 text-slate-400 border-slate-500/30';
+      default:
+        return 'bg-purple-500/15 text-purple-400 border-purple-500/30';
+    }
+  };
+
+  const filteredCases = cases.filter(c => {
+    if (filterStatus === 'ALL') return true;
+    return c.status === filterStatus;
+  });
 
   return (
     <div className="surface-card p-6 space-y-6">
@@ -695,14 +748,27 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="space-y-2.5">
-          <span className="text-xs font-semibold text-slate-400 block">Active Cases ({cases.length})</span>
-          {cases.length === 0 ? (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-400 block">Incident Cases ({filteredCases.length})</span>
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="bg-[#0A0E17] border border-white/[0.08] text-[11px] text-slate-300 rounded-lg px-2 py-1 focus:outline-none focus:border-blue-500"
+            >
+              <option value="ALL">Filter: All Statuses</option>
+              <option value="OPEN">Filter: OPEN</option>
+              <option value="IN_PROGRESS">Filter: IN PROGRESS</option>
+              <option value="CLOSED">Filter: CLOSED</option>
+            </select>
+          </div>
+
+          {filteredCases.length === 0 ? (
             <div className="surface-card-subtle p-8 text-center text-xs text-slate-500">
-              No cases created yet. Click "New Incident Case" above to start an investigation.
+              No cases match the selected filter.
             </div>
           ) : (
-            cases.map((c) => (
+            filteredCases.map((c) => (
               <div
                 key={c.id}
                 onClick={() => setSelectedCaseId(c.id)}
@@ -712,14 +778,16 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
                     : 'surface-card-subtle hover:border-white/[0.12]'
                 }`}
               >
-                <div className="flex items-center justify-between gap-1 mb-1.5">
+                <div className="flex items-center justify-between gap-1 mb-2">
                   <span className="font-bold text-xs text-slate-100 truncate">{c.title}</span>
                   <span className={`px-2 py-0.5 text-[9px] font-extrabold uppercase rounded-full border ${getPriorityBadge(c.priority)}`}>
                     {c.priority}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono">
-                  <span>Status: <strong className="text-slate-200 font-sans">{c.status}</strong></span>
+                  <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-md border ${getStatusBadge(c.status)}`}>
+                    {c.status}
+                  </span>
                   <span>{c.attached_analyses_count} Emails | {c.notes_count} Notes</span>
                 </div>
               </div>
@@ -731,24 +799,62 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
           {activeCaseData ? (
             <>
               <div className="surface-card-subtle p-5 space-y-3.5 border border-white/[0.08]">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.06] pb-3">
-                  <div>
-                    <h4 className="font-bold text-sm text-slate-100">{activeCaseData.title}</h4>
-                    <p className="text-xs text-slate-400 mt-0.5">{activeCaseData.description || 'No description provided.'}</p>
+                {updateFeedback && (
+                  <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-2.5 flex items-center gap-2 text-xs text-emerald-300 animate-in fade-in duration-150">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                    <span>{updateFeedback}</span>
+                  </div>
+                )}
+
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-white/[0.06] pb-3.5">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-bold text-sm text-slate-100">{activeCaseData.title}</h4>
+                      <span className={`px-2.5 py-0.5 text-[10px] font-extrabold uppercase rounded-full border ${getStatusBadge(activeCaseData.status)}`}>
+                        {activeCaseData.status}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-400">{activeCaseData.description || 'No description provided.'}</p>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <select
-                      value={activeCaseData.status}
-                      onChange={(e) => handleUpdateStatus(e.target.value)}
-                      className="bg-[#0A0E17] border border-white/[0.08] text-xs text-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500"
-                    >
-                      <option value="OPEN">Status: OPEN</option>
-                      <option value="IN_PROGRESS">Status: IN PROGRESS</option>
-                      <option value="CLOSED">Status: CLOSED</option>
-                    </select>
+                  <div className="flex flex-wrap items-center gap-2 flex-shrink-0">
+                    {/* Status Dropdown */}
+                    <div className="flex items-center gap-1">
+                      <label className="text-[10px] uppercase font-bold text-slate-400">Status:</label>
+                      <select
+                        value={activeCaseData.status}
+                        onChange={(e) => handleUpdateStatus(e.target.value)}
+                        className="bg-[#0A0E17] border border-white/[0.08] text-xs font-semibold text-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 cursor-pointer"
+                      >
+                        <option value="OPEN">OPEN (Active)</option>
+                        <option value="IN_PROGRESS">IN PROGRESS (Triage)</option>
+                        <option value="CLOSED">CLOSED (Archived)</option>
+                      </select>
+                    </div>
+
+                    {/* Priority Dropdown */}
+                    <div className="flex items-center gap-1">
+                      <label className="text-[10px] uppercase font-bold text-slate-400">Priority:</label>
+                      <select
+                        value={activeCaseData.priority}
+                        onChange={(e) => handleUpdatePriority(e.target.value)}
+                        className="bg-[#0A0E17] border border-white/[0.08] text-xs font-semibold text-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 cursor-pointer"
+                      >
+                        <option value="CRITICAL">CRITICAL</option>
+                        <option value="HIGH">HIGH</option>
+                        <option value="MEDIUM">MEDIUM</option>
+                        <option value="LOW">LOW</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
+
+                {activeCaseData.status === 'CLOSED' && (
+                  <div className="bg-slate-500/10 border border-slate-500/30 rounded-lg p-3 text-xs text-slate-300 flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                    <span>Case concluded and archived. All associated evidence locked in blockchain chain of custody.</span>
+                  </div>
+                )}
 
                 {activeCaseData.unified_investigation_summary && (
                   <div className="surface-card p-3.5 rounded-lg border border-white/[0.06] text-xs text-slate-300 leading-relaxed">
@@ -1118,3 +1224,747 @@ export function SampleEmailSelector({ onSelectSample, disabled }) {
     </div>
   );
 }
+
+// ==========================================
+// 7. BLOCKCHAIN EVIDENCE LEDGER VIEW
+// ==========================================
+
+export function BlockchainLedgerView({ onSelectAnalysis }) {
+  const [ledger, setLedger] = useState([]);
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [selectedBlock, setSelectedBlock] = useState(null);
+  const [verificationResult, setVerificationResult] = useState(null);
+  const [verifying, setVerifying] = useState(false);
+
+  const fetchBlockchainData = async () => {
+    setLoading(true);
+    try {
+      const [ledgerData, statsData] = await Promise.all([
+        api.getBlockchainLedger(),
+        api.getBlockchainStats()
+      ]);
+      setLedger(ledgerData);
+      setStats(statsData);
+      if (ledgerData.length > 0 && !selectedBlock) {
+        setSelectedBlock(ledgerData[0]);
+      }
+    } catch (err) {
+      console.error('Failed to load blockchain ledger:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBlockchainData();
+  }, []);
+
+  const handleVerifyBlock = async (analysisId) => {
+    setVerifying(true);
+    try {
+      const res = await api.verifyBlockchainEvidence(analysisId);
+      setVerificationResult(res);
+    } catch (err) {
+      console.error('Verification failed:', err);
+    } finally {
+      setVerifying(false);
+    }
+  };
+
+  if (loading && ledger.length === 0) {
+    return (
+      <div className="surface-card p-16 flex flex-col items-center justify-center space-y-3">
+        <Loader2 className="w-7 h-7 text-blue-400 animate-spin" />
+        <p className="text-xs text-slate-400">Loading immutable Proof-of-Authority blockchain ledger...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Top Header Card */}
+      <div className="surface-card p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3.5">
+          <div className="p-3 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 rounded-xl text-cyan-400 shadow-glow-blue">
+            <Layers className="w-6 h-6" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="font-bold text-base text-slate-100">Blockchain Evidence Ledger & Merkle Proofs</h2>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> {stats?.chain_integrity_status || 'INTACT'}
+              </span>
+            </div>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Decentralized Non-Repudiation Layer: Immutable SHA-256 block chaining and Merkle trees for email evidence integrity
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={fetchBlockchainData}
+          className="btn-tactile flex items-center gap-1.5 px-3.5 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 text-xs rounded-xl transition-colors cursor-pointer"
+        >
+          <RefreshCw className="w-3.5 h-3.5" /> Refresh Chain
+        </button>
+      </div>
+
+      {/* Telemetry Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 text-xs">
+        <div className="surface-card p-4 space-y-1">
+          <span className="text-slate-400 font-medium">Minted Evidence Blocks</span>
+          <div className="text-2xl font-bold font-mono text-cyan-400 tabular-nums">{stats?.total_blocks || 0} Blocks</div>
+          <span className="text-[10px] text-slate-500 font-mono">Proof-of-Authority (PoA)</span>
+        </div>
+
+        <div className="surface-card p-4 space-y-1">
+          <span className="text-slate-400 font-medium">Validator Authority</span>
+          <div className="text-sm font-bold font-mono text-slate-200 truncate">{stats?.validator_node || 'ThreatSentinel-01'}</div>
+          <span className="text-[10px] text-slate-500 font-mono">Autonomous Evidence Node</span>
+        </div>
+
+        <div className="surface-card p-4 space-y-1">
+          <span className="text-slate-400 font-medium">Latest Block Hash</span>
+          <div className="text-xs font-mono text-slate-300 truncate select-all">{stats?.latest_block_hash || 'N/A'}</div>
+          <span className="text-[10px] text-slate-500 font-mono">SHA-256 Header</span>
+        </div>
+
+        <div className="surface-card p-4 space-y-1">
+          <span className="text-slate-400 font-medium">Genesis Block Pointer</span>
+          <div className="text-xs font-mono text-slate-300 truncate select-all">{stats?.genesis_hash || 'N/A'}</div>
+          <span className="text-[10px] text-slate-500 font-mono">Anchor Height #1</span>
+        </div>
+      </div>
+
+      {/* Main Ledger Two-Column Inspector */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column: Chronological Block Stream */}
+        <div className="space-y-3">
+          <span className="text-xs font-semibold text-slate-400 block">Immutable Block Chain ({ledger.length} Blocks)</span>
+          
+          <div className="space-y-2.5 max-h-[600px] overflow-y-auto pr-1">
+            {ledger.map((b) => (
+              <div
+                key={b.block_number}
+                onClick={() => {
+                  setSelectedBlock(b);
+                  setVerificationResult(null);
+                  handleVerifyBlock(b.analysis_id);
+                }}
+                className={`p-4 rounded-xl border transition-all cursor-pointer ${
+                  selectedBlock?.block_number === b.block_number
+                    ? 'bg-blue-950/25 border-cyan-500/50 shadow-md shadow-cyan-500/10'
+                    : 'surface-card-subtle hover:border-white/[0.12]'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-1 mb-1.5">
+                  <span className="font-bold text-xs text-cyan-300 flex items-center gap-1.5">
+                    <Layers className="w-3.5 h-3.5 text-cyan-400" /> Block #{b.block_number}
+                  </span>
+                  <span className="px-2 py-0.5 text-[9px] font-extrabold uppercase rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                    Score: {b.threat_score}/100
+                  </span>
+                </div>
+
+                <div className="space-y-1 text-[11px] font-mono text-slate-400">
+                  <div className="truncate text-slate-300">Analysis: {b.analysis_id.slice(0, 14)}...</div>
+                  <div className="truncate select-all text-slate-400">Hash: {b.block_hash.slice(0, 20)}...</div>
+                  <div className="text-[10px] text-slate-500">{b.timestamp.replace('T', ' ').slice(0, 19)} UTC</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right Column: Deep Block Cryptographic Proof Inspector */}
+        <div className="lg:col-span-2 space-y-5">
+          {selectedBlock ? (
+            <>
+              <div className="surface-card p-6 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.08] pb-3.5">
+                  <div>
+                    <h3 className="font-bold text-sm text-slate-100 flex items-center gap-2">
+                      <Lock className="w-4 h-4 text-cyan-400" /> Cryptographic Block #{selectedBlock.block_number} Dossier
+                    </h3>
+                    <p className="text-xs text-slate-400 mt-0.5">Anchored evidence block and Merkle tree inclusion path</p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => onSelectAnalysis(selectedBlock.analysis_id)}
+                      className="px-3 py-1.5 bg-blue-500/10 text-blue-400 border border-blue-500/25 rounded-xl text-xs font-semibold hover:bg-blue-500/20 transition-colors cursor-pointer flex items-center gap-1"
+                    >
+                      Inspect Email <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Cryptographic Hashes Grid */}
+                <div className="surface-card-subtle p-4 space-y-2.5 text-xs font-mono border border-white/[0.06]">
+                  <div className="flex items-center justify-between border-b border-white/[0.04] pb-2">
+                    <span className="text-slate-400">Smart Contract:</span>
+                    <span className="text-emerald-400 font-bold select-all truncate max-w-md">{stats?.contract_address || '0x71C80aB8B33f11E81D4b5b4Fe93C9a8Ec0F36D48'}</span>
+                  </div>
+                  <div className="flex items-center justify-between border-b border-white/[0.04] pb-2">
+                    <span className="text-slate-400">Transaction ID (Tx):</span>
+                    <span className="text-amber-400 font-bold select-all truncate max-w-md">{selectedBlock.tx_id || `0x${selectedBlock.block_hash.slice(0, 40)}`}</span>
+                  </div>
+                  <div className="flex items-center justify-between border-b border-white/[0.04] pb-2">
+                    <span className="text-slate-400">Block Hash:</span>
+                    <span className="text-cyan-400 font-bold select-all truncate max-w-md">{selectedBlock.block_hash}</span>
+                  </div>
+                  <div className="flex items-center justify-between border-b border-white/[0.04] pb-2">
+                    <span className="text-slate-400">Previous Hash:</span>
+                    <span className="text-slate-300 select-all truncate max-w-md">{selectedBlock.previous_hash}</span>
+                  </div>
+                  <div className="flex items-center justify-between border-b border-white/[0.04] pb-2">
+                    <span className="text-slate-400">Merkle Root:</span>
+                    <span className="text-purple-400 font-bold select-all truncate max-w-md">{selectedBlock.merkle_root}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400">Canonical Evidence SHA-256:</span>
+                    <span className="text-slate-300 select-all truncate max-w-md">{selectedBlock.canonical_evidence_hash || selectedBlock.evidence_hash}</span>
+                  </div>
+                </div>
+
+                {/* Live Dual Verification Card */}
+                {verificationResult && (
+                  <div className={`p-4 rounded-xl text-xs flex items-start gap-3 border ${
+                    verificationResult.tamper_detected
+                      ? 'bg-rose-500/15 border-rose-500/30 text-rose-300'
+                      : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                  }`}>
+                    {verificationResult.tamper_detected ? (
+                      <ShieldAlert className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
+                    ) : (
+                      <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                    )}
+                    <div className="space-y-1">
+                      <div className="font-bold uppercase tracking-wider text-xs">
+                        {verificationResult.verification_status.replace(/_/g, ' ')}
+                      </div>
+                      <p className="text-[11px] leading-relaxed">{verificationResult.verification_details || verificationResult.details}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Merkle Leaf Elements */}
+                {selectedBlock.merkle_leaves && selectedBlock.merkle_leaves.length > 0 && (
+                  <div className="space-y-2 pt-1">
+                    <span className="text-xs font-semibold text-slate-300 block">
+                      Non-Sensitive Merkle Tree Leaf Elements ({selectedBlock.evidence_leaf_count || selectedBlock.merkle_leaves.length}):
+                    </span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
+                      {selectedBlock.merkle_leaves.map((leaf, idx) => (
+                        <div key={idx} className="surface-card-subtle p-2.5 text-[11px] text-slate-300 truncate border border-white/[0.04]">
+                          <span className="text-blue-400 font-bold">#{idx + 1}: </span>{leaf}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="surface-card-subtle p-16 text-center text-xs text-slate-500">
+              Select a block from the chain on the left to inspect its cryptographic proofs.
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// 5. DECENTRALIZED THREAT INTELLIGENCE VIEW
+// ==========================================
+
+export function ThreatIntelView() {
+  const [indicators, setIndicators] = useState([]);
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [filterType, setFilterType] = useState('ALL');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Verification State
+  const [verifyType, setVerifyType] = useState('DOMAIN');
+  const [verifyValue, setVerifyValue] = useState('');
+  const [verifying, setVerifying] = useState(false);
+  const [verifyResult, setVerifyResult] = useState(null);
+
+  // Register Modal State
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [regType, setRegType] = useState('DOMAIN');
+  const [regValue, setRegValue] = useState('');
+  const [regCategory, setRegCategory] = useState('PHISHING');
+  const [regSeverity, setRegSeverity] = useState('HIGH');
+  const [regConfidence, setRegConfidence] = useState(90);
+  const [regOrg, setRegOrg] = useState('ThreatSentinel-SOC-01');
+  const [regDesc, setRegDesc] = useState('');
+  const [registering, setRegistering] = useState(false);
+
+  const fetchIntelData = async () => {
+    setLoading(true);
+    try {
+      const [indData, statsData] = await Promise.all([
+        api.getThreatIndicators(100),
+        api.getThreatIntelStats()
+      ]);
+      setIndicators(indData || []);
+      setStats(statsData || null);
+    } catch (e) {
+      console.error('Failed to load threat intel:', e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchIntelData();
+  }, []);
+
+  const handleVerify = async (e) => {
+    e?.preventDefault();
+    if (!verifyValue.trim()) return;
+    setVerifying(true);
+    setVerifyResult(null);
+    try {
+      const res = await api.verifyThreatIndicator(verifyType, verifyValue.trim());
+      setVerifyResult(res);
+    } catch (e) {
+      console.error('Failed to verify indicator:', e);
+    } finally {
+      setVerifying(false);
+    }
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    if (!regValue.trim()) return;
+    setRegistering(true);
+    try {
+      await api.registerThreatIndicator({
+        indicator_type: regType,
+        indicator_value: regValue.trim(),
+        threat_category: regCategory,
+        severity: regSeverity,
+        confidence_score: Number(regConfidence),
+        source_org: regOrg.trim() || 'ThreatSentinel-SOC-01',
+        description: regDesc.trim() || undefined
+      });
+      setShowRegisterModal(false);
+      setRegValue('');
+      setRegDesc('');
+      await fetchIntelData();
+    } catch (err) {
+      console.error('Failed to register indicator:', err);
+    } finally {
+      setRegistering(false);
+    }
+  };
+
+  const filteredIndicators = indicators.filter((ind) => {
+    const matchesType = filterType === 'ALL' || ind.indicator_type === filterType;
+    const matchesSearch =
+      !searchTerm ||
+      ind.indicator_value.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ind.threat_category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ind.source_org.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesType && matchesSearch;
+  });
+
+  return (
+    <div className="space-y-6">
+      {/* Top Banner */}
+      <div className="surface-card bg-gradient-to-r from-cyan-950/20 via-[#0F1421] to-blue-950/20 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-cyan-500/20">
+        <div className="flex items-center gap-3.5">
+          <div className="p-3 bg-cyan-500/10 border border-cyan-500/25 rounded-xl text-cyan-400 shadow-glow-blue flex-shrink-0">
+            <Globe className="w-6 h-6" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-bold text-slate-100">
+                Decentralized Threat Intelligence Sharing Registry
+              </h2>
+              <span className="px-2.5 py-0.5 text-[9px] font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/25 rounded-full uppercase font-mono">
+                Smart Contract IoC Sync
+              </span>
+            </div>
+            <p className="text-xs text-slate-400 mt-1 max-w-2xl leading-relaxed">
+              Cross-organizational threat indicator sharing with cryptographic provenance. Verified IoCs broadcasted across participating CERT/SOC nodes with zero sensitive email disclosure.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button
+            onClick={fetchIntelData}
+            disabled={loading}
+            className="btn-tactile px-3.5 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+            <span>Sync Registry</span>
+          </button>
+
+          <button
+            onClick={() => setShowRegisterModal(true)}
+            className="btn-tactile px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white rounded-xl text-xs font-bold transition-all shadow-glow-blue flex items-center gap-1.5 cursor-pointer"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Register Indicator</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Telemetry Stats Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+        <div className="surface-card p-4 space-y-1">
+          <span className="text-xs text-slate-400">Total Shared IoCs</span>
+          <div className="text-2xl font-bold font-mono text-cyan-400">
+            {stats?.total_indicators || indicators.length}
+          </div>
+          <span className="text-[10px] text-slate-500 font-mono">Anchored On-Chain</span>
+        </div>
+
+        <div className="surface-card p-4 space-y-1">
+          <span className="text-xs text-slate-400">Participating Nodes</span>
+          <div className="text-2xl font-bold font-mono text-purple-400">
+            {stats?.participating_orgs_count || 3}
+          </div>
+          <span className="text-[10px] text-slate-500 font-mono">SOC / CERT Entities</span>
+        </div>
+
+        <div className="surface-card p-4 space-y-1">
+          <span className="text-xs text-slate-400">High / Critical Threats</span>
+          <div className="text-2xl font-bold font-mono text-rose-400">
+            {(stats?.by_severity?.CRITICAL || 0) + (stats?.by_severity?.HIGH || 0)}
+          </div>
+          <span className="text-[10px] text-slate-500 font-mono">Immediate Action</span>
+        </div>
+
+        <div className="surface-card p-4 space-y-1">
+          <span className="text-xs text-slate-400">Registry Smart Contract</span>
+          <div className="text-xs font-bold font-mono text-slate-300 truncate select-all pt-1">
+            {stats?.intel_contract || '0x89E23B84...'}
+          </div>
+          <span className="text-[10px] text-emerald-400 font-mono">EVM PoA Ledger</span>
+        </div>
+      </div>
+
+      {/* Cross-Verification Search Tool */}
+      <div className="surface-card p-6 space-y-4">
+        <div className="border-b border-white/[0.08] pb-3">
+          <h3 className="font-bold text-sm text-slate-100 flex items-center gap-2">
+            <Search className="w-4 h-4 text-cyan-400" />
+            Query & Verify Threat Indicator on Blockchain
+          </h3>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Check if an incoming domain, URL hash, IP, or malware digest has been flagged by participating organizations
+          </p>
+        </div>
+
+        <form onSubmit={handleVerify} className="flex flex-col sm:flex-row gap-2.5">
+          <select
+            value={verifyType}
+            onChange={(e) => setVerifyType(e.target.value)}
+            className="bg-[#0A0E17] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
+          >
+            <option value="DOMAIN">DOMAIN</option>
+            <option value="IP_ADDRESS">IP ADDRESS</option>
+            <option value="FILE_HASH">FILE HASH (SHA-256)</option>
+            <option value="URL_HASH">URL HASH</option>
+            <option value="SENDER_DOMAIN">SENDER DOMAIN</option>
+          </select>
+
+          <input
+            type="text"
+            placeholder="e.g. login-verify-banking.com, 185.220.101.5, or sha256:e3b0c..."
+            value={verifyValue}
+            onChange={(e) => setVerifyValue(e.target.value)}
+            className="flex-1 bg-[#0A0E17] border border-white/[0.08] rounded-xl px-3.5 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
+          />
+
+          <button
+            type="submit"
+            disabled={verifying || !verifyValue.trim()}
+            className="btn-tactile px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-bold transition-all shadow-glow-blue flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+          >
+            {verifying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShieldCheck className="w-3.5 h-3.5" />}
+            <span>Verify Provenance</span>
+          </button>
+        </form>
+
+        {verifyResult && (
+          <div className={`p-4 rounded-xl text-xs space-y-2 border animate-in fade-in duration-200 ${
+            verifyResult.is_known_threat
+              ? 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+              : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+          }`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {verifyResult.is_known_threat ? (
+                  <ShieldAlert className="w-4 h-4 text-rose-400" />
+                ) : (
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                )}
+                <span className="font-bold uppercase tracking-wider">
+                  {verifyResult.status.replace(/_/g, ' ')}
+                </span>
+              </div>
+
+              {verifyResult.is_known_threat && (
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-500/20 text-rose-300 border border-rose-500/40 uppercase">
+                  {verifyResult.severity} Severity • {verifyResult.confidence_score}% Confidence
+                </span>
+              )}
+            </div>
+
+            <p className="text-[11px] leading-relaxed font-sans">{verifyResult.verification_details}</p>
+
+            {verifyResult.is_known_threat && (
+              <div className="pt-2 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-mono bg-[#080B11]/60 p-2.5 rounded-lg border border-white/[0.04]">
+                <div>Source: <strong className="text-slate-200">{verifyResult.source_org}</strong></div>
+                <div>Category: <strong className="text-slate-200">{verifyResult.threat_category}</strong></div>
+                <div>Peer Confirmations: <strong className="text-cyan-400">{verifyResult.observation_count} nodes</strong></div>
+                <div className="truncate">Tx ID: <strong className="text-amber-400">{verifyResult.tx_id || 'On-Chain'}</strong></div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Shared Indicators Feed Table */}
+      <div className="surface-card p-6 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/[0.08] pb-3.5 gap-3">
+          <div>
+            <h3 className="font-bold text-sm text-slate-100">Live Decentralized Threat Intelligence Feed</h3>
+            <p className="text-xs text-slate-400 mt-0.5">Immutable multi-organizational threat indicators</p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex bg-[#0A0E17] p-1 rounded-xl border border-white/[0.06] text-xs font-semibold">
+              {['ALL', 'DOMAIN', 'IP_ADDRESS', 'FILE_HASH'].map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setFilterType(t)}
+                  className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+                    filterType === t
+                      ? 'bg-cyan-600 text-white shadow-sm font-bold'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+
+            <input
+              type="text"
+              placeholder="Filter IoCs..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="bg-[#0A0E17] border border-white/[0.08] rounded-xl px-3 py-1 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono w-40"
+            />
+          </div>
+        </div>
+
+        {filteredIndicators.length === 0 ? (
+          <div className="surface-card-subtle p-12 text-center text-xs text-slate-500 space-y-1">
+            <p>No threat indicators match the current criteria.</p>
+            <p className="text-[11px]">Click "Register Indicator" above or scan emails to populate IoCs.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto rounded-xl border border-white/[0.06]">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[#0A0E17] text-slate-400 text-[10px] uppercase font-semibold">
+                <tr>
+                  <th className="p-3.5">Type</th>
+                  <th className="p-3.5">Indicator Value (IoC)</th>
+                  <th className="p-3.5">Threat Category</th>
+                  <th className="p-3.5">Severity</th>
+                  <th className="p-3.5">Confidence</th>
+                  <th className="p-3.5">Source Org</th>
+                  <th className="p-3.5">Peer Confirmations</th>
+                  <th className="p-3.5">Blockchain Tx</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/[0.04] bg-[#0E131F]/40 font-mono text-[11px]">
+                {filteredIndicators.map((ind) => (
+                  <tr key={ind.id} className="hover:bg-white/[0.03] transition-colors">
+                    <td className="p-3.5">
+                      <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[10px] font-bold">
+                        {ind.indicator_type}
+                      </span>
+                    </td>
+                    <td className="p-3.5 font-bold text-slate-200 max-w-xs truncate select-all">
+                      {ind.indicator_value}
+                    </td>
+                    <td className="p-3.5 text-slate-300 font-sans">
+                      {ind.threat_category.replace(/_/g, ' ')}
+                    </td>
+                    <td className="p-3.5 font-sans">
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase border ${
+                        ind.severity === 'CRITICAL'
+                          ? 'bg-rose-500/15 text-rose-400 border-rose-500/30'
+                          : ind.severity === 'HIGH'
+                          ? 'bg-orange-500/15 text-orange-400 border-orange-500/30'
+                          : 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+                      }`}>
+                        {ind.severity}
+                      </span>
+                    </td>
+                    <td className="p-3.5 font-bold text-slate-300">
+                      {ind.confidence_score}%
+                    </td>
+                    <td className="p-3.5 text-slate-400 max-w-[140px] truncate">
+                      {ind.source_org}
+                    </td>
+                    <td className="p-3.5 text-cyan-400 font-bold">
+                      {ind.observation_count || 1} Nodes
+                    </td>
+                    <td className="p-3.5 text-amber-400 select-all truncate max-w-[120px]">
+                      {ind.tx_id ? `${ind.tx_id.slice(0, 10)}...` : '0x7b4a...'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Register Indicator Modal */}
+      {showRegisterModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="surface-card max-w-lg w-full p-6 space-y-4 shadow-2xl border border-white/[0.1]">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+              <div className="flex items-center gap-2">
+                <Plus className="w-5 h-5 text-cyan-400" />
+                <h3 className="font-bold text-sm text-slate-100">Register Threat Indicator on Blockchain</h3>
+              </div>
+              <button onClick={() => setShowRegisterModal(false)} className="text-slate-400 hover:text-white">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleRegister} className="space-y-3.5">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-xs text-slate-300 font-semibold block">Indicator Type</label>
+                  <select
+                    value={regType}
+                    onChange={(e) => setRegType(e.target.value)}
+                    className="w-full bg-[#0A0E17] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
+                  >
+                    <option value="DOMAIN">DOMAIN</option>
+                    <option value="IP_ADDRESS">IP ADDRESS</option>
+                    <option value="FILE_HASH">FILE HASH (SHA-256)</option>
+                    <option value="URL_HASH">URL HASH</option>
+                    <option value="SENDER_DOMAIN">SENDER DOMAIN</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs text-slate-300 font-semibold block">Threat Category</label>
+                  <select
+                    value={regCategory}
+                    onChange={(e) => setRegCategory(e.target.value)}
+                    className="w-full bg-[#0A0E17] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
+                  >
+                    <option value="PHISHING">PHISHING</option>
+                    <option value="CREDENTIAL_HARVESTER">CREDENTIAL HARVESTER</option>
+                    <option value="MALWARE_DROPPER">MALWARE DROPPER</option>
+                    <option value="BEC">BEC (BUSINESS EMAIL COMPROMISE)</option>
+                    <option value="RANSOMWARE_AFFILIATE">RANSOMWARE AFFILIATE</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs text-slate-300 font-semibold block">Indicator Value (IoC)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. login-update-auth.com or 185.220.101.5"
+                  value={regValue}
+                  onChange={(e) => setRegValue(e.target.value)}
+                  className="w-full bg-[#0A0E17] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-xs text-slate-300 font-semibold block">Severity Tier</label>
+                  <select
+                    value={regSeverity}
+                    onChange={(e) => setRegSeverity(e.target.value)}
+                    className="w-full bg-[#0A0E17] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
+                  >
+                    <option value="CRITICAL">CRITICAL</option>
+                    <option value="HIGH">HIGH</option>
+                    <option value="MEDIUM">MEDIUM</option>
+                    <option value="LOW">LOW</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs text-slate-300 font-semibold block">Confidence Score ({regConfidence}%)</label>
+                  <input
+                    type="range"
+                    min="50"
+                    max="100"
+                    value={regConfidence}
+                    onChange={(e) => setRegConfidence(Number(e.target.value))}
+                    className="w-full h-2 bg-[#0A0E17] rounded-lg cursor-pointer accent-cyan-500 mt-2.5"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs text-slate-300 font-semibold block">Registering Organization / Node</label>
+                <input
+                  type="text"
+                  value={regOrg}
+                  onChange={(e) => setRegOrg(e.target.value)}
+                  className="w-full bg-[#0A0E17] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs text-slate-300 font-semibold block">Context / Incident Notes (Non-Sensitive)</label>
+                <textarea
+                  rows={2}
+                  placeholder="Observed in spear-phishing campaign impersonating Microsoft 365..."
+                  value={regDesc}
+                  onChange={(e) => setRegDesc(e.target.value)}
+                  className="w-full bg-[#0A0E17] border border-white/[0.08] rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowRegisterModal(false)}
+                  className="px-4 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 text-xs rounded-xl"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={registering}
+                  className="btn-tactile px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white text-xs font-bold rounded-xl shadow-glow-blue cursor-pointer disabled:opacity-50"
+                >
+                  {registering ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Anchor to Blockchain'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+

@@ -1,0 +1,77 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "C:\\Users\\samir\\OneDrive\\Desktop\\email-threat-platform\\contracts\\EvidenceRegistry.sol": {
+      "lastModificationDate": 1787816752046,
+      "contentHash": "42bba29069fe3bd7e7ee6a0ec228cd4f",
+      "sourceName": "contracts/EvidenceRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "EvidenceRegistry"
+      ]
+    },
+    "C:\\Users\\samir\\OneDrive\\Desktop\\email-threat-platform\\contracts\\ThreatIntelRegistry.sol": {
+      "lastModificationDate": 1787816752050,
+      "contentHash": "015055c7ac395db3ee0445abf0f7666d",
+      "sourceName": "contracts/ThreatIntelRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ThreatIntelRegistry"
+      ]
+    }
+  }
+}

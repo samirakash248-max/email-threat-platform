@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Shield, FileCode, Network, Globe, Link2, Key, ShieldAlert,
   Database, Clock, Download, CheckCircle, FileText, X, Share2,
   Check, Bot, Sparkles, AlertTriangle, HelpCircle, CheckCircle2,
   Lock, Loader2, Send, User, ChevronRight, Server, ArrowRight,
   ExternalLink, Copy, Search, CornerDownRight, Hash, ShieldCheck,
-  Zap, Info, Layers
+  Zap, Info, Layers, RefreshCw, PlusCircle
 } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -29,6 +29,119 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
   const [showSealModal, setShowSealModal] = useState(false);
   const [verifyingSeal, setVerifyingSeal] = useState(false);
   const [sealVerification, setSealVerification] = useState(null);
+
+  // Chain of Custody Lifecycle State
+  const [custodyData, setCustodyData] = useState(null);
+  const [custodyLoading, setCustodyLoading] = useState(false);
+  const [showAddCustodyModal, setShowAddCustodyModal] = useState(false);
+  const [custodyNote, setCustodyNote] = useState('');
+  const [custodyAuthor, setCustodyAuthor] = useState('SOC Analyst');
+  const [custodyEventType, setCustodyEventType] = useState('ANALYST_REVIEW');
+
+  const fetchCustody = async () => {
+    if (!analysis?.analysis_id) return;
+    setCustodyLoading(true);
+    try {
+      const data = await api.getCustodyChain(analysis.analysis_id);
+      setCustodyData(data);
+    } catch (e) {
+      console.error('Error fetching custody chain:', e);
+    } finally {
+      setCustodyLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (analysis?.analysis_id) {
+      fetchCustody();
+    }
+  }, [analysis?.analysis_id]);
+
+  // Blockchain Evidence Verification State
+  const [blockchainVerification, setBlockchainVerification] = useState(null);
+  const [verifyingEvidence, setVerifyingEvidence] = useState(false);
+  const [simulatingTamper, setSimulatingTamper] = useState(false);
+
+  const handleVerifyEvidence = async () => {
+    if (!analysis?.analysis_id) return;
+    setVerifyingEvidence(true);
+    try {
+      const [bRes, cRes] = await Promise.all([
+        api.verifyBlockchainEvidence(analysis.analysis_id),
+        api.verifyCustodyChain(analysis.analysis_id)
+      ]);
+      setBlockchainVerification(bRes);
+      setCustodyData(cRes);
+    } catch (err) {
+      console.error('Failed to verify evidence on blockchain:', err);
+    } finally {
+      setVerifyingEvidence(false);
+    }
+  };
+
+  const handleSimulateTamper = async () => {
+    if (!analysis?.analysis_id) return;
+    setSimulatingTamper(true);
+    try {
+      await api.simulateTamper(analysis.analysis_id);
+      await handleVerifyEvidence();
+    } catch (err) {
+      console.error('Failed to simulate tamper:', err);
+    } finally {
+      setSimulatingTamper(false);
+    }
+  };
+
+  const handleRestoreEvidence = async () => {
+    if (!analysis?.analysis_id) return;
+    setSimulatingTamper(true);
+    try {
+      await api.restoreEvidence(analysis.analysis_id);
+      await handleVerifyEvidence();
+    } catch (err) {
+      console.error('Failed to restore evidence:', err);
+    } finally {
+      setSimulatingTamper(false);
+    }
+  };
+
+  // Broadcast IoCs to Threat Intel Registry
+  const [publishingIoCs, setPublishingIoCs] = useState(false);
+  const [publishFeedback, setPublishFeedback] = useState(null);
+
+  const handlePublishIoCs = async () => {
+    if (!analysis?.analysis_id) return;
+    setPublishingIoCs(true);
+    setPublishFeedback(null);
+    try {
+      const res = await api.publishDossierIoCs(analysis.analysis_id);
+      setPublishFeedback(`Broadcasted ${res.published_count} verified IoCs to Decentralized Threat Intel Registry.`);
+      setTimeout(() => setPublishFeedback(null), 4000);
+    } catch (e) {
+      console.error('Failed to publish IoCs:', e);
+      setPublishFeedback('Failed to broadcast IoCs.');
+      setTimeout(() => setPublishFeedback(null), 4000);
+    } finally {
+      setPublishingIoCs(false);
+    }
+  };
+
+  const handleAddCustodyEvent = async (e) => {
+    e.preventDefault();
+    if (!analysis?.analysis_id || !custodyNote.trim()) return;
+    try {
+      await api.addCustodyEvent(analysis.analysis_id, {
+        event_type: custodyEventType,
+        actor: custodyAuthor,
+        details: { summary: custodyNote.trim(), action_code: "ANALYST_ACTION" }
+      });
+      setCustodyNote('');
+      setShowAddCustodyModal(false);
+      await fetchCustody();
+    } catch (err) {
+      console.error('Failed to add custody event:', err);
+    }
+  };
 
   // Copilot Chat State
   const [chatMessages, setChatMessages] = useState([
@@ -192,6 +305,14 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
 
             <div className="flex items-center gap-2 border-l border-white/[0.08] pl-4">
               <button
+                onClick={handlePublishIoCs}
+                disabled={publishingIoCs}
+                className="p-2 bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.08] rounded-xl text-slate-300 hover:text-cyan-400 transition-colors cursor-pointer"
+                title="Broadcast Non-Sensitive IoCs to Decentralized Threat Intel Registry"
+              >
+                {publishingIoCs ? <Loader2 className="w-4 h-4 animate-spin text-cyan-400" /> : <Globe className="w-4 h-4" />}
+              </button>
+              <button
                 onClick={() => { setShowSealModal(true); handleVerifySeal(); }}
                 className="p-2 bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.08] rounded-xl text-slate-300 hover:text-blue-400 transition-colors cursor-pointer"
                 title="Verify Cryptographic SHA-256 Tamper Seal"
@@ -213,6 +334,13 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
               </button>
             </div>
           </div>
+
+          {publishFeedback && (
+            <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-xl p-3 flex items-center gap-2 text-xs text-cyan-300 animate-in fade-in duration-200">
+              <CheckCircle2 className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+              <span>{publishFeedback}</span>
+            </div>
+          )}
         </div>
 
         {/* Quick Authentication Summary Pills */}
@@ -249,12 +377,137 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
             <span className="text-cyan-400 font-bold font-mono">{relays.length} MTA Nodes</span>
           </div>
         </div>
+
+        {/* Dedicated Blockchain Forensic Verification Section */}
+        <div className="surface-card-subtle p-4 rounded-xl border border-white/[0.08] space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.04] pb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400">
+                <Layers className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="text-xs font-bold text-slate-200 block">
+                  Blockchain Forensic Evidence Verification
+                </span>
+                <span className="text-[11px] text-slate-400">
+                  Immutable Non-Repudiation Layer • Proof-of-Authority Smart Contract Anchor
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Dynamic Blockchain Status Badge */}
+              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase border ${
+                blockchainVerification?.tamper_detected || custodyData?.status === 'MODIFIED'
+                  ? 'bg-rose-500/15 text-rose-400 border-rose-500/30 animate-pulse'
+                  : blockchainVerification?.payload_hash_intact || tamper_seal?.blockchain_verified
+                  ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                  : tamper_seal?.blockchain_status === 'PENDING'
+                  ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+                  : 'bg-slate-500/15 text-slate-400 border-slate-500/30'
+              }`}>
+                {blockchainVerification?.tamper_detected || custodyData?.status === 'MODIFIED' ? (
+                  <>⚠ Evidence Integrity Compromised</>
+                ) : blockchainVerification?.payload_hash_intact || tamper_seal?.blockchain_verified ? (
+                  <>✓ Evidence Integrity Verified</>
+                ) : tamper_seal?.blockchain_status === 'PENDING' ? (
+                  <>⏳ Blockchain Registration Pending</>
+                ) : (
+                  <>○ Blockchain Not Available</>
+                )}
+              </span>
+
+              {/* Verify Evidence Action Button */}
+              <button
+                onClick={handleVerifyEvidence}
+                disabled={verifyingEvidence}
+                className="btn-tactile px-3.5 py-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-glow-blue cursor-pointer disabled:opacity-50"
+              >
+                {verifyingEvidence ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShieldCheck className="w-3.5 h-3.5" />}
+                <span>Verify Evidence</span>
+              </button>
+
+              {/* Controlled Demo Simulation Buttons */}
+              <div className="flex items-center gap-1 border-l border-white/[0.08] pl-2">
+                <button
+                  onClick={handleSimulateTamper}
+                  disabled={simulatingTamper}
+                  title="SIH Evaluator Demo: Simulate off-chain database tampering attack"
+                  className="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/25 rounded-xl text-[11px] font-bold flex items-center gap-1 transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  <AlertTriangle className="w-3 h-3" />
+                  <span>Simulate DB Tamper (Demo)</span>
+                </button>
+                
+                {(blockchainVerification?.tamper_detected || custodyData?.status === 'MODIFIED') && (
+                  <button
+                    onClick={handleRestoreEvidence}
+                    disabled={simulatingTamper}
+                    title="Restore authentic cryptographic record"
+                    className="px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/25 rounded-xl text-[11px] font-bold flex items-center gap-1 transition-colors cursor-pointer disabled:opacity-50"
+                  >
+                    <RefreshCw className="w-3 h-3" />
+                    <span>Restore Authentic</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Blockchain Verification Detail Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs font-mono">
+            <div className="p-2.5 rounded-lg bg-[#080B11] border border-white/[0.04] space-y-0.5">
+              <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Evidence ID</span>
+              <span className="text-slate-200 truncate block font-bold select-all">{analysis_id}</span>
+            </div>
+
+            <div className="p-2.5 rounded-lg bg-[#080B11] border border-white/[0.04] space-y-0.5">
+              <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Evidence SHA-256 Hash</span>
+              <span className="text-cyan-400 truncate block select-all">
+                {blockchainVerification?.canonical_evidence_hash || tamper_seal?.payload_sha256 || 'N/A'}
+              </span>
+            </div>
+
+            <div className="p-2.5 rounded-lg bg-[#080B11] border border-white/[0.04] space-y-0.5">
+              <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Blockchain Tx / Reference ID</span>
+              <span className="text-amber-400 truncate block select-all">
+                {blockchainVerification?.tx_id || tamper_seal?.tx_id || `0x${(tamper_seal?.block_hash || '00').slice(0, 36)}...`}
+              </span>
+            </div>
+
+            <div className="p-2.5 rounded-lg bg-[#080B11] border border-white/[0.04] space-y-0.5">
+              <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Registration Timestamp</span>
+              <span className="text-slate-300 truncate block">
+                {tamper_seal?.timestamp_utc ? tamper_seal.timestamp_utc.replace('T', ' ').slice(0, 19) + ' UTC' : 'N/A'}
+              </span>
+            </div>
+
+            <div className="p-2.5 rounded-lg bg-[#080B11] border border-white/[0.04] space-y-0.5">
+              <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Chain-of-Custody Status</span>
+              <span className="text-emerald-400 font-bold block">
+                {custodyData?.status || 'VERIFIED'} ({custodyData?.total_events || 4} Lifecycle Events)
+              </span>
+            </div>
+
+            <div className="p-2.5 rounded-lg bg-[#080B11] border border-white/[0.04] space-y-0.5">
+              <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Verification Result</span>
+              <span className={`block font-bold truncate ${
+                blockchainVerification?.tamper_detected ? 'text-rose-400' : 'text-emerald-400'
+              }`}>
+                {blockchainVerification?.verification_status
+                  ? blockchainVerification.verification_status.replace(/_/g, ' ')
+                  : 'UNCHANGED (Authentic)'}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Navigation Sub-Tabs */}
       <div className="flex bg-[#0A0E17] p-1 rounded-xl border border-white/[0.06] gap-1 overflow-x-auto text-xs font-semibold shadow-inner-light">
         {[
           { id: 'synthesis', label: 'Executive Synthesis', icon: ShieldAlert },
+          { id: 'custody', label: `Chain of Custody (${custodyData?.events?.length || 4})`, icon: Lock },
           { id: 'headers', label: 'Headers & Auth', icon: FileCode },
           { id: 'relays', label: `Relay Forensics (${relays.length})`, icon: Server },
           { id: 'intel', label: `URLs & Domains (${extracted_urls.length})`, icon: Globe },
@@ -279,6 +532,127 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
           );
         })}
       </div>
+
+      {/* TAB: CHAIN OF CUSTODY LIFECYCLE */}
+      {activeTab === 'custody' && (
+        <div className="space-y-6">
+          <div className="surface-card p-6 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-4">
+              <div>
+                <div className="flex items-center gap-2.5">
+                  <h3 className="font-bold text-sm text-slate-100 flex items-center gap-2">
+                    <Lock className="w-4 h-4 text-cyan-400" />
+                    Digital Chain-of-Custody & Forensic Lifecycle
+                  </h3>
+                  {custodyData && (
+                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase border flex items-center gap-1 ${
+                      custodyData.status === 'VERIFIED'
+                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                        : custodyData.status === 'MODIFIED'
+                        ? 'bg-rose-500/15 text-rose-400 border-rose-500/30'
+                        : custodyData.status === 'BLOCKCHAIN_UNAVAILABLE'
+                        ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                        : 'bg-slate-500/10 text-slate-400 border-slate-500/30'
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${
+                        custodyData.status === 'VERIFIED' ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'
+                      }`}></span>
+                      {custodyData.status.replace(/_/g, ' ')}
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  Cryptographically linked lifecycle stages proving authenticity, sequencing, and non-repudiation
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={fetchCustody}
+                  disabled={custodyLoading}
+                  className="btn-tactile px-3.5 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 text-xs rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  {custodyLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+                  <span>Re-Verify Chain</span>
+                </button>
+
+                <button
+                  onClick={() => setShowAddCustodyModal(true)}
+                  className="btn-tactile px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-glow-blue cursor-pointer"
+                >
+                  <PlusCircle className="w-3.5 h-3.5" />
+                  <span>Record Analyst Review</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Verification Details Alert */}
+            {custodyData && (
+              <div className={`p-3.5 rounded-xl text-xs flex items-start gap-2.5 border ${
+                custodyData.is_intact
+                  ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-300'
+                  : 'bg-rose-500/15 border-rose-500/30 text-rose-300'
+              }`}>
+                {custodyData.is_intact ? (
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                ) : (
+                  <ShieldAlert className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
+                )}
+                <div>
+                  <div className="font-bold uppercase tracking-wider mb-0.5">
+                    {custodyData.status} — {custodyData.total_events} Lifecycle Events Anchored
+                  </div>
+                  <div className="text-[11px] leading-snug">{custodyData.verification_details}</div>
+                </div>
+              </div>
+            )}
+
+            {/* Chronological Event Timeline */}
+            <div className="space-y-3 pt-2">
+              {(custodyData?.events || []).map((evt, idx) => (
+                <div key={idx} className="surface-card-subtle p-4 rounded-xl border border-white/[0.06] space-y-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[10px] font-bold font-mono">
+                        Step #{evt.sequence_number}
+                      </span>
+                      <span className="font-bold text-xs text-slate-100 uppercase tracking-wide">
+                        {evt.event_type.replace(/_/g, ' ')}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-[11px] text-slate-400 font-mono">
+                      <span>Actor: <strong className="text-slate-200">{evt.actor}</strong></span>
+                      <span>•</span>
+                      <span>{evt.timestamp.replace('T', ' ').slice(0, 19)} UTC</span>
+                    </div>
+                  </div>
+
+                  {evt.event_data?.summary && (
+                    <p className="text-xs text-slate-300 font-sans leading-relaxed">
+                      {evt.event_data.summary}
+                    </p>
+                  )}
+
+                  <div className="p-2.5 rounded-lg bg-[#080B11] border border-white/[0.04] text-[11px] font-mono space-y-1 text-slate-400">
+                    <div className="truncate select-all">
+                      Event SHA-256: <span className="text-cyan-400">{evt.event_hash}</span>
+                    </div>
+                    <div className="truncate select-all">
+                      Prev Hash Link: <span className="text-slate-500">{evt.previous_event_hash}</span>
+                    </div>
+                    {evt.tx_id && (
+                      <div className="truncate select-all">
+                        On-Chain Tx ID: <span className="text-amber-400">{evt.tx_id}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* TAB 1: EXECUTIVE SYNTHESIS */}
       {activeTab === 'synthesis' && (
@@ -684,21 +1058,56 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
               <button onClick={() => setShowSealModal(false)} className="text-slate-400 hover:text-white"><X className="w-4 h-4" /></button>
             </div>
 
-            <div className="surface-card-subtle p-4 space-y-2 text-xs font-mono border border-white/[0.06]">
-              <div className="text-slate-400">Seal ID: <span className="text-slate-200">{tamper_seal.seal_id}</span></div>
+            <div className="surface-card-subtle p-4 space-y-2.5 text-xs font-mono border border-white/[0.06]">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400">Blockchain Block:</span>
+                <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold">
+                  Block #{sealVerification?.block_number || tamper_seal.block_number || 1}
+                </span>
+              </div>
+              <div className="text-slate-400">Validator Node: <span className="text-slate-200">{sealVerification?.validator_node || 'ThreatSentinel-Validator-01'}</span></div>
               <div className="text-slate-400">Timestamp: <span className="text-slate-200">{tamper_seal.timestamp_utc}</span></div>
-              <div className="text-slate-400 select-all">SHA-256 Payload Hash: <span className="text-cyan-400">{tamper_seal.payload_sha256}</span></div>
-              <div className="text-slate-400 select-all">Seal Hash: <span className="text-purple-400">{tamper_seal.current_seal_hash}</span></div>
+              <div className="text-slate-400 select-all truncate">
+                Block Hash: <span className="text-cyan-400 font-bold">{sealVerification?.block_hash || tamper_seal.block_hash || tamper_seal.current_seal_hash}</span>
+              </div>
+              <div className="text-slate-400 select-all truncate">
+                Merkle Root: <span className="text-purple-400 font-bold">{sealVerification?.merkle_root || tamper_seal.merkle_root || 'N/A'}</span>
+              </div>
+              <div className="text-slate-400 select-all truncate">
+                Evidence SHA-256: <span className="text-slate-300">{sealVerification?.canonical_evidence_hash || tamper_seal.payload_sha256}</span>
+              </div>
             </div>
 
             {sealVerification && (
-              <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-300 flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                <span>{sealVerification.verification_details}</span>
+              <div className={`p-3.5 rounded-xl text-xs flex items-start gap-2.5 border ${
+                sealVerification.tamper_detected
+                  ? 'bg-rose-500/15 border-rose-500/30 text-rose-300'
+                  : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+              }`}>
+                {sealVerification.tamper_detected ? (
+                  <ShieldAlert className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
+                ) : (
+                  <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                )}
+                <div>
+                  <div className="font-bold uppercase tracking-wider mb-0.5">
+                    {sealVerification.verification_status.replace(/_/g, ' ')}
+                  </div>
+                  <div className="text-[11px] leading-snug">{sealVerification.verification_details}</div>
+                </div>
               </div>
             )}
 
-            <div className="flex justify-end pt-2">
+            <div className="flex items-center justify-between pt-2">
+              <button
+                onClick={handleVerifySeal}
+                disabled={verifyingSeal}
+                className="px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 text-xs rounded-xl flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                {verifyingSeal ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+                <span>Re-Verify Ledger</span>
+              </button>
+
               <button
                 onClick={() => setShowSealModal(false)}
                 className="btn-tactile px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl"
@@ -706,6 +1115,75 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                 Close Proof
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Record Custody Event Modal */}
+      {showAddCustodyModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="surface-card max-w-md w-full p-6 space-y-4 shadow-2xl border border-white/[0.1]">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+              <div className="flex items-center gap-2">
+                <PlusCircle className="w-5 h-5 text-cyan-400" />
+                <h3 className="font-bold text-sm text-slate-100">Record Chain-of-Custody Event</h3>
+              </div>
+              <button onClick={() => setShowAddCustodyModal(false)} className="text-slate-400 hover:text-white"><X className="w-4 h-4" /></button>
+            </div>
+
+            <form onSubmit={handleAddCustodyEvent} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs text-slate-300 font-semibold block">Lifecycle Event Type</label>
+                <select
+                  value={custodyEventType}
+                  onChange={(e) => setCustodyEventType(e.target.value)}
+                  className="w-full bg-[#0A0E17] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                >
+                  <option value="ANALYST_REVIEW">ANALYST_REVIEW (Forensic Assessment & Verification)</option>
+                  <option value="REPORT_GENERATED">REPORT_GENERATED (Intelligence Export)</option>
+                  <option value="EVIDENCE_ARCHIVED">EVIDENCE_ARCHIVED (Case Closure & Sealed)</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs text-slate-300 font-semibold block">Investigator / System Identifier</label>
+                <input
+                  type="text"
+                  value={custodyAuthor}
+                  onChange={(e) => setCustodyAuthor(e.target.value)}
+                  className="w-full bg-[#0A0E17] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs text-slate-300 font-semibold block">Event Summary & Action Taken</label>
+                <textarea
+                  rows={3}
+                  value={custodyNote}
+                  onChange={(e) => setCustodyNote(e.target.value)}
+                  placeholder="Describe forensic action taken or verified evidence indicators..."
+                  className="w-full bg-[#0A0E17] border border-white/[0.08] rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                  required
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddCustodyModal(false)}
+                  className="px-4 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 text-xs rounded-xl"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn-tactile px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white text-xs font-bold rounded-xl shadow-glow-blue cursor-pointer"
+                >
+                  Anchor to Blockchain
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

@@ -45,6 +45,50 @@ class CaseRecord(Base):
     attached_analysis_ids = Column(JSON, default=list)
     notes_json = Column(JSON, default=list)
 
+class BlockRecord(Base):
+    __tablename__ = "blockchain_ledger"
+
+    block_number = Column(Integer, primary_key=True)
+    timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
+    block_hash = Column(String, nullable=False, unique=True, index=True)
+    previous_hash = Column(String, nullable=False)
+    analysis_id = Column(String, nullable=False, index=True)
+    merkle_root = Column(String, nullable=False)
+    canonical_evidence_hash = Column(String, nullable=False)
+    block_data_json = Column(JSON, nullable=False)
+
+class CustodyEventRecord(Base):
+    __tablename__ = "chain_of_custody_events"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    evidence_id = Column(String, nullable=False, index=True)
+    sequence_number = Column(Integer, nullable=False)
+    event_type = Column(String, nullable=False, index=True)
+    timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
+    actor = Column(String, nullable=False)
+    event_hash = Column(String, nullable=False)
+    previous_event_hash = Column(String, nullable=False)
+    tx_id = Column(String, nullable=True)
+    block_number = Column(Integer, nullable=True)
+    event_data_json = Column(JSON, nullable=False)
+
+class ThreatIntelRecord(Base):
+    __tablename__ = "threat_intel_indicators"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    indicator_type = Column(String, nullable=False, index=True)  # DOMAIN, URL_HASH, IP_ADDRESS, FILE_HASH, SENDER_DOMAIN
+    indicator_value = Column(String, nullable=False, index=True)
+    indicator_hash = Column(String, nullable=False, unique=True, index=True)
+    threat_category = Column(String, nullable=False)
+    severity = Column(String, nullable=False)  # LOW, MEDIUM, HIGH, CRITICAL
+    confidence_score = Column(Integer, default=85)
+    source_org = Column(String, nullable=False)
+    timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
+    tx_id = Column(String, nullable=True)
+    block_number = Column(Integer, nullable=True)
+    observation_count = Column(Integer, default=1)
+    details_json = Column(JSON, default=dict)
+
 Base.metadata.create_all(bind=engine)
 
 def get_db():
@@ -56,12 +100,12 @@ def get_db():
 
 # Pydantic Schemas
 class EmailInput(BaseModel):
-    raw_email: Optional[str] = None
-    headers: Optional[str] = None
-    body: Optional[str] = None
-    subject: Optional[str] = None
-    sender: Optional[str] = None
-    recipient: Optional[str] = None
+    raw_email: Optional[str] = Field(None, max_length=15_000_000, description="Max 15MB RFC 5322 payload")
+    headers: Optional[str] = Field(None, max_length=1_000_000)
+    body: Optional[str] = Field(None, max_length=15_000_000)
+    subject: Optional[str] = Field(None, max_length=1000)
+    sender: Optional[str] = Field(None, max_length=500)
+    recipient: Optional[str] = Field(None, max_length=500)
 
 class AuthStatus(BaseModel):
     status: str = "none"
@@ -147,6 +191,13 @@ class TamperSeal(BaseModel):
     previous_seal_hash: str = "0000000000000000000000000000000000000000000000000000000000000000"
     signer_identity: str = "ThreatSentinel-Ledger"
     is_valid: bool = True
+    block_number: Optional[int] = None
+    block_hash: Optional[str] = None
+    tx_id: Optional[str] = None
+    contract_address: Optional[str] = None
+    merkle_root: Optional[str] = None
+    blockchain_status: str = "CONFIRMED"
+    blockchain_verified: bool = True
 
 class FullAnalysisResult(BaseModel):
     analysis_id: str
@@ -169,14 +220,14 @@ class FullAnalysisResult(BaseModel):
     tamper_seal: Optional[TamperSeal] = None
 
 class CaseCreate(BaseModel):
-    title: str
-    description: Optional[str] = None
-    priority: str = "HIGH"
-    initial_analysis_id: Optional[str] = None
+    title: str = Field(..., min_length=1, max_length=256)
+    description: Optional[str] = Field(None, max_length=5000)
+    priority: str = Field("HIGH", max_length=32)
+    initial_analysis_id: Optional[str] = Field(None, max_length=128)
 
 class CaseNoteCreate(BaseModel):
-    author: Optional[str] = "SOC Analyst"
-    content: str
+    author: Optional[str] = Field("SOC Analyst", max_length=128)
+    content: str = Field(..., min_length=1, max_length=5000)
 
 class CaseResponse(BaseModel):
     id: str
@@ -198,3 +249,72 @@ class DashboardStats(BaseModel):
     threat_distribution: Dict[str, int]
     top_categories: Dict[str, int]
     recent_analyses: List[Dict[str, Any]]
+
+class CustodyEventInput(BaseModel):
+    event_type: str = Field("ANALYST_REVIEW", max_length=64)  # e.g., ANALYST_REVIEW, REPORT_GENERATED, EVIDENCE_ARCHIVED
+    actor: str = Field("SOC-Analyst", max_length=128)
+    details: Optional[Dict[str, Any]] = None
+
+class CustodyEventItem(BaseModel):
+    id: str
+    evidence_id: str
+    sequence_number: int
+    event_type: str
+    timestamp: str
+    actor: str
+    event_hash: str
+    previous_event_hash: str
+    tx_id: Optional[str] = None
+    block_number: Optional[int] = None
+    event_data: Dict[str, Any] = {}
+
+class CustodyVerificationResponse(BaseModel):
+    evidence_id: str
+    status: str # VERIFIED, MODIFIED, NOT_FOUND, BLOCKCHAIN_UNAVAILABLE
+    is_intact: bool
+    total_events: int
+    events: List[CustodyEventItem] = []
+    verification_details: str
+    broken_event_index: Optional[int] = None
+    contract_address: Optional[str] = None
+
+class ThreatIndicatorCreate(BaseModel):
+    indicator_type: str = Field("DOMAIN", max_length=32)  # DOMAIN, URL_HASH, IP_ADDRESS, FILE_HASH, SENDER_DOMAIN
+    indicator_value: str = Field(..., min_length=1, max_length=512)
+    threat_category: str = Field("PHISHING", max_length=64)
+    severity: str = Field("HIGH", max_length=16)  # LOW, MEDIUM, HIGH, CRITICAL
+    confidence_score: int = Field(default=85, ge=1, le=100)
+    source_org: Optional[str] = Field("ThreatSentinel-SOC-01", max_length=128)
+    description: Optional[str] = Field(None, max_length=2000)
+
+class ThreatIndicatorItem(BaseModel):
+    id: str
+    indicator_type: str
+    indicator_value: str
+    indicator_hash: str
+    threat_category: str
+    severity: str
+    confidence_score: int
+    source_org: str
+    timestamp: str
+    tx_id: Optional[str] = None
+    block_number: Optional[int] = None
+    observation_count: int = 1
+    is_verified_onchain: bool = True
+    description: Optional[str] = None
+
+class ThreatIndicatorVerifyResponse(BaseModel):
+    indicator_type: str
+    indicator_value: str
+    indicator_hash: str
+    is_known_threat: bool
+    threat_category: str
+    severity: str
+    confidence_score: int
+    source_org: str
+    timestamp: str
+    tx_id: Optional[str] = None
+    observation_count: int = 0
+    status: str  # VERIFIED_ON_CHAIN, CLEAN_OR_NOT_FOUND, BLOCKCHAIN_UNAVAILABLE
+    verification_details: str
+    contract_address: Optional[str] = None

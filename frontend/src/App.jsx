@@ -3,7 +3,7 @@ import {
   Shield, UploadCloud, Play, RotateCcw, Loader2,
   AlertCircle, Briefcase, Search, LayoutDashboard,
   FileSearch, Plus, Network, Sparkles, RefreshCw, CheckCircle2,
-  X, HelpCircle, Activity, Command
+  X, HelpCircle, Activity, Command, Layers, Globe
 } from 'lucide-react';
 
 import api, { useScanner } from './api';
@@ -12,6 +12,8 @@ import {
   DashboardView,
   CorrelationView,
   CaseManager,
+  BlockchainLedgerView,
+  ThreatIntelView,
   GlobalSearchModal,
   DemoTourModal,
   SampleEmailSelector
@@ -208,6 +210,28 @@ export default function App() {
                 }`}
               >
                 <Briefcase className="w-3.5 h-3.5" /> Cases
+              </button>
+
+              <button
+                onClick={() => setCurrentView('blockchain')}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  currentView === 'blockchain'
+                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" /> Blockchain
+              </button>
+
+              <button
+                onClick={() => setCurrentView('intel')}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  currentView === 'intel'
+                    ? 'bg-cyan-600 text-white shadow-sm shadow-cyan-500/20'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
+                }`}
+              >
+                <Globe className="w-3.5 h-3.5" /> Threat Intel
               </button>
             </nav>
 
@@ -454,6 +478,16 @@ export default function App() {
             currentAnalysis={analysis}
             onSelectAnalysisFromCase={(analysisId) => handleSelectAnalysis(analysisId)}
           />
+        )}
+
+        {currentView === 'blockchain' && (
+          <BlockchainLedgerView
+            onSelectAnalysis={handleSelectAnalysis}
+          />
+        )}
+
+        {currentView === 'intel' && (
+          <ThreatIntelView />
         )}
       </main>
 

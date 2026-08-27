@@ -45,11 +45,31 @@ export const api = {
   updateCase: (id, data) => fetchJson(`/cases/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
   addNote: (id, data) => fetchJson(`/cases/${id}/notes`, { method: 'POST', body: JSON.stringify(data) }),
 
-  // Demo samples
+  // Blockchain Evidence & Chain of Custody Integrity
+  getBlockchainLedger: () => fetchJson('/blockchain/ledger'),
+  verifyBlockchainEvidence: (id) => fetchJson(`/blockchain/verify/${id}`),
+  getBlockchainStatus: (id) => fetchJson(`/blockchain/status/${id}`),
+  registerBlockchainEvidence: (id) => fetchJson(`/blockchain/register/${id}`, { method: 'POST' }),
+  getBlockchainContract: () => fetchJson('/blockchain/contract'),
+  getBlockchainStats: () => fetchJson('/blockchain/stats'),
+  getCustodyChain: (id) => fetchJson(`/custody/${id}`),
+  verifyCustodyChain: (id) => fetchJson(`/custody/${id}/verify`),
+  addCustodyEvent: (id, data) => fetchJson(`/custody/event/${id}`, { method: 'POST', body: JSON.stringify(data) }),
+
+  // Blockchain Threat Intelligence Sharing Registry
+  getThreatIndicators: (limit = 50) => fetchJson(`/intel/indicators?limit=${limit}`),
+  registerThreatIndicator: (data) => fetchJson('/intel/indicators', { method: 'POST', body: JSON.stringify(data) }),
+  verifyThreatIndicator: (type, value) => fetchJson(`/intel/verify?type=${encodeURIComponent(type)}&value=${encodeURIComponent(value)}`),
+  getThreatIntelStats: () => fetchJson('/intel/stats'),
+  publishDossierIoCs: (id) => fetchJson(`/intel/publish-dossier/${id}`, { method: 'POST' }),
+
+  // Demo samples & Controlled Tamper Test
   getSamples: () => fetchJson('/sample-emails'),
   getSample: (id) => fetchJson(`/sample-emails/${id}`),
   seedDemo: () => fetchJson('/demo/seed', { method: 'POST' }),
   resetDemo: () => fetchJson('/demo/reset', { method: 'POST' }),
+  simulateTamper: (id) => fetchJson(`/demo/simulate-tamper/${id}`, { method: 'POST' }),
+  restoreEvidence: (id) => fetchJson(`/demo/restore-evidence/${id}`, { method: 'POST' }),
 };
 
 export default api;

@@ -1,0 +1,148 @@
+{
+  "contractName": "EvidenceRegistry",
+  "version": "1.1.0",
+  "compiler": "solc 0.8.20",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        { "indexed": true, "internalType": "bytes32", "name": "evidenceId", "type": "bytes32" },
+        { "indexed": true, "internalType": "bytes32", "name": "evidenceHash", "type": "bytes32" },
+        { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" },
+        { "indexed": true, "internalType": "address", "name": "registeredBy", "type": "address" },
+        { "indexed": false, "internalType": "string", "name": "systemIdentifier", "type": "string" }
+      ],
+      "name": "EvidenceRegistered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        { "indexed": true, "internalType": "bytes32", "name": "evidenceId", "type": "bytes32" },
+        { "indexed": true, "internalType": "bytes32", "name": "eventHash", "type": "bytes32" },
+        { "indexed": true, "internalType": "bytes32", "name": "previousEventHash", "type": "bytes32" },
+        { "indexed": false, "internalType": "uint256", "name": "sequenceNumber", "type": "uint256" },
+        { "indexed": false, "internalType": "string", "name": "eventType", "type": "string" },
+        { "indexed": false, "internalType": "string", "name": "actor", "type": "string" },
+        { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }
+      ],
+      "name": "CustodyEventRecorded",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        { "internalType": "bytes32", "name": "evidenceId", "type": "bytes32" },
+        { "internalType": "bytes32", "name": "eventHash", "type": "bytes32" },
+        { "internalType": "bytes32", "name": "previousEventHash", "type": "bytes32" },
+        { "internalType": "string", "name": "eventType", "type": "string" },
+        { "internalType": "string", "name": "actor", "type": "string" }
+      ],
+      "name": "recordCustodyEvent",
+      "outputs": [{ "internalType": "uint256", "name": "sequenceNumber", "type": "uint256" }],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "bytes32", "name": "evidenceId", "type": "bytes32" },
+        { "internalType": "bytes32[]", "name": "computedEventHashes", "type": "bytes32[]" }
+      ],
+      "name": "verifyCustodyChain",
+      "outputs": [
+        { "internalType": "bool", "name": "isFullyIntact", "type": "bool" },
+        { "internalType": "uint256", "name": "matchingEventsCount", "type": "uint256" },
+        { "internalType": "uint256", "name": "totalOnchainEvents", "type": "uint256" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [{ "internalType": "bytes32", "name": "evidenceId", "type": "bytes32" }],
+      "name": "getCustodyEventCount",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "bytes32", "name": "evidenceId", "type": "bytes32" },
+        { "internalType": "uint256", "name": "index", "type": "uint256" }
+      ],
+      "name": "getCustodyEvent",
+      "outputs": [
+        { "internalType": "bytes32", "name": "eventHash", "type": "bytes32" },
+        { "internalType": "bytes32", "name": "previousEventHash", "type": "bytes32" },
+        { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
+        { "internalType": "string", "name": "eventType", "type": "string" },
+        { "internalType": "string", "name": "actor", "type": "string" },
+        { "internalType": "address", "name": "recordedBy", "type": "address" },
+        { "internalType": "uint256", "name": "sequenceNumber", "type": "uint256" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "bytes32", "name": "evidenceId", "type": "bytes32" },
+        { "internalType": "bytes32", "name": "evidenceHash", "type": "bytes32" },
+        { "internalType": "string", "name": "systemIdentifier", "type": "string" }
+      ],
+      "name": "registerEvidence",
+      "outputs": [{ "internalType": "bool", "name": "success", "type": "bool" }],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "bytes32", "name": "evidenceId", "type": "bytes32" },
+        { "internalType": "bytes32", "name": "computedHash", "type": "bytes32" }
+      ],
+      "name": "verifyEvidence",
+      "outputs": [
+        { "internalType": "bool", "name": "isAuthentic", "type": "bool" },
+        { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
+        { "internalType": "address", "name": "registeredBy", "type": "address" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [{ "internalType": "bytes32", "name": "evidenceId", "type": "bytes32" }],
+      "name": "getEvidence",
+      "outputs": [
+        { "internalType": "bytes32", "name": "evidenceHash", "type": "bytes32" },
+        { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
+        { "internalType": "string", "name": "systemIdentifier", "type": "string" },
+        { "internalType": "address", "name": "registeredBy", "type": "address" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [{ "internalType": "bytes32", "name": "evidenceId", "type": "bytes32" }],
+      "name": "isEvidenceRegistered",
+      "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getEvidenceCount",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [{ "internalType": "uint256", "name": "index", "type": "uint256" }],
+      "name": "getEvidenceIdByIndex",
+      "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}
