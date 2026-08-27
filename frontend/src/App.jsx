@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Shield, UploadCloud, Play, RotateCcw, Loader2,
   AlertCircle, Briefcase, Search, LayoutDashboard,
-  FileSearch, Plus, Network, Sparkles, RefreshCw, CheckCircle2
+  FileSearch, Plus, Network, Sparkles, RefreshCw, CheckCircle2,
+  X, HelpCircle, Activity, Command
 } from 'lucide-react';
 
 import api, { useScanner } from './api';
@@ -46,6 +47,18 @@ export default function App() {
   const [formRecipient, setFormRecipient] = useState('');
   const [formHeaders, setFormHeaders] = useState('');
   const [formBody, setFormBody] = useState('');
+
+  // Keyboard shortcut for search
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsSearchOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleResetDemoData = async () => {
     if (!window.confirm('Reset SQLite database to original baseline state with 10 synthetic demo emails?')) {
@@ -127,35 +140,35 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0F17] text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen bg-[#080B11] bg-ambient-mesh text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
       {/* Top Header Navbar */}
-      <header className="border-b border-[#1E293B] bg-[#131B2A]/90 backdrop-blur-md sticky top-0 z-40">
+      <header className="border-b border-white/[0.08] bg-[#090D18]/85 backdrop-blur-xl sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 rounded-xl shadow-lg shadow-blue-500/20 text-white flex items-center justify-center">
+            <div className="relative p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-glow-blue text-white flex items-center justify-center border border-white/20">
               <Shield className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="font-extrabold text-base tracking-tight text-white flex items-center gap-1.5">
+                <h1 className="font-bold text-sm tracking-tight text-white flex items-center gap-1.5">
                   ThreatSentinel
                 </h1>
-                <span className="px-2 py-0.5 text-[9px] font-extrabold bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded uppercase tracking-wider">
-                  SOC Edition
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full uppercase tracking-wider">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span> SOC Console
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 font-medium">AI-Powered Email Threat Detection & Forensic Intelligence</p>
+              <p className="text-[11px] text-slate-400 font-normal">AI-Powered Email Threat Detection & Forensic Intelligence</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <nav className="hidden md:flex items-center gap-1 bg-[#0B0F17] p-1 rounded-xl border border-[#1E293B]">
+          <div className="flex items-center gap-2.5">
+            <nav className="hidden md:flex items-center gap-1 bg-[#0B0F19]/80 p-1 rounded-xl border border-white/[0.06] shadow-inner-light">
               <button
                 onClick={() => setCurrentView('dashboard')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   currentView === 'dashboard'
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-[#1E293B]/50'
+                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
                 }`}
               >
                 <LayoutDashboard className="w-3.5 h-3.5" /> Dashboard
@@ -166,21 +179,21 @@ export default function App() {
                   if (analysis) setCurrentView('workspace');
                   else setIsIntakeOpen(true);
                 }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   currentView === 'workspace'
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-[#1E293B]/50'
+                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
                 }`}
               >
-                <FileSearch className="w-3.5 h-3.5" /> Analysis Workspace
+                <FileSearch className="w-3.5 h-3.5" /> Workspace
               </button>
 
               <button
                 onClick={() => setCurrentView('correlation')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   currentView === 'correlation'
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-[#1E293B]/50'
+                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
                 }`}
               >
                 <Network className="w-3.5 h-3.5" /> Correlation
@@ -188,34 +201,36 @@ export default function App() {
 
               <button
                 onClick={() => setCurrentView('cases')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   currentView === 'cases'
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-[#1E293B]/50'
+                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
                 }`}
               >
-                <Briefcase className="w-3.5 h-3.5" /> Incident Cases
+                <Briefcase className="w-3.5 h-3.5" /> Cases
               </button>
             </nav>
 
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="p-2 bg-[#0B0F17] hover:bg-[#1E293B] border border-[#1E293B] rounded-xl text-slate-400 hover:text-white transition-colors cursor-pointer"
-              title="Global Search (Ctrl+K)"
+              className="flex items-center gap-2 px-2.5 py-1.5 bg-[#0B0F19] hover:bg-[#141B2D] border border-white/[0.06] rounded-xl text-slate-400 hover:text-slate-200 transition-colors text-xs cursor-pointer shadow-inner-light"
+              title="Global Search"
             >
-              <Search className="w-4 h-4" />
+              <Search className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline text-[11px] text-slate-500">Search</span>
+              <kbd className="hidden sm:inline px-1.5 py-0.5 text-[9px] font-mono bg-white/[0.05] border border-white/[0.08] rounded text-slate-400">⌘K</kbd>
             </button>
 
             <button
               onClick={() => setIsTourOpen(true)}
-              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 bg-purple-950/40 hover:bg-purple-900/50 text-purple-300 border border-purple-500/30 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-sm"
+              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/20 rounded-xl text-xs font-semibold transition-all cursor-pointer"
             >
-              <Sparkles className="w-3.5 h-3.5 text-purple-400" /> Demo Tour
+              <Sparkles className="w-3.5 h-3.5 text-purple-400" /> Tour
             </button>
 
             <button
               onClick={() => setIsIntakeOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-blue-600/20 cursor-pointer"
+              className="btn-tactile flex items-center gap-1.5 px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-glow-blue cursor-pointer"
             >
               <Plus className="w-4 h-4" /> Ingest Email
             </button>
@@ -238,26 +253,26 @@ export default function App() {
 
       {/* Intake Drawer / Modal */}
       {isIntakeOpen && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#131B2A] border border-[#1E293B] rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl animate-in fade-in duration-200">
-            <div className="flex items-center justify-between border-b border-[#1E293B] pb-3">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="surface-card max-w-2xl w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in-95 duration-150 border border-white/[0.1]">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3.5">
               <div>
                 <h3 className="font-bold text-slate-100 text-sm">Ingest Email for Forensic Threat Evaluation</h3>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-400 mt-0.5">
                   Submit RFC 5322 raw email text, upload an .eml artifact, or choose from synthetic test fixtures
                 </p>
               </div>
               <button
                 onClick={() => setIsIntakeOpen(false)}
-                className="p-1 text-slate-400 hover:text-white rounded-lg"
+                className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/[0.06] transition-colors"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
 
             {error && (
-              <div className="p-3 bg-red-500/15 border border-red-500/30 rounded-xl text-xs text-red-300 flex items-center gap-2 animate-in fade-in">
-                <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
+              <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-300 flex items-center gap-2 animate-in fade-in">
+                <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
                 <span>{error}</span>
               </div>
             )}
@@ -272,11 +287,11 @@ export default function App() {
             />
 
             {/* Mode Switcher */}
-            <div className="flex bg-[#0B0F17] p-1 rounded-xl border border-[#1E293B] text-xs font-semibold">
+            <div className="flex bg-[#0A0E17] p-1 rounded-xl border border-white/[0.06] text-xs font-semibold shadow-inner-light">
               <button
                 onClick={() => setIntakeMode('paste')}
                 className={`flex-1 py-1.5 rounded-lg transition-all cursor-pointer ${
-                  intakeMode === 'paste' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-slate-200'
+                  intakeMode === 'paste' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
                 Paste Raw RFC 5322
@@ -284,7 +299,7 @@ export default function App() {
               <button
                 onClick={() => setIntakeMode('upload')}
                 className={`flex-1 py-1.5 rounded-lg transition-all cursor-pointer ${
-                  intakeMode === 'upload' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-slate-200'
+                  intakeMode === 'upload' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
                 Upload .EML File
@@ -292,10 +307,10 @@ export default function App() {
               <button
                 onClick={() => setIntakeMode('fields')}
                 className={`flex-1 py-1.5 rounded-lg transition-all cursor-pointer ${
-                  intakeMode === 'fields' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-slate-200'
+                  intakeMode === 'fields' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
-                Structured Input
+                Structured Form
               </button>
             </div>
 
@@ -303,19 +318,19 @@ export default function App() {
             {intakeMode === 'paste' && (
               <textarea
                 rows={8}
-                placeholder="Paste raw email (Received headers, From, To, Subject, Body)..."
+                placeholder="Paste raw email content (Received headers, From, To, Subject, Body)..."
                 value={rawPastedEmail}
                 onChange={(e) => setRawPastedEmail(e.target.value)}
-                className="w-full bg-[#0B0F17] border border-[#1E293B] rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500"
+                className="w-full bg-[#0A0E17] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-xl p-3.5 text-xs font-mono text-slate-200 focus:outline-none transition-all"
               />
             )}
 
             {intakeMode === 'upload' && (
-              <div className="border-2 border-dashed border-[#1E293B] hover:border-blue-500/50 rounded-xl p-8 text-center space-y-3 bg-[#0B0F17]">
-                <UploadCloud className="w-8 h-8 text-blue-400 mx-auto" />
+              <div className="border-2 border-dashed border-white/[0.1] hover:border-blue-500/50 rounded-xl p-8 text-center space-y-3 bg-[#0A0E17] transition-colors">
+                <UploadCloud className="w-9 h-9 text-blue-400 mx-auto" />
                 <div>
-                  <label className="text-xs font-bold text-slate-200 block cursor-pointer">
-                    Click to select .eml or .txt message file
+                  <label className="text-xs font-bold text-slate-200 block cursor-pointer hover:text-blue-400 transition-colors">
+                    Click to browse .eml or .txt message file
                     <input
                       type="file"
                       accept=".eml,message/rfc822,text/plain"
@@ -323,8 +338,8 @@ export default function App() {
                       onChange={(e) => setUploadedFile(e.target.files?.[0] || null)}
                     />
                   </label>
-                  <span className="text-[11px] text-slate-400 font-mono">
-                    {uploadedFile ? uploadedFile.name : 'Max file size: 15 MB'}
+                  <span className="text-[11px] text-slate-400 font-mono mt-1 block">
+                    {uploadedFile ? uploadedFile.name : 'Max upload size: 15 MB'}
                   </span>
                 </div>
               </div>
@@ -337,44 +352,44 @@ export default function App() {
                   placeholder="Subject Line"
                   value={formSubject}
                   onChange={(e) => setFormSubject(e.target.value)}
-                  className="col-span-2 bg-[#0B0F17] border border-[#1E293B] rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-blue-500"
+                  className="col-span-2 bg-[#0A0E17] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-lg p-2.5 text-slate-200 focus:outline-none"
                 />
                 <input
                   type="text"
                   placeholder="From (e.g. security@company.com)"
                   value={formSender}
                   onChange={(e) => setFormSender(e.target.value)}
-                  className="bg-[#0B0F17] border border-[#1E293B] rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-blue-500"
+                  className="bg-[#0A0E17] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-lg p-2.5 text-slate-200 focus:outline-none"
                 />
                 <input
                   type="text"
                   placeholder="To (e.g. user@domain.com)"
                   value={formRecipient}
                   onChange={(e) => setFormRecipient(e.target.value)}
-                  className="bg-[#0B0F17] border border-[#1E293B] rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-blue-500"
+                  className="bg-[#0A0E17] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-lg p-2.5 text-slate-200 focus:outline-none"
                 />
                 <textarea
                   rows={3}
                   placeholder="Raw Transport Headers (optional)..."
                   value={formHeaders}
                   onChange={(e) => setFormHeaders(e.target.value)}
-                  className="col-span-2 bg-[#0B0F17] border border-[#1E293B] rounded-lg p-2.5 font-mono text-slate-200 focus:outline-none focus:border-blue-500"
+                  className="col-span-2 bg-[#0A0E17] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-lg p-2.5 font-mono text-slate-200 focus:outline-none"
                 />
                 <textarea
                   rows={3}
                   placeholder="Email Plain Body Text..."
                   value={formBody}
                   onChange={(e) => setFormBody(e.target.value)}
-                  className="col-span-2 bg-[#0B0F17] border border-[#1E293B] rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-blue-500"
+                  className="col-span-2 bg-[#0A0E17] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-lg p-2.5 text-slate-200 focus:outline-none"
                 />
               </div>
             )}
 
-            <div className="flex items-center justify-between pt-2 border-t border-[#1E293B]">
+            <div className="flex items-center justify-between pt-3 border-t border-white/[0.08]">
               <button
                 type="button"
                 onClick={() => setIsIntakeOpen(false)}
-                className="px-4 py-2 bg-[#0B0F17] text-slate-400 hover:text-slate-200 text-xs rounded-xl"
+                className="px-4 py-2 bg-white/[0.04] hover:bg-white/[0.08] text-slate-400 hover:text-slate-200 text-xs rounded-xl transition-colors"
               >
                 Cancel
               </button>
@@ -382,7 +397,7 @@ export default function App() {
               <button
                 onClick={handleAnalyzeEmail}
                 disabled={loading}
-                className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-blue-600/20 disabled:opacity-50 cursor-pointer"
+                className="btn-tactile flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold shadow-glow-blue disabled:opacity-50 cursor-pointer"
               >
                 {loading ? (
                   <>
@@ -402,7 +417,7 @@ export default function App() {
       {/* Reset Feedback Notification */}
       {resetFeedback && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 w-full">
-          <div className="bg-emerald-500/15 border border-emerald-500/30 rounded-xl p-3 flex items-center justify-between text-xs text-emerald-300 animate-in fade-in duration-200">
+          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3 flex items-center justify-between text-xs text-emerald-300 animate-in fade-in duration-200">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               <span>{resetFeedback}</span>
@@ -443,9 +458,12 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-[#1E293B] bg-[#0B0F17] py-4 text-center text-xs text-slate-500 mt-auto">
+      <footer className="border-t border-white/[0.06] bg-[#080B11]/80 py-4 text-xs text-slate-500 mt-auto">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>ThreatSentinel • Smart India Hackathon 2026 (PS 26106)</span>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>ThreatSentinel SOC Platform • Active Telemetry Ready</span>
+          </div>
           <button
             onClick={handleResetDemoData}
             disabled={resetting}

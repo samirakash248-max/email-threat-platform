@@ -6,17 +6,26 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+      },
       colors: {
-        cyber: {
-          dark: '#0B0F17',
-          card: '#131B2A',
-          border: '#1E293B',
-          accent: '#3B82F6',
-          danger: '#EF4444',
-          warning: '#F59E0B',
-          success: '#10B981',
-          cyan: '#06B6D4'
+        dark: {
+          bg: '#080B11',
+          surface: '#0F141F',
+          card: '#131926',
+          border: '#1E2638',
+          hover: '#1B2336',
+          muted: '#64748B'
         }
+      },
+      boxShadow: {
+        'glow-blue': '0 0 20px -5px rgba(59, 130, 246, 0.3)',
+        'glow-purple': '0 0 20px -5px rgba(168, 85, 247, 0.3)',
+        'glow-emerald': '0 0 20px -5px rgba(16, 185, 129, 0.3)',
+        'glow-rose': '0 0 20px -5px rgba(244, 63, 94, 0.3)',
+        'inner-light': 'inset 0 1px 0 0 rgba(255, 255, 255, 0.07)',
       }
     },
   },
