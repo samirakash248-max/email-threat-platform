@@ -91,6 +91,50 @@ graph TD
 
 ---
 
+## 📊 Forensic Threat Scoring Criteria & Detection Rules
+
+The platform calculates a deterministic, explainable **0–100 Composite Threat Score** (`calculate_threat_score()`) derived from 12 weighted cybersecurity detection rules evaluated in [`backend/app/scanner.py`](backend/app/scanner.py#L362-L560).
+
+### 🎯 1. Risk Tier Thresholds
+
+| Threat Score | Risk Level | Hex Color | Badge | Incident Triage Action |
+|:---:|:---:|:---:|:---:|:---|
+| **80 – 100** | `Critical` | `#EF4444` | 🔴 Critical | Immediate automated quarantine; block sender domain & origin IP; alert SOC. |
+| **60 – 79** | `High` | `#F97316` | 🟠 High | High-priority analyst triage; flag display-name / BEC impersonation; hold delivery. |
+| **30 – 59** | `Medium` | `#FBBF24` | 🟡 Medium | Warning banner injected; external untrusted link warnings displayed to recipient. |
+| **0 – 29** | `Low` | `#10B981` | 🟢 Low | Normal delivery; verified cryptographic transport authentication. |
+
+---
+
+### 🛡️ 2. Comprehensive 12-Rule Point Allocation Matrix
+
+| Rule ID | Rule Name | Threat Category | Severity | Points | Trigger Criteria & Explanation |
+|:---|:---|:---|:---:|:---:|:---|
+| **RULE-01** | `Urgent / Coercive Language` | `SOCIAL_ENGINEERING` | `MEDIUM` | **+15** | Matches urgency cues (*"immediate action required"*, *"account suspended"*, *"wire transfer"*, *"past due invoice"*). |
+| **RULE-02** | `Lookalike / Typosquatted Domain` | `DOMAIN_INTEGRITY` | `HIGH` | **+30** | Domain uses visual homoglyphs/typosquatting imitating trusted brands (*"micros0ft.com"*, *"paypa1-security.com"*). |
+| **RULE-03** | `Executive BEC Display Spoofing` | `SENDER_INTEGRITY` | `HIGH` | **+35** | Executive title (*"CEO"*, *"CFO"*, *"Director"*) paired with unauthorized free webmail (*"@gmail.com"*, *"@yahoo.com"*). |
+| **RULE-04** | `Reply-To Domain Mismatch` | `SENDER_INTEGRITY` | `HIGH` | **+30** | `Reply-To:` header routes responses to a different domain than the sender envelope domain. |
+| **RULE-05** | `DMARC Policy Hard Failure` | `AUTHENTICATION` | `CRITICAL` | **+40** | DMARC validation returns `fail`, `hardfail`, or `reject` (unauthorized sender domain spoofing). |
+| **RULE-06** | `SPF / DKIM Cryptographic Failure` | `AUTHENTICATION` | `HIGH` | **+25** | Transport authentication fails (`SPF: softfail/fail` or `DKIM: fail/permerror`). |
+| **RULE-07** | `Suspicious Raw IP URL` | `URL_INTEGRITY` | `HIGH` | **+25** | Hyperlinks contain bare IPv4/IPv6 addresses rather than registered domain hostnames. |
+| **RULE-08** | `Hyperlink Anchor Text Mismatch` | `URL_INTEGRITY` | `CRITICAL` | **+40** | Visible anchor text displays a trusted URL, but the underlying `href` destination routes to a malicious domain. |
+| **RULE-09** | `Dangerous / Disguised Attachment` | `ATTACHMENT_SAFETY` | `CRITICAL` | **+65** | Attachment matches executable or weaponized macro extensions (`.exe`, `.scr`, `.vbs`, `.xlsm`, `.iso`, `.hta`). |
+| **RULE-10** | `Untrusted Transit Infrastructure` | `INFRASTRUCTURE` | `HIGH` | **+20** | Transit mail routed through an unauthorized VPS relay or known attacker hosting subnet. |
+| **RULE-11** | `Missing Mandatory RFC Headers` | `HEADER_INTEGRITY` | `MEDIUM` | **+15** | Email payload lacks mandatory RFC 5322 headers (`Message-ID`, `Date`, or `From`). |
+| **RULE-12** | `Malformed / Truncated MIME` | `HEADER_INTEGRITY` | `LOW` | **+10** | Incomplete or corrupted MIME structure without plain body or subject. |
+
+---
+
+### 📚 3. Core Scoring Dictionaries & Keywords
+
+* **Urgent Social Engineering Keywords**: `"urgent"`, `"immediate action"`, `"account suspended"`, `"verify your account"`, `"wire transfer"`, `"unauthorized login"`, `"password expires"`, `"invoice attached"`, `"payroll update"`, `"payment overdue"`, `"tax refund"`.
+* **Typosquatting Monitored Brands**: `micros0ft.com` $\rightarrow$ Microsoft, `paypa1-security.com` $\rightarrow$ PayPal, `amaz0n-support.com` $\rightarrow$ Amazon, `g00gle-verify.com` $\rightarrow$ Google, `wel1sfargo-login.com` $\rightarrow$ Wells Fargo, `bank0famerica.com` $\rightarrow$ Bank of America.
+* **Executive BEC Monitored Titles**: `"ceo"`, `"chief executive"`, `"cfo"`, `"chief financial"`, `"director"`, `"president"`, `"managing director"`, `"vice president"`, `"founder"`.
+* **Free Webmail Providers**: `gmail.com`, `yahoo.com`, `hotmail.com`, `outlook.com`, `protonmail.com`, `icloud.com`, `mail.com`, `aol.com`.
+* **High-Risk File Extensions**: `.exe`, `.scr`, `.vbs`, `.js`, `.bat`, `.cmd`, `.ps1`, `.iso`, `.img`, `.hta`, `.wsf`, `.docm`, `.xlsm`, `.pptm`.
+
+---
+
 ## 🔒 Privacy & Zero-PII Compliance
 
 To ensure compliance with global data protection standards (GDPR, DPDP) and prevent sensitive data leakage on public/consortium blockchains:

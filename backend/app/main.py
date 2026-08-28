@@ -661,16 +661,15 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
             if ioc.get("type") == "domain": seen_domains.add(ioc.get("value", "").lower())
             elif ioc.get("type") == "ip": seen_ips.add(ioc.get("value", "").lower())
 
-        if len(recent) < 10:
-            recent.append({
-                "id": item.id,
-                "subject": item.subject,
-                "sender": item.sender,
-                "threat_score": item.threat_score,
-                "risk_level": item.risk_level,
-                "risk_color": item.risk_color,
-                "created_at": item.created_at.isoformat() if item.created_at else ""
-            })
+        recent.append({
+            "id": item.id,
+            "subject": item.subject,
+            "sender": item.sender,
+            "threat_score": item.threat_score,
+            "risk_level": item.risk_level,
+            "risk_color": item.risk_color,
+            "created_at": item.created_at.isoformat() if item.created_at else ""
+        })
 
     active_cases = db.query(CaseRecord).filter(CaseRecord.status != "CLOSED").count()
 

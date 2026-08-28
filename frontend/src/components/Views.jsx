@@ -30,6 +30,7 @@ import {
   Play,
   ShieldCheck,
   ChevronDown,
+  ChevronUp,
   Activity,
   Layers,
   Lock
@@ -45,6 +46,7 @@ export function DashboardView({ onSelectAnalysis, onOpenCase, onNewIntake }) {
   const [loading, setLoading] = useState(true);
   const [seeding, setSeeding] = useState(false);
   const [seedSuccess, setSeedSuccess] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(10);
 
   const fetchStats = async () => {
     setLoading(true);
@@ -280,7 +282,9 @@ export function DashboardView({ onSelectAnalysis, onOpenCase, onNewIntake }) {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/[0.08] pb-3.5 gap-2">
           <div>
             <h3 className="font-bold text-sm text-slate-100">Recent Forensic Analyses</h3>
-            <p className="text-xs text-slate-400 mt-0.5">Live Intake Log from SQLite Persistence Layer</p>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Showing {Math.min(visibleCount, recent_analyses.length)} of {recent_analyses.length} Persistent Intake Records
+            </p>
           </div>
 
           <button
@@ -297,65 +301,104 @@ export function DashboardView({ onSelectAnalysis, onOpenCase, onNewIntake }) {
             <p className="text-[11px]">Click "Load Demo SOC Dataset" above to populate sample emails.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-white/[0.06]">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-[#0A0E17] text-slate-400 text-[10px] uppercase font-semibold">
-                <tr>
-                  <th className="p-3.5">Subject / Incident Name</th>
-                  <th className="p-3.5">Sender (From)</th>
-                  <th className="p-3.5">Threat Score</th>
-                  <th className="p-3.5">Risk Tier</th>
-                  <th className="p-3.5">Blockchain Integrity</th>
-                  <th className="p-3.5">Timestamp</th>
-                  <th className="p-3.5 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/[0.04] bg-[#0E131F]/40 font-mono text-[11px]">
-                {recent_analyses.map((item) => (
-                  <tr key={item.id} className="hover:bg-white/[0.03] transition-colors">
-                    <td className="p-3.5 font-sans font-semibold text-slate-200 max-w-xs truncate">
-                      {item.subject || '(No Subject Line)'}
-                    </td>
-                    <td className="p-3.5 text-slate-300 max-w-[180px] truncate">
-                      {item.sender || 'N/A'}
-                    </td>
-                    <td className="p-3.5 font-bold tabular-nums" style={{ color: item.risk_color }}>
-                      {item.threat_score}/100
-                    </td>
-                    <td className="p-3.5 font-sans">
-                      <span
-                        className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border"
-                        style={{
-                          backgroundColor: `${item.risk_color}14`,
-                          color: item.risk_color,
-                          borderColor: `${item.risk_color}35`,
-                        }}
-                      >
-                        <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: item.risk_color }}></span>
-                        {item.risk_level}
-                      </span>
-                    </td>
-                    <td className="p-3.5 font-sans">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
-                        <span className="w-1 h-1 rounded-full bg-emerald-400"></span> Verified On-Chain
-                      </span>
-                    </td>
-                    <td className="p-3.5 text-slate-400 text-[10px]">
-                      {item.created_at ? item.created_at.replace('T', ' ').slice(0, 19) : 'N/A'}
-                    </td>
-                    <td className="p-3.5 text-right">
-                      <button
-                        onClick={() => onSelectAnalysis(item.id)}
-                        className="inline-flex items-center gap-1 px-3 py-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/25 rounded-lg text-[11px] font-sans font-semibold transition-colors cursor-pointer"
-                      >
-                        Inspect Dossier <ChevronRight className="w-3 h-3" />
-                      </button>
-                    </td>
+          <>
+            <div className="overflow-x-auto rounded-xl border border-white/[0.06]">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-[#0A0E17] text-slate-400 text-[10px] uppercase font-semibold">
+                  <tr>
+                    <th className="p-3.5">Subject / Incident Name</th>
+                    <th className="p-3.5">Sender (From)</th>
+                    <th className="p-3.5">Threat Score</th>
+                    <th className="p-3.5">Risk Tier</th>
+                    <th className="p-3.5">Blockchain Integrity</th>
+                    <th className="p-3.5">Timestamp</th>
+                    <th className="p-3.5 text-right">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-white/[0.04] bg-[#0E131F]/40 font-mono text-[11px]">
+                  {recent_analyses.slice(0, visibleCount).map((item) => (
+                    <tr key={item.id} className="hover:bg-white/[0.03] transition-colors">
+                      <td className="p-3.5 font-sans font-semibold text-slate-200 max-w-xs truncate">
+                        {item.subject || '(No Subject Line)'}
+                      </td>
+                      <td className="p-3.5 text-slate-300 max-w-[180px] truncate">
+                        {item.sender || 'N/A'}
+                      </td>
+                      <td className="p-3.5 font-bold tabular-nums" style={{ color: item.risk_color }}>
+                        {item.threat_score}/100
+                      </td>
+                      <td className="p-3.5 font-sans">
+                        <span
+                          className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border"
+                          style={{
+                            backgroundColor: `${item.risk_color}14`,
+                            color: item.risk_color,
+                            borderColor: `${item.risk_color}35`,
+                          }}
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: item.risk_color }}></span>
+                          {item.risk_level}
+                        </span>
+                      </td>
+                      <td className="p-3.5 font-sans">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+                          <span className="w-1 h-1 rounded-full bg-emerald-400"></span> Verified On-Chain
+                        </span>
+                      </td>
+                      <td className="p-3.5 text-slate-400 text-[10px]">
+                        {item.created_at ? item.created_at.replace('T', ' ').slice(0, 19) : 'N/A'}
+                      </td>
+                      <td className="p-3.5 text-right">
+                        <button
+                          onClick={() => onSelectAnalysis(item.id)}
+                          className="inline-flex items-center gap-1 px-3 py-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/25 rounded-lg text-[11px] font-sans font-semibold transition-colors cursor-pointer"
+                        >
+                          Inspect Dossier <ChevronRight className="w-3 h-3" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination Controls / Show More Button */}
+            {recent_analyses.length > 10 && (
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                <span className="text-xs text-slate-400 font-mono">
+                  Showing {Math.min(visibleCount, recent_analyses.length)} of {recent_analyses.length} Forensic Records
+                </span>
+
+                <div className="flex items-center gap-2">
+                  {visibleCount < recent_analyses.length && (
+                    <>
+                      <button
+                        onClick={() => setVisibleCount((prev) => Math.min(prev + 10, recent_analyses.length))}
+                        className="btn-tactile flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/25 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+                      >
+                        <ChevronDown className="w-3.5 h-3.5" /> Show More (+10)
+                      </button>
+                      <button
+                        onClick={() => setVisibleCount(recent_analyses.length)}
+                        className="btn-tactile flex items-center gap-1 px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/[0.08] rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+                      >
+                        Show All ({recent_analyses.length})
+                      </button>
+                    </>
+                  )}
+
+                  {visibleCount > 10 && (
+                    <button
+                      onClick={() => setVisibleCount(10)}
+                      className="btn-tactile flex items-center gap-1.5 px-3.5 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-slate-400 hover:text-slate-200 border border-white/[0.08] rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+                    >
+                      <ChevronUp className="w-3.5 h-3.5" /> Show Less
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

@@ -6,10 +6,15 @@ from pydantic import BaseModel, Field
 from sqlalchemy import create_engine, Column, String, Integer, DateTime, JSON, Text
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-# Database Setup
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-DB_PATH = os.path.join(BASE_DIR, "email_threat_platform.db")
-DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{DB_PATH.replace(os.sep, '/')}")
+# Database Setup - Fixed Absolute Path to ensure persistent data across restarts
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+DEFAULT_DB_FILE = os.path.join(ROOT_DIR, "email_threat_platform.db")
+
+env_db_url = os.getenv("DATABASE_URL")
+if not env_db_url or env_db_url.strip() in ("sqlite:///./email_threat_platform.db", "sqlite:///:memory:"):
+    DATABASE_URL = f"sqlite:///{DEFAULT_DB_FILE.replace(os.sep, '/')}"
+else:
+    DATABASE_URL = env_db_url
 
 engine = create_engine(
     DATABASE_URL,
