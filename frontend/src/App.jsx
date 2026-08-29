@@ -281,22 +281,22 @@ export default function App() {
           <div className="surface-card max-w-2xl w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in-95 duration-150 border border-white/[0.1]">
             <div className="flex items-center justify-between border-b border-white/[0.08] pb-3.5">
               <div>
-                <h3 className="font-bold text-slate-100 text-sm">Ingest Email for Forensic Threat Evaluation</h3>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <h3 className="font-bold text-slate-900 text-sm">Ingest Email for Forensic Threat Evaluation</h3>
+                <p className="text-xs text-slate-600 mt-0.5">
                   Submit RFC 5322 raw email text, upload an .eml artifact, or choose from synthetic test fixtures
                 </p>
               </div>
               <button
                 onClick={() => setIsIntakeOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/[0.06] transition-colors"
+                className="p-1.5 text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {error && (
-              <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-300 flex items-center gap-2 animate-in fade-in">
-                <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
+              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 flex items-center gap-2 animate-in fade-in">
+                <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />
                 <span>{error}</span>
               </div>
             )}
@@ -501,7 +501,7 @@ export default function App() {
           <button
             onClick={handleResetDemoData}
             disabled={resetting}
-            className="text-[11px] text-slate-500 hover:text-amber-400 transition-colors flex items-center gap-1 cursor-pointer"
+            className="text-[11px] text-slate-500 hover:text-amber-700 transition-colors flex items-center gap-1 cursor-pointer"
           >
             <RotateCcw className="w-3 h-3" /> Reset Database Baseline
           </button>

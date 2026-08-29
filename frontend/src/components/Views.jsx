@@ -81,7 +81,7 @@ export function DashboardView({ onSelectAnalysis, onOpenCase, onNewIntake }) {
   if (loading && !stats) {
     return (
       <div className="surface-card p-16 flex flex-col items-center justify-center space-y-3">
-        <Loader2 className="w-7 h-7 text-blue-400 animate-spin" />
+        <Loader2 className="w-7 h-7 text-blue-600 animate-spin" />
         <p className="text-xs text-slate-600">Loading live SOC telemetry and database records...</p>
       </div>
     );
@@ -148,8 +148,8 @@ export function DashboardView({ onSelectAnalysis, onOpenCase, onNewIntake }) {
       </div>
 
       {seedSuccess && (
-        <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3 flex items-center gap-2 text-xs text-emerald-300 animate-in fade-in duration-200">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center gap-2 text-xs text-emerald-700 animate-in fade-in duration-200">
+          <CheckCircle2 className="w-4 h-4 text-emerald-700 flex-shrink-0" />
           <span>{seedSuccess}</span>
         </div>
       )}
@@ -224,25 +224,25 @@ export function DashboardView({ onSelectAnalysis, onOpenCase, onNewIntake }) {
               <span className="flex items-center gap-1.5 text-slate-700 font-sans">
                 <span className="w-2 h-2 rounded-full bg-rose-500"></span> Critical
               </span>
-              <span className="font-bold text-rose-400 font-mono">{threat_distribution.critical || 0}</span>
+              <span className="font-bold text-rose-600 font-mono">{threat_distribution.critical || 0}</span>
             </div>
             <div className="surface-card-subtle p-2.5 flex items-center justify-between">
               <span className="flex items-center gap-1.5 text-slate-700 font-sans">
                 <span className="w-2 h-2 rounded-full bg-orange-500"></span> High
               </span>
-              <span className="font-bold text-orange-400 font-mono">{threat_distribution.high || 0}</span>
+              <span className="font-bold text-orange-600 font-mono">{threat_distribution.high || 0}</span>
             </div>
             <div className="surface-card-subtle p-2.5 flex items-center justify-between">
               <span className="flex items-center gap-1.5 text-slate-700 font-sans">
                 <span className="w-2 h-2 rounded-full bg-amber-500"></span> Medium
               </span>
-              <span className="font-bold text-amber-400 font-mono">{threat_distribution.medium || 0}</span>
+              <span className="font-bold text-amber-700 font-mono">{threat_distribution.medium || 0}</span>
             </div>
             <div className="surface-card-subtle p-2.5 flex items-center justify-between">
               <span className="flex items-center gap-1.5 text-slate-700 font-sans">
                 <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Low / Clean
               </span>
-              <span className="font-bold text-emerald-400 font-mono">{threat_distribution.low || 0}</span>
+              <span className="font-bold text-emerald-700 font-mono">{threat_distribution.low || 0}</span>
             </div>
           </div>
         </div>
@@ -253,7 +253,7 @@ export function DashboardView({ onSelectAnalysis, onOpenCase, onNewIntake }) {
               <h3 className="font-bold text-sm text-slate-900">Top Threat Vectors & Rule Triggers</h3>
               <p className="text-xs text-slate-600 mt-0.5">Observed Attack Vectors Across Ingested Messages</p>
             </div>
-            <span className="text-[11px] font-mono text-slate-600 bg-white/[0.04] px-2.5 py-0.5 rounded-full border border-[#E2E8F0]">
+            <span className="text-[11px] font-mono text-slate-600 bg-slate-50 px-2.5 py-0.5 rounded-full border border-[#E2E8F0]">
               12+ Detection Rules
             </span>
           </div>
@@ -267,7 +267,7 @@ export function DashboardView({ onSelectAnalysis, onOpenCase, onNewIntake }) {
                   <span className="text-xs font-medium text-slate-700 truncate max-w-[130px]" title={cat}>
                     {cat.replace(/_/g, ' ')}
                   </span>
-                  <span className="px-2 py-0.5 bg-blue-500/10 text-blue-300 border border-blue-500/20 rounded-full text-xs font-mono font-bold">
+                  <span className="px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full text-xs font-mono font-bold">
                     {count}
                   </span>
                 </div>
@@ -341,7 +341,7 @@ export function DashboardView({ onSelectAnalysis, onOpenCase, onNewIntake }) {
                         </span>
                       </td>
                       <td className="p-3.5 font-sans">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono">
                           <span className="w-1 h-1 rounded-full bg-emerald-400"></span> Verified On-Chain
                         </span>
                       </td>
@@ -371,7 +371,7 @@ export function DashboardView({ onSelectAnalysis, onOpenCase, onNewIntake }) {
                   </span>
 
                   {/* Quick Page Size Selectors */}
-                  <div className="hidden sm:flex items-center gap-1 bg-white/[0.03] p-0.5 rounded-lg border border-[#F1F5F9] text-[11px] font-mono">
+                  <div className="hidden sm:flex items-center gap-1 bg-slate-50 p-0.5 rounded-lg border border-[#F1F5F9] text-[11px] font-mono">
                     <span className="text-slate-500 px-1.5">View:</span>
                     {[10, 25, 50].map((size) => (
                       <button
@@ -412,7 +412,7 @@ export function DashboardView({ onSelectAnalysis, onOpenCase, onNewIntake }) {
                   {visibleCount > 10 && recent_analyses.length > 10 && (
                     <button
                       onClick={() => setVisibleCount(10)}
-                      className="btn-tactile flex items-center gap-1.5 px-3.5 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-slate-600 hover:text-slate-800 border border-[#E2E8F0] rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+                      className="btn-tactile flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-800 border border-[#E2E8F0] rounded-xl text-xs font-semibold transition-colors cursor-pointer"
                     >
                       <ChevronUp className="w-3.5 h-3.5" /> Collapse to 10
                     </button>
@@ -454,7 +454,7 @@ export function CorrelationView({ onSelectAnalysis }) {
   if (loading && !graphData) {
     return (
       <div className="surface-card p-16 flex flex-col items-center justify-center space-y-3">
-        <Loader2 className="w-7 h-7 text-blue-400 animate-spin" />
+        <Loader2 className="w-7 h-7 text-blue-600 animate-spin" />
         <p className="text-xs text-slate-600">Computing cross-email indicator correlation network...</p>
       </div>
     );
@@ -466,7 +466,7 @@ export function CorrelationView({ onSelectAnalysis }) {
     <div className="space-y-6">
       <div className="surface-card p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="p-3 bg-purple-500/10 border border-purple-500/25 rounded-xl text-purple-400 shadow-glow-purple">
+          <div className="p-3 bg-purple-50 border border-purple-200 rounded-xl text-purple-700 shadow-glow-purple">
             <Network className="w-6 h-6" />
           </div>
           <div>
@@ -481,11 +481,11 @@ export function CorrelationView({ onSelectAnalysis }) {
           <div className="flex items-center gap-2 px-3.5 py-1.5 surface-card-subtle text-xs font-mono text-slate-700 border border-[#E2E8F0]">
             <span>{total_correlated_emails} Correlated Emails</span>
             <span className="text-slate-600">•</span>
-            <span className="text-purple-400 font-bold">{total_shared_indicators} Shared Indicators</span>
+            <span className="text-purple-700 font-bold">{total_shared_indicators} Shared Indicators</span>
           </div>
           <button
             onClick={fetchGraph}
-            className="p-2 bg-white/[0.03] hover:bg-white/[0.08] border border-[#E2E8F0] rounded-xl text-slate-600 hover:text-white transition-colors cursor-pointer"
+            className="p-2 bg-slate-50 hover:bg-slate-100 border border-[#E2E8F0] rounded-xl text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
           >
             <RefreshCw className="w-4 h-4" />
           </button>
@@ -511,9 +511,9 @@ export function CorrelationView({ onSelectAnalysis }) {
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <span className="text-xs font-bold text-slate-900 block">{c.cluster_name}</span>
-                    <span className="text-[10px] font-mono text-purple-400 uppercase tracking-wider">{c.classification}</span>
+                    <span className="text-[10px] font-mono text-purple-700 uppercase tracking-wider">{c.classification}</span>
                   </div>
-                  <span className="px-2.5 py-0.5 bg-purple-500/10 text-purple-300 border border-purple-500/25 rounded-full text-[10px] font-bold font-mono">
+                  <span className="px-2.5 py-0.5 bg-purple-50 text-purple-700 border border-purple-200 rounded-full text-[10px] font-bold font-mono">
                     {c.member_email_ids.length} Emails Linked
                   </span>
                 </div>
@@ -527,7 +527,7 @@ export function CorrelationView({ onSelectAnalysis }) {
                     <button
                       key={emailId}
                       onClick={() => onSelectAnalysis(emailId)}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#EFF6FF] hover:bg-blue-500/20 text-blue-400 border border-[#E2E8F0] hover:border-blue-500/40 rounded-lg text-[11px] font-mono cursor-pointer transition-colors"
+                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#EFF6FF] hover:bg-blue-50 text-blue-600 border border-[#E2E8F0] hover:border-blue-500/40 rounded-lg text-[11px] font-mono cursor-pointer transition-colors"
                     >
                       <Mail className="w-3 h-3" />
                       <span>{emailId.slice(0, 8)}...</span>
@@ -557,9 +557,9 @@ export function CorrelationView({ onSelectAnalysis }) {
               <tbody className="divide-y divide-[#F1F5F9] bg-white text-[11px]">
                 {edges.map((e, idx) => (
                   <tr key={idx} className="hover:bg-[#F0F7FF] transition-colors">
-                    <td className="p-3.5 text-blue-400 font-bold">{e.source}</td>
+                    <td className="p-3.5 text-blue-600 font-bold">{e.source}</td>
                     <td className="p-3.5 text-slate-700">{e.relationship}</td>
-                    <td className="p-3.5 text-cyan-300 font-bold">{e.target}</td>
+                    <td className="p-3.5 text-cyan-800 font-bold">{e.target}</td>
                     <td className="p-3.5 text-slate-600 font-sans">{e.reason || 'Observed correlation'}</td>
                   </tr>
                 ))}
@@ -691,28 +691,28 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
   const getPriorityBadge = (pri) => {
     switch (pri?.toUpperCase()) {
       case 'CRITICAL':
-        return 'bg-rose-500/15 text-rose-400 border-rose-500/30';
+        return 'bg-rose-50 text-rose-600 border-rose-200';
       case 'HIGH':
-        return 'bg-orange-500/15 text-orange-400 border-orange-500/30';
+        return 'bg-orange-500/15 text-orange-600 border-orange-500/30';
       case 'MEDIUM':
-        return 'bg-amber-500/15 text-amber-400 border-amber-500/30';
+        return 'bg-amber-50 text-amber-700 border-amber-200';
       default:
-        return 'bg-blue-500/15 text-blue-400 border-blue-500/30';
+        return 'bg-blue-50 text-blue-600 border-blue-200';
     }
   };
 
   const getStatusBadge = (status) => {
     switch (status?.toUpperCase()) {
       case 'OPEN':
-        return 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30';
+        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
       case 'IN_PROGRESS':
-        return 'bg-amber-500/15 text-amber-400 border-amber-500/30';
+        return 'bg-amber-50 text-amber-700 border-amber-200';
       case 'RESOLVED':
-        return 'bg-blue-500/15 text-blue-400 border-blue-500/30';
+        return 'bg-blue-50 text-blue-600 border-blue-200';
       case 'CLOSED':
         return 'bg-slate-500/15 text-slate-600 border-slate-500/30';
       default:
-        return 'bg-purple-500/15 text-purple-400 border-purple-500/30';
+        return 'bg-purple-50 text-purple-700 border-purple-200';
     }
   };
 
@@ -725,7 +725,7 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
     <div className="surface-card p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#E2E8F0] pb-4 gap-3">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-blue-500/10 border border-blue-500/25 rounded-xl text-blue-400 shadow-glow-blue">
+          <div className="p-2.5 bg-blue-50 border border-blue-200 rounded-xl text-blue-600 shadow-glow-blue">
             <Briefcase className="w-5 h-5" />
           </div>
           <div>
@@ -787,7 +787,7 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
 
               {currentAnalysis && (
                 <div className="surface-card-subtle p-3 rounded-lg border border-[#F1F5F9] text-[11px] text-slate-700">
-                  <span className="text-blue-400 font-semibold block mb-0.5">Auto-Attach Current Analysis:</span>
+                  <span className="text-blue-600 font-semibold block mb-0.5">Auto-Attach Current Analysis:</span>
                   <span className="truncate block font-mono">{currentAnalysis.metadata?.subject || currentAnalysis.analysis_id}</span>
                 </div>
               )}
@@ -796,7 +796,7 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-3.5 py-1.5 bg-white/[0.04] text-slate-600 hover:text-slate-800 rounded-xl"
+                  className="px-3.5 py-1.5 bg-slate-50 text-slate-600 hover:text-slate-800 rounded-xl"
                 >
                   Cancel
                 </button>
@@ -865,8 +865,8 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
             <>
               <div className="surface-card-subtle p-5 space-y-3.5 border border-[#E2E8F0]">
                 {updateFeedback && (
-                  <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-2.5 flex items-center gap-2 text-xs text-emerald-300 animate-in fade-in duration-150">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 flex items-center gap-2 text-xs text-emerald-700 animate-in fade-in duration-150">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-700 flex-shrink-0" />
                     <span>{updateFeedback}</span>
                   </div>
                 )}
@@ -916,14 +916,14 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
 
                 {activeCaseData.status === 'CLOSED' && (
                   <div className="bg-slate-500/10 border border-slate-500/30 rounded-lg p-3 text-xs text-slate-700 flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                    <CheckCircle className="w-4 h-4 text-emerald-700 flex-shrink-0" />
                     <span>Case concluded and archived. All associated evidence locked in blockchain chain of custody.</span>
                   </div>
                 )}
 
                 {activeCaseData.unified_investigation_summary && (
                   <div className="surface-card p-3.5 rounded-lg border border-[#F1F5F9] text-xs text-slate-700 leading-relaxed">
-                    <strong className="text-blue-300 block mb-1 font-semibold">Correlated Multi-Email Summary:</strong>
+                    <strong className="text-blue-700 block mb-1 font-semibold">Correlated Multi-Email Summary:</strong>
                     {activeCaseData.unified_investigation_summary.forensic_narrative}
                   </div>
                 )}
@@ -953,7 +953,7 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
                           {onSelectAnalysisFromCase && (
                             <button
                               onClick={() => onSelectAnalysisFromCase(analysis.analysis_id)}
-                              className="px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/25 rounded-lg hover:bg-blue-500/20 text-[11px] font-semibold transition-colors"
+                              className="px-3 py-1 bg-blue-50 text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50 text-[11px] font-semibold transition-colors"
                             >
                               Inspect in Console
                             </button>
@@ -967,14 +967,14 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
 
               <div className="surface-card-subtle p-5 space-y-4 border border-[#E2E8F0]">
                 <span className="text-xs font-semibold text-slate-700 block flex items-center gap-2">
-                  <MessageSquare className="w-4 h-4 text-blue-400" /> Analyst Investigation Notes ({activeCaseData.notes.length})
+                  <MessageSquare className="w-4 h-4 text-blue-600" /> Analyst Investigation Notes ({activeCaseData.notes.length})
                 </span>
 
                 <div className="space-y-2.5 max-h-56 overflow-y-auto pr-1">
                   {activeCaseData.notes.map((note, idx) => (
                     <div key={idx} className="surface-card p-3 text-xs space-y-1">
                       <div className="flex items-center justify-between text-[11px] text-slate-600">
-                        <span className="font-semibold text-blue-300 flex items-center gap-1.5">
+                        <span className="font-semibold text-blue-700 flex items-center gap-1.5">
                           <User className="w-3.5 h-3.5" /> {note.author}
                         </span>
                         <span className="font-mono text-[10px]">{note.created_at?.slice(0, 19).replace('T', ' ')}</span>
@@ -1047,7 +1047,7 @@ export function GlobalSearchModal({ isOpen, onClose, onSelectResult }) {
     <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-start justify-center pt-20 p-4">
       <div className="surface-card max-w-xl w-full p-4 space-y-3 shadow-2xl border border-white/[0.1] animate-in fade-in zoom-in-95 duration-150">
         <div className="flex items-center gap-2.5 border-b border-[#E2E8F0] pb-2.5 px-1">
-          <Search className="w-4 h-4 text-blue-400 flex-shrink-0" />
+          <Search className="w-4 h-4 text-blue-600 flex-shrink-0" />
           <input
             type="text"
             value={query}
@@ -1056,7 +1056,7 @@ export function GlobalSearchModal({ isOpen, onClose, onSelectResult }) {
             autoFocus
             className="flex-1 bg-transparent text-xs text-slate-900 placeholder-slate-500 focus:outline-none"
           />
-          <button onClick={onClose} className="p-1 text-slate-600 hover:text-white rounded-lg">
+          <button onClick={onClose} className="p-1 text-slate-600 hover:text-slate-900 rounded-lg">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -1072,7 +1072,7 @@ export function GlobalSearchModal({ isOpen, onClose, onSelectResult }) {
                 <div className="text-xs font-bold text-slate-800">{res.title}</div>
                 <div className="text-[11px] text-slate-600 font-mono">{res.subtitle}</div>
               </div>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold uppercase tracking-wider">{res.type}</span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-200 font-bold uppercase tracking-wider">{res.type}</span>
             </div>
           ))}
           {query.trim().length >= 2 && results.length === 0 && !loading && (
@@ -1098,9 +1098,9 @@ export function DemoTourModal({ isOpen, onClose, onLaunchSample }) {
       title: "Scenario 1: Legitimate Enterprise Communication",
       subtitle: "Clean Cryptographic Verification & Standard Transit",
       expectedThreat: "Low (0-29)",
-      badgeColor: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
+      badgeColor: "bg-emerald-50 text-emerald-700 border-emerald-200",
       sampleId: "01_legitimate",
-      icon: <ShieldCheck className="w-6 h-6 text-emerald-400" />,
+      icon: <ShieldCheck className="w-6 h-6 text-emerald-700" />,
       description: "Demonstrates baseline benign email traffic. SPF, DKIM, and DMARC passes, matching sender domains, standard MTA relay transit, and zero malicious payload markers.",
       keyEvaluatorPoints: [
         "SPF / DKIM / DMARC cryptographic pass",
@@ -1112,9 +1112,9 @@ export function DemoTourModal({ isOpen, onClose, onLaunchSample }) {
       title: "Scenario 2: Credential Harvest Phishing & Lookalike Domain",
       subtitle: "Homoglyph Domain Typosquatting & Urgency Social Engineering",
       expectedThreat: "Critical (80-100)",
-      badgeColor: "bg-rose-500/15 text-rose-400 border-rose-500/30",
+      badgeColor: "bg-rose-50 text-rose-600 border-rose-200",
       sampleId: "02_phishing_suspension",
-      icon: <ShieldAlert className="w-6 h-6 text-rose-400" />,
+      icon: <ShieldAlert className="w-6 h-6 text-rose-600" />,
       description: "Demonstrates advanced credential phishing mimicking Microsoft 365 security alert. The platform detects character substitution (micros0ft), Reply-To domain divergence, and urgency coercion keywords.",
       keyEvaluatorPoints: [
         "Lookalike domain detection with explainable homoglyph rationale",
@@ -1126,9 +1126,9 @@ export function DemoTourModal({ isOpen, onClose, onLaunchSample }) {
       title: "Scenario 3: Executive BEC Display Name Spoofing",
       subtitle: "C-Level Identity Impersonation via External Webmail",
       expectedThreat: "High (60-79)",
-      badgeColor: "bg-orange-500/15 text-orange-400 border-orange-500/30",
+      badgeColor: "bg-orange-500/15 text-orange-600 border-orange-500/30",
       sampleId: "03_spoofed_ceo",
-      icon: <Mail className="w-6 h-6 text-orange-400" />,
+      icon: <Mail className="w-6 h-6 text-orange-600" />,
       description: "Demonstrates CEO Fraud / Business Email Compromise. Attacker uses legitimate CEO display name ('Alex Mercer - CEO') sent from an external unauthorized free webmail address asking for urgent payroll transfers.",
       keyEvaluatorPoints: [
         "Executive display name spoofing rule trigger",
@@ -1140,9 +1140,9 @@ export function DemoTourModal({ isOpen, onClose, onLaunchSample }) {
       title: "Scenario 4: Multi-Hop MTA Transit Forensics & Geolocation",
       subtitle: "4-Hop Relay Reconstruction, Latency Deltas & Geolocation",
       expectedThreat: "Low / Medium",
-      badgeColor: "bg-blue-500/15 text-blue-400 border-blue-500/30",
+      badgeColor: "bg-blue-50 text-blue-600 border-blue-200",
       sampleId: "07_multi_hop_relays",
-      icon: <Server className="w-6 h-6 text-blue-400" />,
+      icon: <Server className="w-6 h-6 text-blue-600" />,
       description: "Demonstrates deep Received-header reconstruction across a 4-hop relay transit chain. Computes hop-to-hop latency deltas, identifies ISP gateway nodes, and plots infrastructure on the interactive Leaflet map.",
       keyEvaluatorPoints: [
         "4-Hop chronological node graph with +4s transit latency calculation",
@@ -1159,7 +1159,7 @@ export function DemoTourModal({ isOpen, onClose, onLaunchSample }) {
       <div className="surface-card max-w-2xl w-full p-6 space-y-5 shadow-2xl border border-white/[0.1] animate-in fade-in zoom-in-95 duration-150">
         <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-3.5">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-500/10 border border-purple-500/25 rounded-xl text-purple-400">
+            <div className="p-2 bg-purple-50 border border-purple-200 rounded-xl text-purple-700">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
@@ -1167,7 +1167,7 @@ export function DemoTourModal({ isOpen, onClose, onLaunchSample }) {
               <p className="text-xs text-slate-600">Step {currentStep + 1} of {scenarios.length} • Synthetic Test Cases</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 text-slate-600 hover:text-white rounded-lg"><X className="w-4 h-4" /></button>
+          <button onClick={onClose} className="p-1.5 text-slate-600 hover:text-slate-900 rounded-lg"><X className="w-4 h-4" /></button>
         </div>
 
         <div className="grid grid-cols-4 gap-2">
@@ -1176,7 +1176,7 @@ export function DemoTourModal({ isOpen, onClose, onLaunchSample }) {
               key={idx}
               onClick={() => setCurrentStep(idx)}
               className={`h-1.5 rounded-full cursor-pointer transition-all ${
-                idx === currentStep ? 'bg-blue-500 shadow-glow-blue' : idx < currentStep ? 'bg-blue-900/60' : 'bg-white/[0.06]'
+                idx === currentStep ? 'bg-blue-500 shadow-glow-blue' : idx < currentStep ? 'bg-blue-900/60' : 'bg-slate-100'
               }`}
             />
           ))}
@@ -1185,7 +1185,7 @@ export function DemoTourModal({ isOpen, onClose, onLaunchSample }) {
         <div className="surface-card-subtle p-5 space-y-4 border border-[#F1F5F9]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-white/[0.04] border border-[#E2E8F0]">{current.icon}</div>
+              <div className="p-2 rounded-xl bg-slate-50 border border-[#E2E8F0]">{current.icon}</div>
               <div>
                 <h4 className="font-bold text-sm text-slate-900">{current.title}</h4>
                 <p className="text-xs text-slate-600 font-mono">{current.subtitle}</p>
@@ -1203,14 +1203,14 @@ export function DemoTourModal({ isOpen, onClose, onLaunchSample }) {
             <button
               onClick={() => setCurrentStep(prev => Math.max(0, prev - 1))}
               disabled={currentStep === 0}
-              className="flex items-center gap-1 px-3 py-1.5 bg-white/[0.04] text-slate-600 border border-[#E2E8F0] rounded-xl text-xs disabled:opacity-30 transition-colors"
+              className="flex items-center gap-1 px-3 py-1.5 bg-slate-50 text-slate-600 border border-[#E2E8F0] rounded-xl text-xs disabled:opacity-30 transition-colors"
             >
               <ChevronLeft className="w-3.5 h-3.5" /> Prev
             </button>
             <button
               onClick={() => setCurrentStep(prev => Math.min(scenarios.length - 1, prev + 1))}
               disabled={currentStep === scenarios.length - 1}
-              className="flex items-center gap-1 px-3 py-1.5 bg-white/[0.04] text-slate-600 border border-[#E2E8F0] rounded-xl text-xs disabled:opacity-30 transition-colors"
+              className="flex items-center gap-1 px-3 py-1.5 bg-slate-50 text-slate-600 border border-[#E2E8F0] rounded-xl text-xs disabled:opacity-30 transition-colors"
             >
               Next <ChevronRight className="w-3.5 h-3.5" />
             </button>
@@ -1340,7 +1340,7 @@ export function BlockchainLedgerView({ onSelectAnalysis }) {
   if (loading && ledger.length === 0) {
     return (
       <div className="surface-card p-16 flex flex-col items-center justify-center space-y-3">
-        <Loader2 className="w-7 h-7 text-blue-400 animate-spin" />
+        <Loader2 className="w-7 h-7 text-blue-600 animate-spin" />
         <p className="text-xs text-slate-600">Loading immutable Proof-of-Authority blockchain ledger...</p>
       </div>
     );
@@ -1351,13 +1351,13 @@ export function BlockchainLedgerView({ onSelectAnalysis }) {
       {/* Top Header Card */}
       <div className="surface-card p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="p-3 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 rounded-xl text-cyan-400 shadow-glow-blue">
+          <div className="p-3 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-200 rounded-xl text-cyan-700 shadow-glow-blue">
             <Layers className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h2 className="font-bold text-base text-slate-900">Blockchain Evidence Ledger & Merkle Proofs</h2>
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> {stats?.chain_integrity_status || 'INTACT'}
               </span>
             </div>
@@ -1369,7 +1369,7 @@ export function BlockchainLedgerView({ onSelectAnalysis }) {
 
         <button
           onClick={fetchBlockchainData}
-          className="btn-tactile flex items-center gap-1.5 px-3.5 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-[#E2E8F0] text-slate-700 text-xs rounded-xl transition-colors cursor-pointer"
+          className="btn-tactile flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-50 hover:bg-slate-100 border border-[#E2E8F0] text-slate-700 text-xs rounded-xl transition-colors cursor-pointer"
         >
           <RefreshCw className="w-3.5 h-3.5" /> Refresh Chain
         </button>
@@ -1379,7 +1379,7 @@ export function BlockchainLedgerView({ onSelectAnalysis }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 text-xs">
         <div className="surface-card p-4 space-y-1">
           <span className="text-slate-600 font-medium">Minted Evidence Blocks</span>
-          <div className="text-2xl font-bold font-mono text-cyan-400 tabular-nums">{stats?.total_blocks || 0} Blocks</div>
+          <div className="text-2xl font-bold font-mono text-cyan-700 tabular-nums">{stats?.total_blocks || 0} Blocks</div>
           <span className="text-[10px] text-slate-500 font-mono">Proof-of-Authority (PoA)</span>
         </div>
 
@@ -1424,10 +1424,10 @@ export function BlockchainLedgerView({ onSelectAnalysis }) {
                 }`}
               >
                 <div className="flex items-center justify-between gap-1 mb-1.5">
-                  <span className="font-bold text-xs text-cyan-300 flex items-center gap-1.5">
-                    <Layers className="w-3.5 h-3.5 text-cyan-400" /> Block #{b.block_number}
+                  <span className="font-bold text-xs text-cyan-800 flex items-center gap-1.5">
+                    <Layers className="w-3.5 h-3.5 text-cyan-700" /> Block #{b.block_number}
                   </span>
-                  <span className="px-2 py-0.5 text-[9px] font-extrabold uppercase rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                  <span className="px-2 py-0.5 text-[9px] font-extrabold uppercase rounded-full bg-blue-50 text-blue-600 border border-blue-200">
                     Score: {b.threat_score}/100
                   </span>
                 </div>
@@ -1450,7 +1450,7 @@ export function BlockchainLedgerView({ onSelectAnalysis }) {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E2E8F0] pb-3.5">
                   <div>
                     <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                      <Lock className="w-4 h-4 text-cyan-400" /> Cryptographic Block #{selectedBlock.block_number} Dossier
+                      <Lock className="w-4 h-4 text-cyan-700" /> Cryptographic Block #{selectedBlock.block_number} Dossier
                     </h3>
                     <p className="text-xs text-slate-600 mt-0.5">Anchored evidence block and Merkle tree inclusion path</p>
                   </div>
@@ -1458,7 +1458,7 @@ export function BlockchainLedgerView({ onSelectAnalysis }) {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => onSelectAnalysis(selectedBlock.analysis_id)}
-                      className="px-3 py-1.5 bg-blue-500/10 text-blue-400 border border-blue-500/25 rounded-xl text-xs font-semibold hover:bg-blue-500/20 transition-colors cursor-pointer flex items-center gap-1"
+                      className="px-3 py-1.5 bg-blue-50 text-blue-600 border border-blue-200 rounded-xl text-xs font-semibold hover:bg-blue-50 transition-colors cursor-pointer flex items-center gap-1"
                     >
                       Inspect Email <ArrowRight className="w-3 h-3" />
                     </button>
@@ -1469,15 +1469,15 @@ export function BlockchainLedgerView({ onSelectAnalysis }) {
                 <div className="surface-card-subtle p-4 space-y-2.5 text-xs font-mono border border-[#F1F5F9]">
                   <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-2">
                     <span className="text-slate-600">Smart Contract:</span>
-                    <span className="text-emerald-400 font-bold select-all truncate max-w-md">{stats?.contract_address || '0x71C80aB8B33f11E81D4b5b4Fe93C9a8Ec0F36D48'}</span>
+                    <span className="text-emerald-700 font-bold select-all truncate max-w-md">{stats?.contract_address || '0x71C80aB8B33f11E81D4b5b4Fe93C9a8Ec0F36D48'}</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-2">
                     <span className="text-slate-600">Transaction ID (Tx):</span>
-                    <span className="text-amber-400 font-bold select-all truncate max-w-md">{selectedBlock.tx_id || `0x${selectedBlock.block_hash.slice(0, 40)}`}</span>
+                    <span className="text-amber-700 font-bold select-all truncate max-w-md">{selectedBlock.tx_id || `0x${selectedBlock.block_hash.slice(0, 40)}`}</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-2">
                     <span className="text-slate-600">Block Hash:</span>
-                    <span className="text-cyan-400 font-bold select-all truncate max-w-md">{selectedBlock.block_hash}</span>
+                    <span className="text-cyan-700 font-bold select-all truncate max-w-md">{selectedBlock.block_hash}</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-2">
                     <span className="text-slate-600">Previous Hash:</span>
@@ -1485,7 +1485,7 @@ export function BlockchainLedgerView({ onSelectAnalysis }) {
                   </div>
                   <div className="flex items-center justify-between border-b border-[#F1F5F9] pb-2">
                     <span className="text-slate-600">Merkle Root:</span>
-                    <span className="text-purple-400 font-bold select-all truncate max-w-md">{selectedBlock.merkle_root}</span>
+                    <span className="text-purple-700 font-bold select-all truncate max-w-md">{selectedBlock.merkle_root}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-slate-600">Canonical Evidence SHA-256:</span>
@@ -1497,13 +1497,13 @@ export function BlockchainLedgerView({ onSelectAnalysis }) {
                 {verificationResult && (
                   <div className={`p-4 rounded-xl text-xs flex items-start gap-3 border ${
                     verificationResult.tamper_detected
-                      ? 'bg-rose-500/15 border-rose-500/30 text-rose-300'
-                      : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                      ? 'bg-rose-50 border-rose-200 text-rose-700'
+                      : 'bg-emerald-50 border-emerald-200 text-emerald-700'
                   }`}>
                     {verificationResult.tamper_detected ? (
-                      <ShieldAlert className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
+                      <ShieldAlert className="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" />
                     ) : (
-                      <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="w-5 h-5 text-emerald-700 flex-shrink-0 mt-0.5" />
                     )}
                     <div className="space-y-1">
                       <div className="font-bold uppercase tracking-wider text-xs">
@@ -1523,7 +1523,7 @@ export function BlockchainLedgerView({ onSelectAnalysis }) {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
                       {selectedBlock.merkle_leaves.map((leaf, idx) => (
                         <div key={idx} className="surface-card-subtle p-2.5 text-[11px] text-slate-700 truncate border border-[#F1F5F9]">
-                          <span className="text-blue-400 font-bold">#{idx + 1}: </span>{leaf}
+                          <span className="text-blue-600 font-bold">#{idx + 1}: </span>{leaf}
                         </div>
                       ))}
                     </div>
@@ -1643,9 +1643,9 @@ export function ThreatIntelView() {
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="surface-card bg-gradient-to-r from-cyan-950/20 via-[#111726] to-blue-950/20 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-cyan-500/20">
+      <div className="surface-card bg-gradient-to-r from-cyan-950/20 via-[#111726] to-blue-950/20 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-cyan-200">
         <div className="flex items-center gap-3.5">
-          <div className="p-3 bg-cyan-500/10 border border-cyan-500/25 rounded-xl text-cyan-400 shadow-glow-blue flex-shrink-0">
+          <div className="p-3 bg-cyan-50 border border-cyan-200 rounded-xl text-cyan-700 shadow-glow-blue flex-shrink-0">
             <Globe className="w-6 h-6" />
           </div>
           <div>
@@ -1653,7 +1653,7 @@ export function ThreatIntelView() {
               <h2 className="text-base font-bold text-slate-900">
                 Decentralized Threat Intelligence Sharing Registry
               </h2>
-              <span className="px-2.5 py-0.5 text-[9px] font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/25 rounded-full uppercase font-mono">
+              <span className="px-2.5 py-0.5 text-[9px] font-bold bg-cyan-50 text-cyan-800 border border-cyan-200 rounded-full uppercase font-mono">
                 Smart Contract IoC Sync
               </span>
             </div>
@@ -1667,7 +1667,7 @@ export function ThreatIntelView() {
           <button
             onClick={fetchIntelData}
             disabled={loading}
-            className="btn-tactile px-3.5 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-[#E2E8F0] text-slate-700 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+            className="btn-tactile px-3.5 py-2 bg-slate-50 hover:bg-slate-100 border border-[#E2E8F0] text-slate-700 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
             <span>Sync Registry</span>
@@ -1687,7 +1687,7 @@ export function ThreatIntelView() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
         <div className="surface-card p-4 space-y-1">
           <span className="text-xs text-slate-600">Total Shared IoCs</span>
-          <div className="text-2xl font-bold font-mono text-cyan-400">
+          <div className="text-2xl font-bold font-mono text-cyan-700">
             {stats?.total_indicators || indicators.length}
           </div>
           <span className="text-[10px] text-slate-500 font-mono">Anchored On-Chain</span>
@@ -1695,7 +1695,7 @@ export function ThreatIntelView() {
 
         <div className="surface-card p-4 space-y-1">
           <span className="text-xs text-slate-600">Participating Nodes</span>
-          <div className="text-2xl font-bold font-mono text-purple-400">
+          <div className="text-2xl font-bold font-mono text-purple-700">
             {stats?.participating_orgs_count || 3}
           </div>
           <span className="text-[10px] text-slate-500 font-mono">SOC / CERT Entities</span>
@@ -1703,7 +1703,7 @@ export function ThreatIntelView() {
 
         <div className="surface-card p-4 space-y-1">
           <span className="text-xs text-slate-600">High / Critical Threats</span>
-          <div className="text-2xl font-bold font-mono text-rose-400">
+          <div className="text-2xl font-bold font-mono text-rose-600">
             {(stats?.by_severity?.CRITICAL || 0) + (stats?.by_severity?.HIGH || 0)}
           </div>
           <span className="text-[10px] text-slate-500 font-mono">Immediate Action</span>
@@ -1714,7 +1714,7 @@ export function ThreatIntelView() {
           <div className="text-xs font-bold font-mono text-slate-700 truncate select-all pt-1">
             {stats?.intel_contract || '0x89E23B84...'}
           </div>
-          <span className="text-[10px] text-emerald-400 font-mono">EVM PoA Ledger</span>
+          <span className="text-[10px] text-emerald-700 font-mono">EVM PoA Ledger</span>
         </div>
       </div>
 
@@ -1722,7 +1722,7 @@ export function ThreatIntelView() {
       <div className="surface-card p-6 space-y-4">
         <div className="border-b border-[#E2E8F0] pb-3">
           <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-            <Search className="w-4 h-4 text-cyan-400" />
+            <Search className="w-4 h-4 text-cyan-700" />
             Query & Verify Threat Indicator on Blockchain
           </h3>
           <p className="text-xs text-slate-600 mt-0.5">
@@ -1764,15 +1764,15 @@ export function ThreatIntelView() {
         {verifyResult && (
           <div className={`p-4 rounded-xl text-xs space-y-2 border animate-in fade-in duration-200 ${
             verifyResult.is_known_threat
-              ? 'bg-rose-500/10 border-rose-500/30 text-rose-300'
-              : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+              ? 'bg-rose-50 border-rose-200 text-rose-700'
+              : 'bg-emerald-50 border-emerald-200 text-emerald-700'
           }`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {verifyResult.is_known_threat ? (
-                  <ShieldAlert className="w-4 h-4 text-rose-400" />
+                  <ShieldAlert className="w-4 h-4 text-rose-600" />
                 ) : (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-700" />
                 )}
                 <span className="font-bold uppercase tracking-wider">
                   {verifyResult.status.replace(/_/g, ' ')}
@@ -1780,7 +1780,7 @@ export function ThreatIntelView() {
               </div>
 
               {verifyResult.is_known_threat && (
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-500/20 text-rose-300 border border-rose-500/40 uppercase">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-50 text-rose-700 border border-rose-300 uppercase">
                   {verifyResult.severity} Severity • {verifyResult.confidence_score}% Confidence
                 </span>
               )}
@@ -1792,8 +1792,8 @@ export function ThreatIntelView() {
               <div className="pt-2 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-mono bg-[#0B0F19]/60 p-2.5 rounded-lg border border-[#F1F5F9]">
                 <div>Source: <strong className="text-slate-800">{verifyResult.source_org}</strong></div>
                 <div>Category: <strong className="text-slate-800">{verifyResult.threat_category}</strong></div>
-                <div>Peer Confirmations: <strong className="text-cyan-400">{verifyResult.observation_count} nodes</strong></div>
-                <div className="truncate">Tx ID: <strong className="text-amber-400">{verifyResult.tx_id || 'On-Chain'}</strong></div>
+                <div>Peer Confirmations: <strong className="text-cyan-700">{verifyResult.observation_count} nodes</strong></div>
+                <div className="truncate">Tx ID: <strong className="text-amber-700">{verifyResult.tx_id || 'On-Chain'}</strong></div>
               </div>
             )}
           </div>
@@ -1859,7 +1859,7 @@ export function ThreatIntelView() {
                 {filteredIndicators.map((ind) => (
                   <tr key={ind.id} className="hover:bg-[#F0F7FF] transition-colors">
                     <td className="p-3.5">
-                      <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[10px] font-bold">
+                      <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 border border-blue-200 text-[10px] font-bold">
                         {ind.indicator_type}
                       </span>
                     </td>
@@ -1872,10 +1872,10 @@ export function ThreatIntelView() {
                     <td className="p-3.5 font-sans">
                       <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase border ${
                         ind.severity === 'CRITICAL'
-                          ? 'bg-rose-500/15 text-rose-400 border-rose-500/30'
+                          ? 'bg-rose-50 text-rose-600 border-rose-200'
                           : ind.severity === 'HIGH'
-                          ? 'bg-orange-500/15 text-orange-400 border-orange-500/30'
-                          : 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+                          ? 'bg-orange-500/15 text-orange-600 border-orange-500/30'
+                          : 'bg-amber-50 text-amber-700 border-amber-200'
                       }`}>
                         {ind.severity}
                       </span>
@@ -1886,10 +1886,10 @@ export function ThreatIntelView() {
                     <td className="p-3.5 text-slate-600 max-w-[140px] truncate">
                       {ind.source_org}
                     </td>
-                    <td className="p-3.5 text-cyan-400 font-bold">
+                    <td className="p-3.5 text-cyan-700 font-bold">
                       {ind.observation_count || 1} Nodes
                     </td>
-                    <td className="p-3.5 text-amber-400 select-all truncate max-w-[120px]">
+                    <td className="p-3.5 text-amber-700 select-all truncate max-w-[120px]">
                       {ind.tx_id ? `${ind.tx_id.slice(0, 10)}...` : '0x7b4a...'}
                     </td>
                   </tr>
@@ -1906,10 +1906,10 @@ export function ThreatIntelView() {
           <div className="surface-card max-w-lg w-full p-6 space-y-4 shadow-2xl border border-white/[0.1]">
             <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-3">
               <div className="flex items-center gap-2">
-                <Plus className="w-5 h-5 text-cyan-400" />
+                <Plus className="w-5 h-5 text-cyan-700" />
                 <h3 className="font-bold text-sm text-slate-900">Register Threat Indicator on Blockchain</h3>
               </div>
-              <button onClick={() => setShowRegisterModal(false)} className="text-slate-600 hover:text-white">
+              <button onClick={() => setShowRegisterModal(false)} className="text-slate-600 hover:text-slate-900">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -2013,7 +2013,7 @@ export function ThreatIntelView() {
                 <button
                   type="button"
                   onClick={() => setShowRegisterModal(false)}
-                  className="px-4 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-[#E2E8F0] text-slate-700 text-xs rounded-xl"
+                  className="px-4 py-2 bg-slate-50 hover:bg-slate-100 border border-[#E2E8F0] text-slate-700 text-xs rounded-xl"
                 >
                   Cancel
                 </button>
