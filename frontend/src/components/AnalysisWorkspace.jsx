@@ -159,16 +159,16 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
   if (!analysis) {
     return (
       <div className="surface-card p-16 flex flex-col items-center justify-center space-y-4 text-center">
-        <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.08] text-slate-500">
+        <div className="p-4 rounded-2xl bg-white/[0.03] border border-[#E2E8F0] text-slate-500">
           <ShieldAlert className="w-10 h-10" />
         </div>
-        <h3 className="text-base font-bold text-slate-200">No Forensic Dossier Selected</h3>
-        <p className="text-xs text-slate-400 max-w-md">
+        <h3 className="text-base font-bold text-slate-800">No Forensic Dossier Selected</h3>
+        <p className="text-xs text-slate-600 max-w-md">
           Select an existing analysis from the SOC Dashboard or ingest a new email artifact using the button below.
         </p>
         <button
           onClick={onNewIntake}
-          className="btn-tactile px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition-all shadow-glow-blue"
+          className="btn-tactile px-4 py-2 btn-block-primary text-white rounded-xl text-xs font-bold transition-all shadow-glow-blue"
         >
           Open New Intake Console
         </button>
@@ -263,7 +263,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
     <div className="space-y-6">
       {/* Top Dossier Header Card */}
       <div className="surface-card p-6 space-y-5">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-white/[0.08] pb-5">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[#E2E8F0] pb-5">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
               <span
@@ -277,21 +277,21 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                 <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: threat_score.risk_color }}></span>
                 {threat_score.risk_level} Risk Tier
               </span>
-              <span className="text-xs font-mono text-slate-400">ID: {analysis_id.slice(0, 10)}</span>
+              <span className="text-xs font-mono text-slate-600">ID: {analysis_id.slice(0, 10)}</span>
               <span className="text-slate-600">•</span>
-              <span className="text-xs text-slate-400 font-mono">
+              <span className="text-xs text-slate-600 font-mono">
                 {timestamp ? timestamp.replace('T', ' ').slice(0, 19) + ' UTC' : 'N/A'}
               </span>
             </div>
 
-            <h2 className="text-lg font-bold text-slate-100 tracking-tight">
+            <h2 className="text-lg font-bold text-slate-900 tracking-tight">
               {metadata.subject || '(No Subject Header)'}
             </h2>
 
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-slate-400 font-mono pt-0.5">
-              <div>From: <span className="text-slate-200 font-semibold">{metadata.from_address || 'N/A'}</span></div>
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-slate-600 font-mono pt-0.5">
+              <div>From: <span className="text-slate-800 font-semibold">{metadata.from_address || 'N/A'}</span></div>
               {metadata.reply_to && <div>Reply-To: <span className="text-amber-400 font-medium">{metadata.reply_to}</span></div>}
-              {metadata.return_path && <div>Return-Path: <span className="text-slate-400">{metadata.return_path}</span></div>}
+              {metadata.return_path && <div>Return-Path: <span className="text-slate-600">{metadata.return_path}</span></div>}
             </div>
           </div>
 
@@ -300,35 +300,35 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
               <div className="text-3xl font-extrabold font-mono tabular-nums tracking-tight" style={{ color: threat_score.risk_color }}>
                 {threat_score.overall_score}<span className="text-xs font-normal text-slate-500">/100</span>
               </div>
-              <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Threat Score</div>
+              <div className="text-[10px] uppercase font-bold tracking-wider text-slate-600">Threat Score</div>
             </div>
 
-            <div className="flex items-center gap-2 border-l border-white/[0.08] pl-4">
+            <div className="flex items-center gap-2 border-l border-[#E2E8F0] pl-4">
               <button
                 onClick={handlePublishIoCs}
                 disabled={publishingIoCs}
-                className="p-2 bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.08] rounded-xl text-slate-300 hover:text-cyan-400 transition-colors cursor-pointer"
+                className="p-2 bg-white/[0.03] hover:bg-white/[0.08] border border-[#E2E8F0] rounded-xl text-slate-700 hover:text-cyan-400 transition-colors cursor-pointer"
                 title="Broadcast Non-Sensitive IoCs to Decentralized Threat Intel Registry"
               >
                 {publishingIoCs ? <Loader2 className="w-4 h-4 animate-spin text-cyan-400" /> : <Globe className="w-4 h-4" />}
               </button>
               <button
                 onClick={() => { setShowSealModal(true); handleVerifySeal(); }}
-                className="p-2 bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.08] rounded-xl text-slate-300 hover:text-blue-400 transition-colors cursor-pointer"
+                className="p-2 bg-white/[0.03] hover:bg-white/[0.08] border border-[#E2E8F0] rounded-xl text-slate-700 hover:text-blue-400 transition-colors cursor-pointer"
                 title="Verify Cryptographic SHA-256 Tamper Seal"
               >
                 <Lock className="w-4 h-4" />
               </button>
               <button
                 onClick={handleExportReport}
-                className="p-2 bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.08] rounded-xl text-slate-300 hover:text-emerald-400 transition-colors cursor-pointer"
+                className="p-2 bg-white/[0.03] hover:bg-white/[0.08] border border-[#E2E8F0] rounded-xl text-slate-700 hover:text-emerald-400 transition-colors cursor-pointer"
                 title="Export Forensic Investigation Report (TLP:AMBER)"
               >
                 <Download className="w-4 h-4" />
               </button>
               <button
                 onClick={onNewIntake}
-                className="btn-tactile px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition-all shadow-glow-blue cursor-pointer"
+                className="btn-tactile px-4 py-2 btn-block-primary text-white rounded-xl text-xs font-bold transition-all shadow-glow-blue cursor-pointer"
               >
                 New Intake
               </button>
@@ -346,7 +346,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
         {/* Quick Authentication Summary Pills */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs font-mono">
           <div className="surface-card-subtle p-3 flex items-center justify-between">
-            <span className="text-slate-400 font-sans text-xs">SPF Protocol</span>
+            <span className="text-slate-600 font-sans text-xs">SPF Protocol</span>
             <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase border ${
               authentication.spf?.status === 'pass' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-rose-500/15 text-rose-400 border-rose-500/30'
             }`}>
@@ -355,7 +355,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
           </div>
 
           <div className="surface-card-subtle p-3 flex items-center justify-between">
-            <span className="text-slate-400 font-sans text-xs">DKIM Signature</span>
+            <span className="text-slate-600 font-sans text-xs">DKIM Signature</span>
             <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase border ${
               authentication.dkim?.status === 'pass' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-rose-500/15 text-rose-400 border-rose-500/30'
             }`}>
@@ -364,7 +364,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
           </div>
 
           <div className="surface-card-subtle p-3 flex items-center justify-between">
-            <span className="text-slate-400 font-sans text-xs">DMARC Policy</span>
+            <span className="text-slate-600 font-sans text-xs">DMARC Policy</span>
             <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase border ${
               authentication.dmarc?.status === 'pass' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-rose-500/15 text-rose-400 border-rose-500/30'
             }`}>
@@ -373,23 +373,23 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
           </div>
 
           <div className="surface-card-subtle p-3 flex items-center justify-between">
-            <span className="text-slate-400 font-sans text-xs">Transit Hops</span>
+            <span className="text-slate-600 font-sans text-xs">Transit Hops</span>
             <span className="text-cyan-400 font-bold font-mono">{relays.length} MTA Nodes</span>
           </div>
         </div>
 
         {/* Dedicated Blockchain Forensic Verification Section */}
-        <div className="surface-card-subtle p-4 rounded-xl border border-white/[0.08] space-y-3">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.04] pb-3">
+        <div className="surface-card-subtle p-4 rounded-xl border border-[#E2E8F0] space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#F1F5F9] pb-3">
             <div className="flex items-center gap-2.5">
               <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400">
                 <Layers className="w-4 h-4" />
               </div>
               <div>
-                <span className="text-xs font-bold text-slate-200 block">
+                <span className="text-xs font-bold text-slate-800 block">
                   Blockchain Forensic Evidence Verification
                 </span>
-                <span className="text-[11px] text-slate-400">
+                <span className="text-[11px] text-slate-600">
                   Immutable Non-Repudiation Layer • Proof-of-Authority Smart Contract Anchor
                 </span>
               </div>
@@ -404,7 +404,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                   ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
                   : tamper_seal?.blockchain_status === 'PENDING'
                   ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
-                  : 'bg-slate-500/15 text-slate-400 border-slate-500/30'
+                  : 'bg-slate-500/15 text-slate-600 border-slate-500/30'
               }`}>
                 {blockchainVerification?.tamper_detected || custodyData?.status === 'MODIFIED' ? (
                   <>⚠ Evidence Integrity Compromised</>
@@ -428,7 +428,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
               </button>
 
               {/* Controlled Demo Simulation Buttons */}
-              <div className="flex items-center gap-1 border-l border-white/[0.08] pl-2">
+              <div className="flex items-center gap-1 border-l border-[#E2E8F0] pl-2">
                 <button
                   onClick={handleSimulateTamper}
                   disabled={simulatingTamper}
@@ -456,40 +456,40 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
 
           {/* Blockchain Verification Detail Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs font-mono">
-            <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-white/[0.04] space-y-0.5">
+            <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-[#F1F5F9] space-y-0.5">
               <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Evidence ID</span>
-              <span className="text-slate-200 truncate block font-bold select-all">{analysis_id}</span>
+              <span className="text-slate-800 truncate block font-bold select-all">{analysis_id}</span>
             </div>
 
-            <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-white/[0.04] space-y-0.5">
+            <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-[#F1F5F9] space-y-0.5">
               <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Evidence SHA-256 Hash</span>
               <span className="text-cyan-400 truncate block select-all">
                 {blockchainVerification?.canonical_evidence_hash || tamper_seal?.payload_sha256 || 'N/A'}
               </span>
             </div>
 
-            <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-white/[0.04] space-y-0.5">
+            <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-[#F1F5F9] space-y-0.5">
               <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Blockchain Tx / Reference ID</span>
               <span className="text-amber-400 truncate block select-all">
                 {blockchainVerification?.tx_id || tamper_seal?.tx_id || `0x${(tamper_seal?.block_hash || '00').slice(0, 36)}...`}
               </span>
             </div>
 
-            <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-white/[0.04] space-y-0.5">
+            <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-[#F1F5F9] space-y-0.5">
               <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Registration Timestamp</span>
-              <span className="text-slate-300 truncate block">
+              <span className="text-slate-700 truncate block">
                 {tamper_seal?.timestamp_utc ? tamper_seal.timestamp_utc.replace('T', ' ').slice(0, 19) + ' UTC' : 'N/A'}
               </span>
             </div>
 
-            <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-white/[0.04] space-y-0.5">
+            <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-[#F1F5F9] space-y-0.5">
               <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Chain-of-Custody Status</span>
               <span className="text-emerald-400 font-bold block">
                 {custodyData?.status || 'VERIFIED'} ({custodyData?.total_events || 4} Lifecycle Events)
               </span>
             </div>
 
-            <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-white/[0.04] space-y-0.5">
+            <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-[#F1F5F9] space-y-0.5">
               <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Verification Result</span>
               <span className={`block font-bold truncate ${
                 blockchainVerification?.tamper_detected ? 'text-rose-400' : 'text-emerald-400'
@@ -504,7 +504,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="flex bg-[#0D1322] p-1 rounded-xl border border-white/[0.06] gap-1 overflow-x-auto text-xs font-semibold shadow-inner-light">
+      <div className="flex bg-[#EFF6FF] p-1 rounded-xl border border-[#F1F5F9] gap-1 overflow-x-auto text-xs font-semibold shadow-inner-light">
         {[
           { id: 'synthesis', label: 'Executive Synthesis', icon: ShieldAlert },
           { id: 'custody', label: `Chain of Custody (${custodyData?.events?.length || 4})`, icon: Lock },
@@ -523,7 +523,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
               className={`flex items-center gap-2 px-3.5 py-2 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                 activeTab === tab.id
                   ? 'bg-blue-600 text-white shadow-sm font-bold'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
+                  : 'text-slate-600 hover:text-slate-800 hover:bg-[#F0F7FF]'
               }`}
             >
               <Icon className="w-3.5 h-3.5" />
@@ -537,10 +537,10 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
       {activeTab === 'custody' && (
         <div className="space-y-6">
           <div className="surface-card p-6 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E2E8F0] pb-4">
               <div>
                 <div className="flex items-center gap-2.5">
-                  <h3 className="font-bold text-sm text-slate-100 flex items-center gap-2">
+                  <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
                     <Lock className="w-4 h-4 text-cyan-400" />
                     Digital Chain-of-Custody & Forensic Lifecycle
                   </h3>
@@ -552,7 +552,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                         ? 'bg-rose-500/15 text-rose-400 border-rose-500/30'
                         : custodyData.status === 'BLOCKCHAIN_UNAVAILABLE'
                         ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
-                        : 'bg-slate-500/10 text-slate-400 border-slate-500/30'
+                        : 'bg-slate-500/10 text-slate-600 border-slate-500/30'
                     }`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${
                         custodyData.status === 'VERIFIED' ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'
@@ -561,7 +561,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-slate-600 mt-1">
                   Cryptographically linked lifecycle stages proving authenticity, sequencing, and non-repudiation
                 </p>
               </div>
@@ -570,7 +570,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                 <button
                   onClick={fetchCustody}
                   disabled={custodyLoading}
-                  className="btn-tactile px-3.5 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 text-xs rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
+                  className="btn-tactile px-3.5 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-[#E2E8F0] text-slate-700 text-xs rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
                 >
                   {custodyLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
                   <span>Re-Verify Chain</span>
@@ -578,7 +578,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
 
                 <button
                   onClick={() => setShowAddCustodyModal(true)}
-                  className="btn-tactile px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-glow-blue cursor-pointer"
+                  className="btn-tactile px-3.5 py-1.5 btn-block-primary text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-glow-blue cursor-pointer"
                 >
                   <PlusCircle className="w-3.5 h-3.5" />
                   <span>Record Analyst Review</span>
@@ -610,31 +610,31 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
             {/* Chronological Event Timeline */}
             <div className="space-y-3 pt-2">
               {(custodyData?.events || []).map((evt, idx) => (
-                <div key={idx} className="surface-card-subtle p-4 rounded-xl border border-white/[0.06] space-y-2">
+                <div key={idx} className="surface-card-subtle p-4 rounded-xl border border-[#F1F5F9] space-y-2">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
                       <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[10px] font-bold font-mono">
                         Step #{evt.sequence_number}
                       </span>
-                      <span className="font-bold text-xs text-slate-100 uppercase tracking-wide">
+                      <span className="font-bold text-xs text-slate-900 uppercase tracking-wide">
                         {evt.event_type.replace(/_/g, ' ')}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2 text-[11px] text-slate-400 font-mono">
-                      <span>Actor: <strong className="text-slate-200">{evt.actor}</strong></span>
+                    <div className="flex items-center gap-2 text-[11px] text-slate-600 font-mono">
+                      <span>Actor: <strong className="text-slate-800">{evt.actor}</strong></span>
                       <span>•</span>
                       <span>{evt.timestamp.replace('T', ' ').slice(0, 19)} UTC</span>
                     </div>
                   </div>
 
                   {evt.event_data?.summary && (
-                    <p className="text-xs text-slate-300 font-sans leading-relaxed">
+                    <p className="text-xs text-slate-700 font-sans leading-relaxed">
                       {evt.event_data.summary}
                     </p>
                   )}
 
-                  <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-white/[0.04] text-[11px] font-mono space-y-1 text-slate-400">
+                  <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-[#F1F5F9] text-[11px] font-mono space-y-1 text-slate-600">
                     <div className="truncate select-all">
                       Event SHA-256: <span className="text-cyan-400">{evt.event_hash}</span>
                     </div>
@@ -658,13 +658,13 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
       {activeTab === 'synthesis' && (
         <div className="space-y-6">
           <div className="surface-card p-6 space-y-5">
-            <div className="flex items-center justify-between border-b border-white/[0.08] pb-4">
+            <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-4">
               <div>
-                <h3 className="font-bold text-sm text-slate-100 flex items-center gap-2">
+                <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-purple-400" />
                   AI Threat Assessment & Investigation Priority
                 </h3>
-                <p className="text-xs text-slate-400 mt-0.5">Ground-truth evidence breakdown and recommended actions</p>
+                <p className="text-xs text-slate-600 mt-0.5">Ground-truth evidence breakdown and recommended actions</p>
               </div>
 
               {ai_assessment?.threat_category && (
@@ -674,7 +674,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
               )}
             </div>
 
-            <div className="surface-card-subtle p-4 text-xs leading-relaxed text-slate-200 border border-white/[0.06]">
+            <div className="surface-card-subtle p-4 text-xs leading-relaxed text-slate-800 border border-[#F1F5F9]">
               <strong className="text-blue-400 block mb-1 text-xs font-bold flex items-center gap-1.5">
                 <Info className="w-3.5 h-3.5" /> Primary Rationale:
               </strong>
@@ -687,7 +687,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                 <span className="font-bold text-emerald-400 block flex items-center gap-1.5">
                   <CheckCircle className="w-3.5 h-3.5" /> Observed Ground Facts
                 </span>
-                <ul className="space-y-1.5 text-slate-300 text-[11px] list-disc list-inside">
+                <ul className="space-y-1.5 text-slate-700 text-[11px] list-disc list-inside">
                   {(ai_assessment?.observed_evidence || []).map((item, idx) => (
                     <li key={idx} className="leading-snug">{item}</li>
                   ))}
@@ -701,7 +701,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                 <span className="font-bold text-amber-400 block flex items-center gap-1.5">
                   <AlertTriangle className="w-3.5 h-3.5" /> Inferred Hypotheses
                 </span>
-                <ul className="space-y-1.5 text-slate-300 text-[11px] list-disc list-inside">
+                <ul className="space-y-1.5 text-slate-700 text-[11px] list-disc list-inside">
                   {(ai_assessment?.inferred_evidence || []).map((item, idx) => (
                     <li key={idx} className="leading-snug">{item}</li>
                   ))}
@@ -712,10 +712,10 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
               </div>
 
               <div className="surface-card-subtle p-4 border-l-2 border-l-slate-500 space-y-2">
-                <span className="font-bold text-slate-400 block flex items-center gap-1.5">
+                <span className="font-bold text-slate-600 block flex items-center gap-1.5">
                   <HelpCircle className="w-3.5 h-3.5" /> Unknown Gaps
                 </span>
-                <ul className="space-y-1.5 text-slate-400 text-[11px] list-disc list-inside">
+                <ul className="space-y-1.5 text-slate-600 text-[11px] list-disc list-inside">
                   {(ai_assessment?.unknown_gaps || []).map((item, idx) => (
                     <li key={idx} className="leading-snug">{item}</li>
                   ))}
@@ -728,10 +728,10 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
 
             {/* Recommended Analyst Actions */}
             <div className="space-y-2 pt-1">
-              <span className="text-xs font-bold text-slate-300 block">Recommended SOC Analyst Actions:</span>
+              <span className="text-xs font-bold text-slate-700 block">Recommended SOC Analyst Actions:</span>
               <div className="space-y-1.5">
                 {(ai_assessment?.recommended_analyst_actions || []).map((act, idx) => (
-                  <div key={idx} className="surface-card-subtle p-3 text-xs text-slate-300 flex items-center gap-2.5">
+                  <div key={idx} className="surface-card-subtle p-3 text-xs text-slate-700 flex items-center gap-2.5">
                     <ChevronRight className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
                     <span>{act}</span>
                   </div>
@@ -745,10 +745,10 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
       {/* TAB 2: HEADERS & AUTH FORENSICS */}
       {activeTab === 'headers' && (
         <div className="surface-card p-6 space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E2E8F0] pb-4">
             <div>
-              <h3 className="font-bold text-sm text-slate-100">RFC 5322 Raw & Structured Transport Headers</h3>
-              <p className="text-xs text-slate-400 mt-0.5">Complete header map with cryptographic proof verification</p>
+              <h3 className="font-bold text-sm text-slate-900">RFC 5322 Raw & Structured Transport Headers</h3>
+              <p className="text-xs text-slate-600 mt-0.5">Complete header map with cryptographic proof verification</p>
             </div>
 
             <div className="relative min-w-[220px]">
@@ -757,17 +757,17 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                 placeholder="Filter header keys / values..."
                 value={headerFilter}
                 onChange={(e) => setHeaderFilter(e.target.value)}
-                className="w-full bg-[#0D1322] border border-white/[0.08] focus:border-blue-500/80 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:outline-none"
+                className="w-full bg-[#EFF6FF] border border-[#E2E8F0] focus:border-blue-500/80 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none"
               />
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-2.5 pointer-events-none" />
+              <Search className="w-3.5 h-3.5 text-slate-600 absolute right-2.5 top-2.5 pointer-events-none" />
             </div>
           </div>
 
-          <div className="surface-card-subtle p-4 max-h-[500px] overflow-y-auto font-mono text-xs text-slate-300 space-y-2.5 border border-white/[0.06]">
+          <div className="surface-card-subtle p-4 max-h-[500px] overflow-y-auto font-mono text-xs text-slate-700 space-y-2.5 border border-[#F1F5F9]">
             {filteredHeaders.map(([k, v], idx) => (
-              <div key={idx} className="border-b border-white/[0.04] pb-2">
+              <div key={idx} className="border-b border-[#F1F5F9] pb-2">
                 <span className="text-blue-400 font-semibold select-all">{k}: </span>
-                <span className="text-slate-300 whitespace-pre-wrap select-all">
+                <span className="text-slate-700 whitespace-pre-wrap select-all">
                   {Array.isArray(v) ? v.join('\n  ') : String(v)}
                 </span>
               </div>
@@ -784,11 +784,11 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
         <div className="space-y-5">
           {/* Leaflet Dark Map */}
           <div className="surface-card overflow-hidden">
-            <div className="p-3.5 bg-[#0D1322] border-b border-white/[0.08] flex items-center justify-between text-xs">
-              <span className="font-bold text-slate-200 flex items-center gap-2">
+            <div className="p-3.5 bg-[#EFF6FF] border-b border-[#E2E8F0] flex items-center justify-between text-xs">
+              <span className="font-bold text-slate-800 flex items-center gap-2">
                 <Globe className="w-4 h-4 text-blue-400" /> Observed MTA Mail Relay Path
               </span>
-              <span className="text-[10px] text-slate-400 font-mono">
+              <span className="text-[10px] text-slate-600 font-mono">
                 {validRelays.length} Geocoded Hops • Latency Deltas & Autonomous Systems
               </span>
             </div>
@@ -826,10 +826,10 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
 
           {/* Relays Table */}
           <div className="surface-card p-6 space-y-4">
-            <h3 className="font-bold text-sm text-slate-100">Chronological Relay Transit Chain ({relays.length} Hops)</h3>
-            <div className="overflow-x-auto rounded-xl border border-white/[0.06]">
+            <h3 className="font-bold text-sm text-slate-900">Chronological Relay Transit Chain ({relays.length} Hops)</h3>
+            <div className="overflow-x-auto rounded-xl border border-[#F1F5F9]">
               <table className="w-full text-left text-xs font-mono">
-                <thead className="bg-[#0D1322] text-slate-400 text-[10px] uppercase font-sans">
+                <thead className="bg-[#EFF6FF] text-slate-600 text-[10px] uppercase font-sans">
                   <tr>
                     <th className="p-3">Hop</th>
                     <th className="p-3">Received By / From</th>
@@ -838,16 +838,16 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                     <th className="p-3">Delay</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/[0.04] bg-[#111726]/40 text-[11px]">
+                <tbody className="divide-y divide-[#F1F5F9] bg-white text-[11px]">
                   {relays.map((r) => (
-                    <tr key={r.hop_number} className="hover:bg-white/[0.03] transition-colors">
+                    <tr key={r.hop_number} className="hover:bg-[#F0F7FF] transition-colors">
                       <td className="p-3 font-bold text-blue-400">#{r.hop_number}</td>
-                      <td className="p-3 text-slate-300 max-w-xs truncate">
+                      <td className="p-3 text-slate-700 max-w-xs truncate">
                         <div>by {r.by_host || 'N/A'}</div>
                         <div className="text-[10px] text-slate-500 font-sans">from {r.from_host || 'N/A'}</div>
                       </td>
-                      <td className="p-3 font-bold text-slate-200">{r.ip_address || 'Private/Unknown'}</td>
-                      <td className="p-3 text-slate-400 font-sans">
+                      <td className="p-3 font-bold text-slate-800">{r.ip_address || 'Private/Unknown'}</td>
+                      <td className="p-3 text-slate-600 font-sans">
                         {r.city ? `${r.city}, ${r.country}` : 'Internal'} ({r.organization || 'N/A'})
                       </td>
                       <td className="p-3 text-cyan-400 font-bold">
@@ -866,7 +866,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
       {activeTab === 'intel' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="surface-card p-6 space-y-4">
-            <h3 className="font-bold text-sm text-slate-100">Domain & Lookalike Forensics</h3>
+            <h3 className="font-bold text-sm text-slate-900">Domain & Lookalike Forensics</h3>
             <div className="space-y-2.5">
               {Object.entries(domain_intelligence).map(([dom, info], idx) => (
                 <div key={idx} className="surface-card-subtle p-3.5 space-y-1 text-xs font-mono">
@@ -879,8 +879,8 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                     )}
                   </div>
                   {info.lookalike_target_brand && (
-                    <div className="text-[11px] text-slate-400 font-sans">
-                      Impersonating brand: <strong className="text-slate-200">{info.lookalike_target_brand}</strong>
+                    <div className="text-[11px] text-slate-600 font-sans">
+                      Impersonating brand: <strong className="text-slate-800">{info.lookalike_target_brand}</strong>
                     </div>
                   )}
                 </div>
@@ -892,13 +892,13 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
           </div>
 
           <div className="surface-card p-6 space-y-4">
-            <h3 className="font-bold text-sm text-slate-100">Extracted Hyperlinks ({extracted_urls.length})</h3>
+            <h3 className="font-bold text-sm text-slate-900">Extracted Hyperlinks ({extracted_urls.length})</h3>
             <div className="space-y-2.5 max-h-80 overflow-y-auto">
               {extracted_urls.map((u, idx) => (
                 <div key={idx} className="surface-card-subtle p-3.5 space-y-1 text-xs font-mono">
                   <div className="text-blue-400 font-bold truncate max-w-full">{u.url}</div>
-                  <div className="text-[11px] text-slate-400 font-sans flex items-center gap-2">
-                    <span>Domain: <strong className="text-slate-300 font-mono">{u.domain}</strong></span>
+                  <div className="text-[11px] text-slate-600 font-sans flex items-center gap-2">
+                    <span>Domain: <strong className="text-slate-700 font-mono">{u.domain}</strong></span>
                     {u.is_ip_host && <span className="text-rose-400 font-bold">(Raw IP Address)</span>}
                   </div>
                   {u.has_anchor_mismatch && (
@@ -919,7 +919,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
       {/* TAB 5: ATTACHMENTS & HASHES */}
       {activeTab === 'attachments' && (
         <div className="surface-card p-6 space-y-5">
-          <h3 className="font-bold text-sm text-slate-100">Extracted Attachments & Cryptographic Hashes</h3>
+          <h3 className="font-bold text-sm text-slate-900">Extracted Attachments & Cryptographic Hashes</h3>
           {attachments.length === 0 ? (
             <div className="surface-card-subtle p-12 text-center text-xs text-slate-500">
               No attached binary or document payloads found in this message.
@@ -929,18 +929,18 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
               {attachments.map((a, idx) => (
                 <div key={idx} className="surface-card-subtle p-4 space-y-2 text-xs font-mono">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-100 text-sm">{a.filename}</span>
+                    <span className="font-bold text-slate-900 text-sm">{a.filename}</span>
                     {a.is_suspicious && (
                       <span className="px-2.5 py-0.5 bg-rose-500/15 text-rose-400 border border-rose-500/30 rounded-full text-[10px] font-bold uppercase">
                         Suspicious / Executable Payload
                       </span>
                     )}
                   </div>
-                  <div className="text-slate-400 font-sans">
-                    Size: <strong className="text-slate-200">{(a.size_bytes / 1024).toFixed(1)} KB</strong> | MIME: <strong className="text-slate-200">{a.content_type}</strong>
+                  <div className="text-slate-600 font-sans">
+                    Size: <strong className="text-slate-800">{(a.size_bytes / 1024).toFixed(1)} KB</strong> | MIME: <strong className="text-slate-800">{a.content_type}</strong>
                   </div>
-                  <div className="text-[11px] text-slate-400 select-all">SHA-256: <span className="text-cyan-400">{a.sha256}</span></div>
-                  <div className="text-[11px] text-slate-400 select-all">MD5: <span className="text-purple-400">{a.md5}</span></div>
+                  <div className="text-[11px] text-slate-600 select-all">SHA-256: <span className="text-cyan-400">{a.sha256}</span></div>
+                  <div className="text-[11px] text-slate-600 select-all">MD5: <span className="text-purple-400">{a.md5}</span></div>
                 </div>
               ))}
             </div>
@@ -951,14 +951,14 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
       {/* TAB 6: DETECTION RULES */}
       {activeTab === 'detection' && (
         <div className="space-y-4">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600">
             Triggered Security Findings ({detection_findings.length})
           </h3>
 
           {detection_findings.length === 0 ? (
-            <div className="surface-card p-12 text-center text-xs text-slate-400">
+            <div className="surface-card p-12 text-center text-xs text-slate-600">
               <CheckCircle className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
-              <p className="font-semibold text-slate-200">Zero Security Findings Triggered</p>
+              <p className="font-semibold text-slate-800">Zero Security Findings Triggered</p>
               <p className="text-[11px] text-slate-500 mt-0.5">Clean authentication and normal transit patterns.</p>
             </div>
           ) : (
@@ -970,16 +970,16 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                       <span className="px-2.5 py-0.5 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/30 text-[10px] font-mono font-bold">
                         {f.rule_id}
                       </span>
-                      <h4 className="font-bold text-xs text-slate-100">{f.rule_name}</h4>
+                      <h4 className="font-bold text-xs text-slate-900">{f.rule_name}</h4>
                     </div>
                     <span className="text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-full bg-rose-500/15 text-rose-400 border border-rose-500/30">
                       {f.severity} (+{f.points} PTS)
                     </span>
                   </div>
 
-                  <p className="text-xs text-slate-300 leading-relaxed">{f.explanation}</p>
+                  <p className="text-xs text-slate-700 leading-relaxed">{f.explanation}</p>
                   {f.evidence && (
-                    <div className="text-[11px] font-mono text-slate-400 surface-card-subtle p-3 rounded-lg border border-white/[0.05]">
+                    <div className="text-[11px] font-mono text-slate-600 surface-card-subtle p-3 rounded-lg border border-white/[0.05]">
                       Evidence: {f.evidence}
                     </div>
                   )}
@@ -993,12 +993,12 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
       {/* TAB 7: SOC COPILOT & CHAT */}
       {activeTab === 'copilot' && (
         <div className="surface-card p-6 space-y-5">
-          <div className="flex items-center justify-between border-b border-white/[0.08] pb-4">
+          <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-4">
             <div className="flex items-center gap-2.5">
               <Bot className="w-5 h-5 text-blue-400" />
               <div>
-                <h3 className="font-bold text-sm text-slate-100">SOC Forensic Copilot</h3>
-                <p className="text-xs text-slate-400 mt-0.5">Conversational AI assistant answering queries directly from email evidence</p>
+                <h3 className="font-bold text-sm text-slate-900">SOC Forensic Copilot</h3>
+                <p className="text-xs text-slate-600 mt-0.5">Conversational AI assistant answering queries directly from email evidence</p>
               </div>
             </div>
           </div>
@@ -1010,10 +1010,10 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                 className={`p-3.5 rounded-xl text-xs max-w-xl leading-relaxed space-y-1.5 ${
                   m.sender === 'user'
                     ? 'ml-auto bg-blue-600 text-white font-medium shadow-sm'
-                    : 'mr-auto surface-card text-slate-200 border border-white/[0.08]'
+                    : 'mr-auto surface-card text-slate-800 border border-[#E2E8F0]'
                 }`}
               >
-                <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-mono">
+                <div className="flex items-center gap-1.5 text-[10px] text-slate-600 font-mono">
                   <User className="w-3 h-3" />
                   <span>{m.sender === 'user' ? 'You' : 'Forensic Assistant'}</span>
                 </div>
@@ -1021,7 +1021,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
               </div>
             ))}
             {chatLoading && (
-              <div className="mr-auto surface-card p-3 rounded-xl border border-white/[0.08] text-xs text-slate-400 flex items-center gap-2">
+              <div className="mr-auto surface-card p-3 rounded-xl border border-[#E2E8F0] text-xs text-slate-600 flex items-center gap-2">
                 <Loader2 className="w-4 h-4 animate-spin text-blue-400" /> Evaluating indicators...
               </div>
             )}
@@ -1033,12 +1033,12 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
               placeholder="Ask Copilot about sender authentication, lookalike domains, or MTA hops..."
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
-              className="flex-1 bg-[#0D1322] border border-white/[0.08] focus:border-blue-500/80 rounded-xl px-3.5 py-2 text-xs text-slate-200 focus:outline-none"
+              className="flex-1 bg-[#EFF6FF] border border-[#E2E8F0] focus:border-blue-500/80 rounded-xl px-3.5 py-2 text-xs text-slate-800 focus:outline-none"
             />
             <button
               type="submit"
               disabled={chatLoading || !chatInput.trim()}
-              className="btn-tactile px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
+              className="btn-tactile px-4 py-2 btn-block-primary text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
             >
               <Send className="w-3.5 h-3.5" /> Send
             </button>
@@ -1050,31 +1050,31 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
       {showSealModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
           <div className="surface-card max-w-lg w-full p-6 space-y-4 shadow-2xl border border-white/[0.1]">
-            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+            <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-3">
               <div className="flex items-center gap-2">
                 <Lock className="w-5 h-5 text-blue-400" />
-                <h3 className="font-bold text-sm text-slate-100">Cryptographic Chain-of-Custody Proof</h3>
+                <h3 className="font-bold text-sm text-slate-900">Cryptographic Chain-of-Custody Proof</h3>
               </div>
-              <button onClick={() => setShowSealModal(false)} className="text-slate-400 hover:text-white"><X className="w-4 h-4" /></button>
+              <button onClick={() => setShowSealModal(false)} className="text-slate-600 hover:text-white"><X className="w-4 h-4" /></button>
             </div>
 
-            <div className="surface-card-subtle p-4 space-y-2.5 text-xs font-mono border border-white/[0.06]">
+            <div className="surface-card-subtle p-4 space-y-2.5 text-xs font-mono border border-[#F1F5F9]">
               <div className="flex items-center justify-between">
-                <span className="text-slate-400">Blockchain Block:</span>
+                <span className="text-slate-600">Blockchain Block:</span>
                 <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold">
                   Block #{sealVerification?.block_number || tamper_seal.block_number || 1}
                 </span>
               </div>
-              <div className="text-slate-400">Validator Node: <span className="text-slate-200">{sealVerification?.validator_node || 'ThreatSentinel-Validator-01'}</span></div>
-              <div className="text-slate-400">Timestamp: <span className="text-slate-200">{tamper_seal.timestamp_utc}</span></div>
-              <div className="text-slate-400 select-all truncate">
+              <div className="text-slate-600">Validator Node: <span className="text-slate-800">{sealVerification?.validator_node || 'ThreatSentinel-Validator-01'}</span></div>
+              <div className="text-slate-600">Timestamp: <span className="text-slate-800">{tamper_seal.timestamp_utc}</span></div>
+              <div className="text-slate-600 select-all truncate">
                 Block Hash: <span className="text-cyan-400 font-bold">{sealVerification?.block_hash || tamper_seal.block_hash || tamper_seal.current_seal_hash}</span>
               </div>
-              <div className="text-slate-400 select-all truncate">
+              <div className="text-slate-600 select-all truncate">
                 Merkle Root: <span className="text-purple-400 font-bold">{sealVerification?.merkle_root || tamper_seal.merkle_root || 'N/A'}</span>
               </div>
-              <div className="text-slate-400 select-all truncate">
-                Evidence SHA-256: <span className="text-slate-300">{sealVerification?.canonical_evidence_hash || tamper_seal.payload_sha256}</span>
+              <div className="text-slate-600 select-all truncate">
+                Evidence SHA-256: <span className="text-slate-700">{sealVerification?.canonical_evidence_hash || tamper_seal.payload_sha256}</span>
               </div>
             </div>
 
@@ -1102,7 +1102,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
               <button
                 onClick={handleVerifySeal}
                 disabled={verifyingSeal}
-                className="px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 text-xs rounded-xl flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                className="px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-[#E2E8F0] text-slate-700 text-xs rounded-xl flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
               >
                 {verifyingSeal ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
                 <span>Re-Verify Ledger</span>
@@ -1110,7 +1110,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
 
               <button
                 onClick={() => setShowSealModal(false)}
-                className="btn-tactile px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl"
+                className="btn-tactile px-4 py-1.5 btn-block-primary text-white text-xs font-bold rounded-xl"
               >
                 Close Proof
               </button>
@@ -1123,21 +1123,21 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
       {showAddCustodyModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
           <div className="surface-card max-w-md w-full p-6 space-y-4 shadow-2xl border border-white/[0.1]">
-            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+            <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-3">
               <div className="flex items-center gap-2">
                 <PlusCircle className="w-5 h-5 text-cyan-400" />
-                <h3 className="font-bold text-sm text-slate-100">Record Chain-of-Custody Event</h3>
+                <h3 className="font-bold text-sm text-slate-900">Record Chain-of-Custody Event</h3>
               </div>
-              <button onClick={() => setShowAddCustodyModal(false)} className="text-slate-400 hover:text-white"><X className="w-4 h-4" /></button>
+              <button onClick={() => setShowAddCustodyModal(false)} className="text-slate-600 hover:text-white"><X className="w-4 h-4" /></button>
             </div>
 
             <form onSubmit={handleAddCustodyEvent} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-300 font-semibold block">Lifecycle Event Type</label>
+                <label className="text-xs text-slate-700 font-semibold block">Lifecycle Event Type</label>
                 <select
                   value={custodyEventType}
                   onChange={(e) => setCustodyEventType(e.target.value)}
-                  className="w-full bg-[#0D1322] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                  className="w-full bg-[#EFF6FF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-cyan-500"
                 >
                   <option value="ANALYST_REVIEW">ANALYST_REVIEW (Forensic Assessment & Verification)</option>
                   <option value="REPORT_GENERATED">REPORT_GENERATED (Intelligence Export)</option>
@@ -1146,24 +1146,24 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-300 font-semibold block">Investigator / System Identifier</label>
+                <label className="text-xs text-slate-700 font-semibold block">Investigator / System Identifier</label>
                 <input
                   type="text"
                   value={custodyAuthor}
                   onChange={(e) => setCustodyAuthor(e.target.value)}
-                  className="w-full bg-[#0D1322] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                  className="w-full bg-[#EFF6FF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-cyan-500"
                   required
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-300 font-semibold block">Event Summary & Action Taken</label>
+                <label className="text-xs text-slate-700 font-semibold block">Event Summary & Action Taken</label>
                 <textarea
                   rows={3}
                   value={custodyNote}
                   onChange={(e) => setCustodyNote(e.target.value)}
                   placeholder="Describe forensic action taken or verified evidence indicators..."
-                  className="w-full bg-[#0D1322] border border-white/[0.08] rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                  className="w-full bg-[#EFF6FF] border border-[#E2E8F0] rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-cyan-500"
                   required
                 />
               </div>
@@ -1172,7 +1172,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                 <button
                   type="button"
                   onClick={() => setShowAddCustodyModal(false)}
-                  className="px-4 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 text-xs rounded-xl"
+                  className="px-4 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-[#E2E8F0] text-slate-700 text-xs rounded-xl"
                 >
                   Cancel
                 </button>
@@ -1192,23 +1192,23 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
       {showExportModal && reportData && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
           <div className="surface-card max-w-2xl w-full p-6 space-y-4 shadow-2xl border border-white/[0.1]">
-            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+            <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-3">
               <div className="flex items-center gap-2">
                 <FileText className="w-5 h-5 text-emerald-400" />
-                <h3 className="font-bold text-sm text-slate-100">Forensic Investigation Report (TLP:AMBER)</h3>
+                <h3 className="font-bold text-sm text-slate-900">Forensic Investigation Report (TLP:AMBER)</h3>
               </div>
-              <button onClick={() => setShowExportModal(false)} className="text-slate-400 hover:text-white"><X className="w-4 h-4" /></button>
+              <button onClick={() => setShowExportModal(false)} className="text-slate-600 hover:text-white"><X className="w-4 h-4" /></button>
             </div>
 
             <textarea
               readOnly
               rows={12}
               value={reportData.report_markdown}
-              className="w-full bg-[#0D1322] border border-white/[0.08] rounded-xl p-3.5 text-xs font-mono text-slate-200 focus:outline-none"
+              className="w-full bg-[#EFF6FF] border border-[#E2E8F0] rounded-xl p-3.5 text-xs font-mono text-slate-800 focus:outline-none"
             />
 
             <div className="flex items-center justify-between pt-2">
-              <span className="text-[11px] text-slate-400 font-mono">Report ID: {reportData.report_id}</span>
+              <span className="text-[11px] text-slate-600 font-mono">Report ID: {reportData.report_id}</span>
               <div className="flex gap-2">
                 <button
                   onClick={() => {
@@ -1216,14 +1216,14 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                     setCopiedMd(true);
                     setTimeout(() => setCopiedMd(false), 2000);
                   }}
-                  className="px-3.5 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs rounded-xl flex items-center gap-1.5 transition-colors"
+                  className="px-3.5 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-[#E2E8F0] text-slate-700 hover:text-white text-xs rounded-xl flex items-center gap-1.5 transition-colors"
                 >
                   {copiedMd ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copiedMd ? 'Copied Markdown' : 'Copy Markdown'}</span>
                 </button>
                 <button
                   onClick={() => setShowExportModal(false)}
-                  className="btn-tactile px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl"
+                  className="btn-tactile px-4 py-1.5 btn-block-primary text-white text-xs font-bold rounded-xl"
                 >
                   Done
                 </button>

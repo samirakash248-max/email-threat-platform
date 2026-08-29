@@ -142,35 +142,35 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] bg-ambient-mesh text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen bg-[#F8FAFC] bg-ambient-mesh text-slate-900 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
       {/* Top Header Navbar */}
-      <header className="border-b border-white/[0.08] bg-[#0D1322]/90 backdrop-blur-xl sticky top-0 z-40">
+      <header className="border-b border-blue-100 bg-white/95 backdrop-blur-xl sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="relative p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-glow-blue text-white flex items-center justify-center border border-white/20">
+            <div className="relative p-2 bg-blue-600 rounded-xl shadow-md shadow-blue-500/25 text-white flex items-center justify-center border border-blue-700">
               <Shield className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="font-bold text-sm tracking-tight text-white flex items-center gap-1.5">
+                <h1 className="font-bold text-sm tracking-tight text-slate-900 flex items-center gap-1.5">
                   ThreatSentinel
                 </h1>
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full uppercase tracking-wider">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span> SOC Console
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-bold bg-blue-50 text-blue-700 border border-blue-200 rounded-full uppercase tracking-wider">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span> SOC Console
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 font-normal">AI-Powered Email Threat Detection & Forensic Intelligence</p>
+              <p className="text-[11px] text-slate-500 font-normal">AI-Powered Email Threat Detection & Forensic Intelligence</p>
             </div>
           </div>
 
           <div className="flex items-center gap-2.5">
-            <nav className="hidden md:flex items-center gap-1 bg-[#0D1322]/80 p-1 rounded-xl border border-white/[0.06] shadow-inner-light">
+            <nav className="hidden md:flex items-center gap-1 bg-blue-50/60 p-1 rounded-xl border border-blue-100">
               <button
                 onClick={() => setCurrentView('dashboard')}
                 className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   currentView === 'dashboard'
-                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
+                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/25 font-bold'
+                    : 'text-slate-600 hover:text-blue-600 hover:bg-white'
                 }`}
               >
                 <LayoutDashboard className="w-3.5 h-3.5" /> Dashboard
@@ -183,8 +183,8 @@ export default function App() {
                 }}
                 className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   currentView === 'workspace'
-                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
+                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/25 font-bold'
+                    : 'text-slate-600 hover:text-blue-600 hover:bg-white'
                 }`}
               >
                 <FileSearch className="w-3.5 h-3.5" /> Workspace
@@ -194,8 +194,8 @@ export default function App() {
                 onClick={() => setCurrentView('correlation')}
                 className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   currentView === 'correlation'
-                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
+                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/25 font-bold'
+                    : 'text-slate-600 hover:text-blue-600 hover:bg-white'
                 }`}
               >
                 <Network className="w-3.5 h-3.5" /> Correlation
@@ -205,8 +205,8 @@ export default function App() {
                 onClick={() => setCurrentView('cases')}
                 className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   currentView === 'cases'
-                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
+                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/25 font-bold'
+                    : 'text-slate-600 hover:text-blue-600 hover:bg-white'
                 }`}
               >
                 <Briefcase className="w-3.5 h-3.5" /> Cases
@@ -216,8 +216,8 @@ export default function App() {
                 onClick={() => setCurrentView('blockchain')}
                 className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   currentView === 'blockchain'
-                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
+                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/25 font-bold'
+                    : 'text-slate-600 hover:text-blue-600 hover:bg-white'
                 }`}
               >
                 <Layers className="w-3.5 h-3.5" /> Blockchain
@@ -227,8 +227,8 @@ export default function App() {
                 onClick={() => setCurrentView('intel')}
                 className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   currentView === 'intel'
-                    ? 'bg-cyan-600 text-white shadow-sm shadow-cyan-500/20'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
+                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/25 font-bold'
+                    : 'text-slate-600 hover:text-blue-600 hover:bg-white'
                 }`}
               >
                 <Globe className="w-3.5 h-3.5" /> Threat Intel
@@ -237,24 +237,24 @@ export default function App() {
 
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="flex items-center gap-2 px-2.5 py-1.5 bg-[#0D1322] hover:bg-[#151D30] border border-white/[0.06] rounded-xl text-slate-400 hover:text-slate-200 transition-colors text-xs cursor-pointer shadow-inner-light"
+              className="flex items-center gap-2 px-2.5 py-1.5 bg-white hover:bg-blue-50 border border-slate-200 rounded-xl text-slate-600 hover:text-blue-600 transition-colors text-xs cursor-pointer shadow-sm"
               title="Global Search"
             >
               <Search className="w-3.5 h-3.5" />
               <span className="hidden sm:inline text-[11px] text-slate-500">Search</span>
-              <kbd className="hidden sm:inline px-1.5 py-0.5 text-[9px] font-mono bg-white/[0.05] border border-white/[0.08] rounded text-slate-400">⌘K</kbd>
+              <kbd className="hidden sm:inline px-1.5 py-0.5 text-[9px] font-mono bg-slate-100 border border-slate-200 rounded text-slate-600">⌘K</kbd>
             </button>
 
             <button
               onClick={() => setIsTourOpen(true)}
-              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/20 rounded-xl text-xs font-semibold transition-all cursor-pointer"
+              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-bold transition-all cursor-pointer"
             >
-              <Sparkles className="w-3.5 h-3.5 text-purple-400" /> Tour
+              <Sparkles className="w-3.5 h-3.5 text-indigo-600" /> Tour
             </button>
 
             <button
               onClick={() => setIsIntakeOpen(true)}
-              className="btn-tactile flex items-center gap-1.5 px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-glow-blue cursor-pointer"
+              className="btn-tactile bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md shadow-blue-500/25 cursor-pointer"
             >
               <Plus className="w-4 h-4" /> Ingest Email
             </button>
@@ -311,11 +311,11 @@ export default function App() {
             />
 
             {/* Mode Switcher */}
-            <div className="flex bg-[#0D1322] p-1 rounded-xl border border-white/[0.06] text-xs font-semibold shadow-inner-light">
+            <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-semibold">
               <button
                 onClick={() => setIntakeMode('paste')}
                 className={`flex-1 py-1.5 rounded-lg transition-all cursor-pointer ${
-                  intakeMode === 'paste' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+                  intakeMode === 'paste' ? 'bg-blue-600 text-white shadow-sm font-bold' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 Paste Raw RFC 5322
@@ -323,7 +323,7 @@ export default function App() {
               <button
                 onClick={() => setIntakeMode('upload')}
                 className={`flex-1 py-1.5 rounded-lg transition-all cursor-pointer ${
-                  intakeMode === 'upload' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+                  intakeMode === 'upload' ? 'bg-blue-600 text-white shadow-sm font-bold' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 Upload .EML File
@@ -331,7 +331,7 @@ export default function App() {
               <button
                 onClick={() => setIntakeMode('fields')}
                 className={`flex-1 py-1.5 rounded-lg transition-all cursor-pointer ${
-                  intakeMode === 'fields' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+                  intakeMode === 'fields' ? 'bg-blue-600 text-white shadow-sm font-bold' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 Structured Form
@@ -345,15 +345,15 @@ export default function App() {
                 placeholder="Paste raw email content (Received headers, From, To, Subject, Body)..."
                 value={rawPastedEmail}
                 onChange={(e) => setRawPastedEmail(e.target.value)}
-                className="w-full bg-[#0D1322] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-xl p-3.5 text-xs font-mono text-slate-200 focus:outline-none transition-all"
+                className="w-full bg-white border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-xl p-3.5 text-xs font-mono text-slate-900 focus:outline-none transition-all"
               />
             )}
 
             {intakeMode === 'upload' && (
-              <div className="border-2 border-dashed border-white/[0.1] hover:border-blue-500/50 rounded-xl p-8 text-center space-y-3 bg-[#0D1322] transition-colors">
-                <UploadCloud className="w-9 h-9 text-blue-400 mx-auto" />
+              <div className="border-2 border-dashed border-blue-200 hover:border-blue-500 rounded-xl p-8 text-center space-y-3 bg-blue-50/40 transition-colors">
+                <UploadCloud className="w-9 h-9 text-blue-600 mx-auto" />
                 <div>
-                  <label className="text-xs font-bold text-slate-200 block cursor-pointer hover:text-blue-400 transition-colors">
+                  <label className="text-xs font-bold text-slate-800 block cursor-pointer hover:text-blue-600 transition-colors">
                     Click to browse .eml or .txt message file
                     <input
                       type="file"
@@ -362,7 +362,7 @@ export default function App() {
                       onChange={(e) => setUploadedFile(e.target.files?.[0] || null)}
                     />
                   </label>
-                  <span className="text-[11px] text-slate-400 font-mono mt-1 block">
+                  <span className="text-[11px] text-slate-500 font-mono mt-1 block">
                     {uploadedFile ? uploadedFile.name : 'Max upload size: 15 MB'}
                   </span>
                 </div>
@@ -376,44 +376,44 @@ export default function App() {
                   placeholder="Subject Line"
                   value={formSubject}
                   onChange={(e) => setFormSubject(e.target.value)}
-                  className="col-span-2 bg-[#0D1322] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-lg p-2.5 text-slate-200 focus:outline-none"
+                  className="col-span-2 bg-white border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-lg p-2.5 text-slate-900 focus:outline-none"
                 />
                 <input
                   type="text"
                   placeholder="From (e.g. security@company.com)"
                   value={formSender}
                   onChange={(e) => setFormSender(e.target.value)}
-                  className="bg-[#0D1322] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-lg p-2.5 text-slate-200 focus:outline-none"
+                  className="bg-white border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-lg p-2.5 text-slate-900 focus:outline-none"
                 />
                 <input
                   type="text"
                   placeholder="To (e.g. user@domain.com)"
                   value={formRecipient}
                   onChange={(e) => setFormRecipient(e.target.value)}
-                  className="bg-[#0D1322] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-lg p-2.5 text-slate-200 focus:outline-none"
+                  className="bg-white border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-lg p-2.5 text-slate-900 focus:outline-none"
                 />
                 <textarea
                   rows={3}
                   placeholder="Raw Transport Headers (optional)..."
                   value={formHeaders}
                   onChange={(e) => setFormHeaders(e.target.value)}
-                  className="col-span-2 bg-[#0D1322] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-lg p-2.5 font-mono text-slate-200 focus:outline-none"
+                  className="col-span-2 bg-white border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-lg p-2.5 font-mono text-slate-900 focus:outline-none"
                 />
                 <textarea
                   rows={3}
                   placeholder="Email Plain Body Text..."
                   value={formBody}
                   onChange={(e) => setFormBody(e.target.value)}
-                  className="col-span-2 bg-[#0D1322] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-lg p-2.5 text-slate-200 focus:outline-none"
+                  className="col-span-2 bg-white border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-lg p-2.5 text-slate-900 focus:outline-none"
                 />
               </div>
             )}
 
-            <div className="flex items-center justify-between pt-3 border-t border-white/[0.08]">
+            <div className="flex items-center justify-between pt-3 border-t border-slate-200">
               <button
                 type="button"
                 onClick={() => setIsIntakeOpen(false)}
-                className="px-4 py-2 bg-white/[0.04] hover:bg-white/[0.08] text-slate-400 hover:text-slate-200 text-xs rounded-xl transition-colors"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 text-xs rounded-xl transition-colors font-medium cursor-pointer"
               >
                 Cancel
               </button>
@@ -421,7 +421,7 @@ export default function App() {
               <button
                 onClick={handleAnalyzeEmail}
                 disabled={loading}
-                className="btn-tactile flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold shadow-glow-blue disabled:opacity-50 cursor-pointer"
+                className="btn-tactile bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-bold shadow-md shadow-blue-500/25 disabled:opacity-50 cursor-pointer"
               >
                 {loading ? (
                   <>
@@ -441,9 +441,9 @@ export default function App() {
       {/* Reset Feedback Notification */}
       {resetFeedback && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 w-full">
-          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3 flex items-center justify-between text-xs text-emerald-300 animate-in fade-in duration-200">
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center justify-between text-xs text-emerald-800 animate-in fade-in duration-200">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
               <span>{resetFeedback}</span>
             </div>
           </div>
@@ -492,7 +492,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/[0.06] bg-[#0B0F19]/90 py-4 text-xs text-slate-500 mt-auto">
+      <footer className="border-t border-slate-200 bg-white py-4 text-xs text-slate-600 mt-auto">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
