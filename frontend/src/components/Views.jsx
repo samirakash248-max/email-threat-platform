@@ -46,7 +46,7 @@ export function DashboardView({ onSelectAnalysis, onOpenCase, onNewIntake }) {
   const [loading, setLoading] = useState(true);
   const [seeding, setSeeding] = useState(false);
   const [seedSuccess, setSeedSuccess] = useState(null);
-  const [visibleCount, setVisibleCount] = useState(10);
+  const [visibleCount, setVisibleCount] = useState(50);
 
   const fetchStats = async () => {
     setLoading(true);
@@ -363,36 +363,58 @@ export function DashboardView({ onSelectAnalysis, onOpenCase, onNewIntake }) {
             </div>
 
             {/* Pagination Controls / Show More Button */}
-            {recent_analyses.length > 10 && (
-              <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-                <span className="text-xs text-slate-400 font-mono">
-                  Showing {Math.min(visibleCount, recent_analyses.length)} of {recent_analyses.length} Forensic Records
-                </span>
+            {recent_analyses.length > 0 && (
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-white/[0.06]">
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-slate-400 font-mono">
+                    Showing {Math.min(visibleCount, recent_analyses.length)} of {recent_analyses.length} Forensic Records
+                  </span>
+
+                  {/* Quick Page Size Selectors */}
+                  <div className="hidden sm:flex items-center gap-1 bg-white/[0.03] p-0.5 rounded-lg border border-white/[0.06] text-[11px] font-mono">
+                    <span className="text-slate-500 px-1.5">View:</span>
+                    {[10, 25, 50].map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => setVisibleCount(size)}
+                        className={`px-2 py-0.5 rounded transition-colors cursor-pointer ${
+                          visibleCount === size
+                            ? 'bg-blue-600 text-white font-bold'
+                            : 'text-slate-400 hover:text-slate-200'
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => setVisibleCount(recent_analyses.length)}
+                      className={`px-2 py-0.5 rounded transition-colors cursor-pointer ${
+                        visibleCount >= recent_analyses.length
+                          ? 'bg-blue-600 text-white font-bold'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      All
+                    </button>
+                  </div>
+                </div>
 
                 <div className="flex items-center gap-2">
                   {visibleCount < recent_analyses.length && (
-                    <>
-                      <button
-                        onClick={() => setVisibleCount((prev) => Math.min(prev + 10, recent_analyses.length))}
-                        className="btn-tactile flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/25 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
-                      >
-                        <ChevronDown className="w-3.5 h-3.5" /> Show More (+10)
-                      </button>
-                      <button
-                        onClick={() => setVisibleCount(recent_analyses.length)}
-                        className="btn-tactile flex items-center gap-1 px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/[0.08] rounded-xl text-xs font-semibold transition-colors cursor-pointer"
-                      >
-                        Show All ({recent_analyses.length})
-                      </button>
-                    </>
+                    <button
+                      onClick={() => setVisibleCount((prev) => Math.min(prev + 10, recent_analyses.length))}
+                      className="btn-tactile flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/25 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+                    >
+                      <ChevronDown className="w-3.5 h-3.5" /> Show More (+10)
+                    </button>
                   )}
 
-                  {visibleCount > 10 && (
+                  {visibleCount > 10 && recent_analyses.length > 10 && (
                     <button
                       onClick={() => setVisibleCount(10)}
                       className="btn-tactile flex items-center gap-1.5 px-3.5 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-slate-400 hover:text-slate-200 border border-white/[0.08] rounded-xl text-xs font-semibold transition-colors cursor-pointer"
                     >
-                      <ChevronUp className="w-3.5 h-3.5" /> Show Less
+                      <ChevronUp className="w-3.5 h-3.5" /> Collapse to 10
                     </button>
                   )}
                 </div>
