@@ -142,9 +142,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#080B11] bg-ambient-mesh text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen bg-[#0B0F19] bg-ambient-mesh text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
       {/* Top Header Navbar */}
-      <header className="border-b border-white/[0.08] bg-[#090D18]/85 backdrop-blur-xl sticky top-0 z-40">
+      <header className="border-b border-white/[0.08] bg-[#0D1322]/90 backdrop-blur-xl sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="relative p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-glow-blue text-white flex items-center justify-center border border-white/20">
@@ -164,7 +164,7 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-2.5">
-            <nav className="hidden md:flex items-center gap-1 bg-[#0B0F19]/80 p-1 rounded-xl border border-white/[0.06] shadow-inner-light">
+            <nav className="hidden md:flex items-center gap-1 bg-[#0D1322]/80 p-1 rounded-xl border border-white/[0.06] shadow-inner-light">
               <button
                 onClick={() => setCurrentView('dashboard')}
                 className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
@@ -237,7 +237,7 @@ export default function App() {
 
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="flex items-center gap-2 px-2.5 py-1.5 bg-[#0B0F19] hover:bg-[#141B2D] border border-white/[0.06] rounded-xl text-slate-400 hover:text-slate-200 transition-colors text-xs cursor-pointer shadow-inner-light"
+              className="flex items-center gap-2 px-2.5 py-1.5 bg-[#0D1322] hover:bg-[#151D30] border border-white/[0.06] rounded-xl text-slate-400 hover:text-slate-200 transition-colors text-xs cursor-pointer shadow-inner-light"
               title="Global Search"
             >
               <Search className="w-3.5 h-3.5" />
@@ -311,7 +311,7 @@ export default function App() {
             />
 
             {/* Mode Switcher */}
-            <div className="flex bg-[#0A0E17] p-1 rounded-xl border border-white/[0.06] text-xs font-semibold shadow-inner-light">
+            <div className="flex bg-[#0D1322] p-1 rounded-xl border border-white/[0.06] text-xs font-semibold shadow-inner-light">
               <button
                 onClick={() => setIntakeMode('paste')}
                 className={`flex-1 py-1.5 rounded-lg transition-all cursor-pointer ${
@@ -345,12 +345,12 @@ export default function App() {
                 placeholder="Paste raw email content (Received headers, From, To, Subject, Body)..."
                 value={rawPastedEmail}
                 onChange={(e) => setRawPastedEmail(e.target.value)}
-                className="w-full bg-[#0A0E17] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-xl p-3.5 text-xs font-mono text-slate-200 focus:outline-none transition-all"
+                className="w-full bg-[#0D1322] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-xl p-3.5 text-xs font-mono text-slate-200 focus:outline-none transition-all"
               />
             )}
 
             {intakeMode === 'upload' && (
-              <div className="border-2 border-dashed border-white/[0.1] hover:border-blue-500/50 rounded-xl p-8 text-center space-y-3 bg-[#0A0E17] transition-colors">
+              <div className="border-2 border-dashed border-white/[0.1] hover:border-blue-500/50 rounded-xl p-8 text-center space-y-3 bg-[#0D1322] transition-colors">
                 <UploadCloud className="w-9 h-9 text-blue-400 mx-auto" />
                 <div>
                   <label className="text-xs font-bold text-slate-200 block cursor-pointer hover:text-blue-400 transition-colors">
@@ -376,35 +376,35 @@ export default function App() {
                   placeholder="Subject Line"
                   value={formSubject}
                   onChange={(e) => setFormSubject(e.target.value)}
-                  className="col-span-2 bg-[#0A0E17] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-lg p-2.5 text-slate-200 focus:outline-none"
+                  className="col-span-2 bg-[#0D1322] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-lg p-2.5 text-slate-200 focus:outline-none"
                 />
                 <input
                   type="text"
                   placeholder="From (e.g. security@company.com)"
                   value={formSender}
                   onChange={(e) => setFormSender(e.target.value)}
-                  className="bg-[#0A0E17] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-lg p-2.5 text-slate-200 focus:outline-none"
+                  className="bg-[#0D1322] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-lg p-2.5 text-slate-200 focus:outline-none"
                 />
                 <input
                   type="text"
                   placeholder="To (e.g. user@domain.com)"
                   value={formRecipient}
                   onChange={(e) => setFormRecipient(e.target.value)}
-                  className="bg-[#0A0E17] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-lg p-2.5 text-slate-200 focus:outline-none"
+                  className="bg-[#0D1322] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-lg p-2.5 text-slate-200 focus:outline-none"
                 />
                 <textarea
                   rows={3}
                   placeholder="Raw Transport Headers (optional)..."
                   value={formHeaders}
                   onChange={(e) => setFormHeaders(e.target.value)}
-                  className="col-span-2 bg-[#0A0E17] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-lg p-2.5 font-mono text-slate-200 focus:outline-none"
+                  className="col-span-2 bg-[#0D1322] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-lg p-2.5 font-mono text-slate-200 focus:outline-none"
                 />
                 <textarea
                   rows={3}
                   placeholder="Email Plain Body Text..."
                   value={formBody}
                   onChange={(e) => setFormBody(e.target.value)}
-                  className="col-span-2 bg-[#0A0E17] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-lg p-2.5 text-slate-200 focus:outline-none"
+                  className="col-span-2 bg-[#0D1322] border border-white/[0.08] focus:border-blue-500/80 focus:ring-2 focus:ring-blue-500/20 rounded-lg p-2.5 text-slate-200 focus:outline-none"
                 />
               </div>
             )}
@@ -492,7 +492,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/[0.06] bg-[#080B11]/80 py-4 text-xs text-slate-500 mt-auto">
+      <footer className="border-t border-white/[0.06] bg-[#0B0F19]/90 py-4 text-xs text-slate-500 mt-auto">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>

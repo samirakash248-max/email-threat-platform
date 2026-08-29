@@ -456,40 +456,40 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
 
           {/* Blockchain Verification Detail Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs font-mono">
-            <div className="p-2.5 rounded-lg bg-[#080B11] border border-white/[0.04] space-y-0.5">
+            <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-white/[0.04] space-y-0.5">
               <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Evidence ID</span>
               <span className="text-slate-200 truncate block font-bold select-all">{analysis_id}</span>
             </div>
 
-            <div className="p-2.5 rounded-lg bg-[#080B11] border border-white/[0.04] space-y-0.5">
+            <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-white/[0.04] space-y-0.5">
               <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Evidence SHA-256 Hash</span>
               <span className="text-cyan-400 truncate block select-all">
                 {blockchainVerification?.canonical_evidence_hash || tamper_seal?.payload_sha256 || 'N/A'}
               </span>
             </div>
 
-            <div className="p-2.5 rounded-lg bg-[#080B11] border border-white/[0.04] space-y-0.5">
+            <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-white/[0.04] space-y-0.5">
               <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Blockchain Tx / Reference ID</span>
               <span className="text-amber-400 truncate block select-all">
                 {blockchainVerification?.tx_id || tamper_seal?.tx_id || `0x${(tamper_seal?.block_hash || '00').slice(0, 36)}...`}
               </span>
             </div>
 
-            <div className="p-2.5 rounded-lg bg-[#080B11] border border-white/[0.04] space-y-0.5">
+            <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-white/[0.04] space-y-0.5">
               <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Registration Timestamp</span>
               <span className="text-slate-300 truncate block">
                 {tamper_seal?.timestamp_utc ? tamper_seal.timestamp_utc.replace('T', ' ').slice(0, 19) + ' UTC' : 'N/A'}
               </span>
             </div>
 
-            <div className="p-2.5 rounded-lg bg-[#080B11] border border-white/[0.04] space-y-0.5">
+            <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-white/[0.04] space-y-0.5">
               <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Chain-of-Custody Status</span>
               <span className="text-emerald-400 font-bold block">
                 {custodyData?.status || 'VERIFIED'} ({custodyData?.total_events || 4} Lifecycle Events)
               </span>
             </div>
 
-            <div className="p-2.5 rounded-lg bg-[#080B11] border border-white/[0.04] space-y-0.5">
+            <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-white/[0.04] space-y-0.5">
               <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Verification Result</span>
               <span className={`block font-bold truncate ${
                 blockchainVerification?.tamper_detected ? 'text-rose-400' : 'text-emerald-400'
@@ -504,7 +504,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="flex bg-[#0A0E17] p-1 rounded-xl border border-white/[0.06] gap-1 overflow-x-auto text-xs font-semibold shadow-inner-light">
+      <div className="flex bg-[#0D1322] p-1 rounded-xl border border-white/[0.06] gap-1 overflow-x-auto text-xs font-semibold shadow-inner-light">
         {[
           { id: 'synthesis', label: 'Executive Synthesis', icon: ShieldAlert },
           { id: 'custody', label: `Chain of Custody (${custodyData?.events?.length || 4})`, icon: Lock },
@@ -634,7 +634,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                     </p>
                   )}
 
-                  <div className="p-2.5 rounded-lg bg-[#080B11] border border-white/[0.04] text-[11px] font-mono space-y-1 text-slate-400">
+                  <div className="p-2.5 rounded-lg bg-[#0B0F19] border border-white/[0.04] text-[11px] font-mono space-y-1 text-slate-400">
                     <div className="truncate select-all">
                       Event SHA-256: <span className="text-cyan-400">{evt.event_hash}</span>
                     </div>
@@ -757,7 +757,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                 placeholder="Filter header keys / values..."
                 value={headerFilter}
                 onChange={(e) => setHeaderFilter(e.target.value)}
-                className="w-full bg-[#0A0E17] border border-white/[0.08] focus:border-blue-500/80 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:outline-none"
+                className="w-full bg-[#0D1322] border border-white/[0.08] focus:border-blue-500/80 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:outline-none"
               />
               <Search className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-2.5 pointer-events-none" />
             </div>
@@ -784,7 +784,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
         <div className="space-y-5">
           {/* Leaflet Dark Map */}
           <div className="surface-card overflow-hidden">
-            <div className="p-3.5 bg-[#0A0E17] border-b border-white/[0.08] flex items-center justify-between text-xs">
+            <div className="p-3.5 bg-[#0D1322] border-b border-white/[0.08] flex items-center justify-between text-xs">
               <span className="font-bold text-slate-200 flex items-center gap-2">
                 <Globe className="w-4 h-4 text-blue-400" /> Observed MTA Mail Relay Path
               </span>
@@ -799,7 +799,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                 zoom={2}
                 scrollWheelZoom={false}
                 className="dark-map-tiles"
-                style={{ height: '100%', width: '100%', backgroundColor: '#0A0E17' }}
+                style={{ height: '100%', width: '100%', backgroundColor: '#0D1322' }}
               >
                 <TileLayer
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -829,7 +829,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
             <h3 className="font-bold text-sm text-slate-100">Chronological Relay Transit Chain ({relays.length} Hops)</h3>
             <div className="overflow-x-auto rounded-xl border border-white/[0.06]">
               <table className="w-full text-left text-xs font-mono">
-                <thead className="bg-[#0A0E17] text-slate-400 text-[10px] uppercase font-sans">
+                <thead className="bg-[#0D1322] text-slate-400 text-[10px] uppercase font-sans">
                   <tr>
                     <th className="p-3">Hop</th>
                     <th className="p-3">Received By / From</th>
@@ -838,7 +838,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                     <th className="p-3">Delay</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/[0.04] bg-[#0E131F]/40 text-[11px]">
+                <tbody className="divide-y divide-white/[0.04] bg-[#111726]/40 text-[11px]">
                   {relays.map((r) => (
                     <tr key={r.hop_number} className="hover:bg-white/[0.03] transition-colors">
                       <td className="p-3 font-bold text-blue-400">#{r.hop_number}</td>
@@ -1033,7 +1033,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
               placeholder="Ask Copilot about sender authentication, lookalike domains, or MTA hops..."
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
-              className="flex-1 bg-[#0A0E17] border border-white/[0.08] focus:border-blue-500/80 rounded-xl px-3.5 py-2 text-xs text-slate-200 focus:outline-none"
+              className="flex-1 bg-[#0D1322] border border-white/[0.08] focus:border-blue-500/80 rounded-xl px-3.5 py-2 text-xs text-slate-200 focus:outline-none"
             />
             <button
               type="submit"
@@ -1137,7 +1137,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                 <select
                   value={custodyEventType}
                   onChange={(e) => setCustodyEventType(e.target.value)}
-                  className="w-full bg-[#0A0E17] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                  className="w-full bg-[#0D1322] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
                 >
                   <option value="ANALYST_REVIEW">ANALYST_REVIEW (Forensic Assessment & Verification)</option>
                   <option value="REPORT_GENERATED">REPORT_GENERATED (Intelligence Export)</option>
@@ -1151,7 +1151,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                   type="text"
                   value={custodyAuthor}
                   onChange={(e) => setCustodyAuthor(e.target.value)}
-                  className="w-full bg-[#0A0E17] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                  className="w-full bg-[#0D1322] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
                   required
                 />
               </div>
@@ -1163,7 +1163,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
                   value={custodyNote}
                   onChange={(e) => setCustodyNote(e.target.value)}
                   placeholder="Describe forensic action taken or verified evidence indicators..."
-                  className="w-full bg-[#0A0E17] border border-white/[0.08] rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                  className="w-full bg-[#0D1322] border border-white/[0.08] rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
                   required
                 />
               </div>
@@ -1204,7 +1204,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
               readOnly
               rows={12}
               value={reportData.report_markdown}
-              className="w-full bg-[#0A0E17] border border-white/[0.08] rounded-xl p-3.5 text-xs font-mono text-slate-200 focus:outline-none"
+              className="w-full bg-[#0D1322] border border-white/[0.08] rounded-xl p-3.5 text-xs font-mono text-slate-200 focus:outline-none"
             />
 
             <div className="flex items-center justify-between pt-2">

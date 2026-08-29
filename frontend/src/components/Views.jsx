@@ -108,7 +108,7 @@ export function DashboardView({ onSelectAnalysis, onOpenCase, onNewIntake }) {
   return (
     <div className="space-y-6">
       {/* Demo Seeder Banner */}
-      <div className="surface-card bg-gradient-to-r from-blue-950/20 via-[#0F1421] to-purple-950/20 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-blue-500/20">
+      <div className="surface-card bg-gradient-to-r from-blue-950/20 via-[#111726] to-purple-950/20 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-blue-500/20">
         <div className="flex items-center gap-3.5">
           <div className="p-2.5 bg-blue-500/10 border border-blue-500/25 rounded-xl text-blue-400 shadow-glow-blue flex-shrink-0">
             <Sparkles className="w-5 h-5" />
@@ -212,7 +212,7 @@ export function DashboardView({ onSelectAnalysis, onOpenCase, onNewIntake }) {
             <p className="text-xs text-slate-400 mt-0.5">Classification of Analyzed Email Corpus</p>
           </div>
 
-          <div className="w-full bg-[#0A0E17] h-3 rounded-full overflow-hidden flex border border-white/[0.06] p-0.5">
+          <div className="w-full bg-[#0D1322] h-3 rounded-full overflow-hidden flex border border-white/[0.06] p-0.5">
             <div style={{ width: `${getPercentage(threat_distribution.critical)}%` }} className="bg-rose-500 h-full rounded-l-full transition-all duration-500" title={`Critical: ${threat_distribution.critical}`} />
             <div style={{ width: `${getPercentage(threat_distribution.high)}%` }} className="bg-orange-500 h-full transition-all duration-500" title={`High: ${threat_distribution.high}`} />
             <div style={{ width: `${getPercentage(threat_distribution.medium)}%` }} className="bg-amber-500 h-full transition-all duration-500" title={`Medium: ${threat_distribution.medium}`} />
@@ -304,7 +304,7 @@ export function DashboardView({ onSelectAnalysis, onOpenCase, onNewIntake }) {
           <>
             <div className="overflow-x-auto rounded-xl border border-white/[0.06]">
               <table className="w-full text-left text-xs">
-                <thead className="bg-[#0A0E17] text-slate-400 text-[10px] uppercase font-semibold">
+                <thead className="bg-[#0D1322] text-slate-400 text-[10px] uppercase font-semibold">
                   <tr>
                     <th className="p-3.5">Subject / Incident Name</th>
                     <th className="p-3.5">Sender (From)</th>
@@ -315,7 +315,7 @@ export function DashboardView({ onSelectAnalysis, onOpenCase, onNewIntake }) {
                     <th className="p-3.5 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/[0.04] bg-[#0E131F]/40 font-mono text-[11px]">
+                <tbody className="divide-y divide-white/[0.04] bg-[#111726]/40 font-mono text-[11px]">
                   {recent_analyses.slice(0, visibleCount).map((item) => (
                     <tr key={item.id} className="hover:bg-white/[0.03] transition-colors">
                       <td className="p-3.5 font-sans font-semibold text-slate-200 max-w-xs truncate">
@@ -505,7 +505,7 @@ export function CorrelationView({ onSelectAnalysis }) {
                     <button
                       key={emailId}
                       onClick={() => onSelectAnalysis(emailId)}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#0A0E17] hover:bg-blue-500/20 text-blue-400 border border-white/[0.08] hover:border-blue-500/40 rounded-lg text-[11px] font-mono cursor-pointer transition-colors"
+                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#0D1322] hover:bg-blue-500/20 text-blue-400 border border-white/[0.08] hover:border-blue-500/40 rounded-lg text-[11px] font-mono cursor-pointer transition-colors"
                     >
                       <Mail className="w-3 h-3" />
                       <span>{emailId.slice(0, 8)}...</span>
@@ -524,7 +524,7 @@ export function CorrelationView({ onSelectAnalysis }) {
         {edges.length > 0 && (
           <div className="overflow-x-auto rounded-xl border border-white/[0.06]">
             <table className="w-full text-left text-xs font-mono">
-              <thead className="bg-[#0A0E17] text-slate-400 text-[10px] uppercase font-sans">
+              <thead className="bg-[#0D1322] text-slate-400 text-[10px] uppercase font-sans">
                 <tr>
                   <th className="p-3.5">Source</th>
                   <th className="p-3.5">Relationship</th>
@@ -532,7 +532,7 @@ export function CorrelationView({ onSelectAnalysis }) {
                   <th className="p-3.5">Rationale</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/[0.04] bg-[#0E131F]/40 text-[11px]">
+              <tbody className="divide-y divide-white/[0.04] bg-[#111726]/40 text-[11px]">
                 {edges.map((e, idx) => (
                   <tr key={idx} className="hover:bg-white/[0.03] transition-colors">
                     <td className="p-3.5 text-blue-400 font-bold">{e.source}</td>
@@ -734,7 +734,7 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
                   placeholder="e.g. Spear-Phishing Campaign Targeting CFO"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className="w-full bg-[#0A0E17] border border-white/[0.08] focus:border-blue-500/80 rounded-xl p-2.5 text-slate-200 focus:outline-none"
+                  className="w-full bg-[#0D1322] border border-white/[0.08] focus:border-blue-500/80 rounded-xl p-2.5 text-slate-200 focus:outline-none"
                 />
               </div>
 
@@ -745,7 +745,7 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
                   placeholder="Summary of threat scope, affected users, and objective..."
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
-                  className="w-full bg-[#0A0E17] border border-white/[0.08] focus:border-blue-500/80 rounded-xl p-2.5 text-slate-200 focus:outline-none"
+                  className="w-full bg-[#0D1322] border border-white/[0.08] focus:border-blue-500/80 rounded-xl p-2.5 text-slate-200 focus:outline-none"
                 />
               </div>
 
@@ -754,7 +754,7 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
                 <select
                   value={newPriority}
                   onChange={(e) => setNewPriority(e.target.value)}
-                  className="w-full bg-[#0A0E17] border border-white/[0.08] focus:border-blue-500/80 rounded-xl p-2.5 text-slate-200 focus:outline-none"
+                  className="w-full bg-[#0D1322] border border-white/[0.08] focus:border-blue-500/80 rounded-xl p-2.5 text-slate-200 focus:outline-none"
                 >
                   <option value="CRITICAL">CRITICAL (Active Breach / Malware)</option>
                   <option value="HIGH">HIGH (Targeted Phishing / BEC)</option>
@@ -797,7 +797,7 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="bg-[#0A0E17] border border-white/[0.08] text-[11px] text-slate-300 rounded-lg px-2 py-1 focus:outline-none focus:border-blue-500"
+              className="bg-[#0D1322] border border-white/[0.08] text-[11px] text-slate-300 rounded-lg px-2 py-1 focus:outline-none focus:border-blue-500"
             >
               <option value="ALL">Filter: All Statuses</option>
               <option value="OPEN">Filter: OPEN</option>
@@ -867,7 +867,7 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
                       <select
                         value={activeCaseData.status}
                         onChange={(e) => handleUpdateStatus(e.target.value)}
-                        className="bg-[#0A0E17] border border-white/[0.08] text-xs font-semibold text-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 cursor-pointer"
+                        className="bg-[#0D1322] border border-white/[0.08] text-xs font-semibold text-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 cursor-pointer"
                       >
                         <option value="OPEN">OPEN (Active)</option>
                         <option value="IN_PROGRESS">IN PROGRESS (Triage)</option>
@@ -881,7 +881,7 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
                       <select
                         value={activeCaseData.priority}
                         onChange={(e) => handleUpdatePriority(e.target.value)}
-                        className="bg-[#0A0E17] border border-white/[0.08] text-xs font-semibold text-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 cursor-pointer"
+                        className="bg-[#0D1322] border border-white/[0.08] text-xs font-semibold text-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 cursor-pointer"
                       >
                         <option value="CRITICAL">CRITICAL</option>
                         <option value="HIGH">HIGH</option>
@@ -968,7 +968,7 @@ export function CaseManager({ currentAnalysis, onSelectAnalysisFromCase }) {
                     placeholder="Type an analyst observation or forensic note..."
                     value={newNoteContent}
                     onChange={(e) => setNewNoteContent(e.target.value)}
-                    className="flex-1 bg-[#0A0E17] border border-white/[0.08] focus:border-blue-500/80 rounded-xl px-3.5 py-2 text-xs text-slate-200 focus:outline-none"
+                    className="flex-1 bg-[#0D1322] border border-white/[0.08] focus:border-blue-500/80 rounded-xl px-3.5 py-2 text-xs text-slate-200 focus:outline-none"
                   />
                   <button
                     type="submit"
@@ -1253,7 +1253,7 @@ export function SampleEmailSelector({ onSelectSample, disabled }) {
           onChange={handleChange}
           defaultValue=""
           disabled={disabled || loading}
-          className="w-full appearance-none bg-[#0A0E17] border border-white/[0.08] hover:border-blue-500/50 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500 cursor-pointer disabled:opacity-50 transition-colors"
+          className="w-full appearance-none bg-[#0D1322] border border-white/[0.08] hover:border-blue-500/50 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500 cursor-pointer disabled:opacity-50 transition-colors"
         >
           <option value="" disabled>Choose a synthetic test email...</option>
           {samples.map((s) => (
@@ -1621,7 +1621,7 @@ export function ThreatIntelView() {
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="surface-card bg-gradient-to-r from-cyan-950/20 via-[#0F1421] to-blue-950/20 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-cyan-500/20">
+      <div className="surface-card bg-gradient-to-r from-cyan-950/20 via-[#111726] to-blue-950/20 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-cyan-500/20">
         <div className="flex items-center gap-3.5">
           <div className="p-3 bg-cyan-500/10 border border-cyan-500/25 rounded-xl text-cyan-400 shadow-glow-blue flex-shrink-0">
             <Globe className="w-6 h-6" />
@@ -1712,7 +1712,7 @@ export function ThreatIntelView() {
           <select
             value={verifyType}
             onChange={(e) => setVerifyType(e.target.value)}
-            className="bg-[#0A0E17] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
+            className="bg-[#0D1322] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
           >
             <option value="DOMAIN">DOMAIN</option>
             <option value="IP_ADDRESS">IP ADDRESS</option>
@@ -1726,7 +1726,7 @@ export function ThreatIntelView() {
             placeholder="e.g. login-verify-banking.com, 185.220.101.5, or sha256:e3b0c..."
             value={verifyValue}
             onChange={(e) => setVerifyValue(e.target.value)}
-            className="flex-1 bg-[#0A0E17] border border-white/[0.08] rounded-xl px-3.5 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
+            className="flex-1 bg-[#0D1322] border border-white/[0.08] rounded-xl px-3.5 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
           />
 
           <button
@@ -1767,7 +1767,7 @@ export function ThreatIntelView() {
             <p className="text-[11px] leading-relaxed font-sans">{verifyResult.verification_details}</p>
 
             {verifyResult.is_known_threat && (
-              <div className="pt-2 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-mono bg-[#080B11]/60 p-2.5 rounded-lg border border-white/[0.04]">
+              <div className="pt-2 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-mono bg-[#0B0F19]/60 p-2.5 rounded-lg border border-white/[0.04]">
                 <div>Source: <strong className="text-slate-200">{verifyResult.source_org}</strong></div>
                 <div>Category: <strong className="text-slate-200">{verifyResult.threat_category}</strong></div>
                 <div>Peer Confirmations: <strong className="text-cyan-400">{verifyResult.observation_count} nodes</strong></div>
@@ -1787,7 +1787,7 @@ export function ThreatIntelView() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex bg-[#0A0E17] p-1 rounded-xl border border-white/[0.06] text-xs font-semibold">
+            <div className="flex bg-[#0D1322] p-1 rounded-xl border border-white/[0.06] text-xs font-semibold">
               {['ALL', 'DOMAIN', 'IP_ADDRESS', 'FILE_HASH'].map((t) => (
                 <button
                   key={t}
@@ -1808,7 +1808,7 @@ export function ThreatIntelView() {
               placeholder="Filter IoCs..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-[#0A0E17] border border-white/[0.08] rounded-xl px-3 py-1 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono w-40"
+              className="bg-[#0D1322] border border-white/[0.08] rounded-xl px-3 py-1 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono w-40"
             />
           </div>
         </div>
@@ -1821,7 +1821,7 @@ export function ThreatIntelView() {
         ) : (
           <div className="overflow-x-auto rounded-xl border border-white/[0.06]">
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#0A0E17] text-slate-400 text-[10px] uppercase font-semibold">
+              <thead className="bg-[#0D1322] text-slate-400 text-[10px] uppercase font-semibold">
                 <tr>
                   <th className="p-3.5">Type</th>
                   <th className="p-3.5">Indicator Value (IoC)</th>
@@ -1833,7 +1833,7 @@ export function ThreatIntelView() {
                   <th className="p-3.5">Blockchain Tx</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/[0.04] bg-[#0E131F]/40 font-mono text-[11px]">
+              <tbody className="divide-y divide-white/[0.04] bg-[#111726]/40 font-mono text-[11px]">
                 {filteredIndicators.map((ind) => (
                   <tr key={ind.id} className="hover:bg-white/[0.03] transition-colors">
                     <td className="p-3.5">
@@ -1899,7 +1899,7 @@ export function ThreatIntelView() {
                   <select
                     value={regType}
                     onChange={(e) => setRegType(e.target.value)}
-                    className="w-full bg-[#0A0E17] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
+                    className="w-full bg-[#0D1322] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
                   >
                     <option value="DOMAIN">DOMAIN</option>
                     <option value="IP_ADDRESS">IP ADDRESS</option>
@@ -1914,7 +1914,7 @@ export function ThreatIntelView() {
                   <select
                     value={regCategory}
                     onChange={(e) => setRegCategory(e.target.value)}
-                    className="w-full bg-[#0A0E17] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
+                    className="w-full bg-[#0D1322] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
                   >
                     <option value="PHISHING">PHISHING</option>
                     <option value="CREDENTIAL_HARVESTER">CREDENTIAL HARVESTER</option>
@@ -1932,7 +1932,7 @@ export function ThreatIntelView() {
                   placeholder="e.g. login-update-auth.com or 185.220.101.5"
                   value={regValue}
                   onChange={(e) => setRegValue(e.target.value)}
-                  className="w-full bg-[#0A0E17] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
+                  className="w-full bg-[#0D1322] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
                   required
                 />
               </div>
@@ -1943,7 +1943,7 @@ export function ThreatIntelView() {
                   <select
                     value={regSeverity}
                     onChange={(e) => setRegSeverity(e.target.value)}
-                    className="w-full bg-[#0A0E17] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
+                    className="w-full bg-[#0D1322] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
                   >
                     <option value="CRITICAL">CRITICAL</option>
                     <option value="HIGH">HIGH</option>
@@ -1960,7 +1960,7 @@ export function ThreatIntelView() {
                     max="100"
                     value={regConfidence}
                     onChange={(e) => setRegConfidence(Number(e.target.value))}
-                    className="w-full h-2 bg-[#0A0E17] rounded-lg cursor-pointer accent-cyan-500 mt-2.5"
+                    className="w-full h-2 bg-[#0D1322] rounded-lg cursor-pointer accent-cyan-500 mt-2.5"
                   />
                 </div>
               </div>
@@ -1971,7 +1971,7 @@ export function ThreatIntelView() {
                   type="text"
                   value={regOrg}
                   onChange={(e) => setRegOrg(e.target.value)}
-                  className="w-full bg-[#0A0E17] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
+                  className="w-full bg-[#0D1322] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
                   required
                 />
               </div>
@@ -1983,7 +1983,7 @@ export function ThreatIntelView() {
                   placeholder="Observed in spear-phishing campaign impersonating Microsoft 365..."
                   value={regDesc}
                   onChange={(e) => setRegDesc(e.target.value)}
-                  className="w-full bg-[#0A0E17] border border-white/[0.08] rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                  className="w-full bg-[#0D1322] border border-white/[0.08] rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
                 />
               </div>
 
