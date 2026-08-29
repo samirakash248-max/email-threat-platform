@@ -156,50 +156,50 @@ export function DashboardView({ onSelectAnalysis, onOpenCase, onNewIntake }) {
 
       {/* Top Telemetry Metric Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
-        <div className="surface-card surface-card-hover p-4 space-y-1.5">
+        <div className="surface-card surface-card-hover p-4 space-y-1.5 border border-slate-200 shadow-sm">
           <div className="flex items-center justify-between text-slate-600 text-xs font-medium">
             <span>Analyzed Messages</span>
-            <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-400"><Mail className="w-3.5 h-3.5" /></div>
+            <div className="p-1.5 rounded-lg bg-blue-50 text-blue-600 border border-blue-100"><Mail className="w-3.5 h-3.5" /></div>
           </div>
-          <div className="text-2xl font-bold text-white font-mono tabular-nums tracking-tight">{total_analyzed_emails}</div>
+          <div className="text-2xl font-bold text-slate-900 font-mono tabular-nums tracking-tight">{total_analyzed_emails}</div>
           <div className="text-[10px] text-slate-500 font-mono">SQLite Persistent Store</div>
         </div>
 
-        <div className="surface-card surface-card-hover p-4 space-y-1.5">
+        <div className="surface-card surface-card-hover p-4 space-y-1.5 border border-slate-200 shadow-sm">
           <div className="flex items-center justify-between text-slate-600 text-xs font-medium">
             <span>High/Critical Alerts</span>
-            <div className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400"><ShieldAlert className="w-3.5 h-3.5" /></div>
+            <div className="p-1.5 rounded-lg bg-rose-50 text-rose-600 border border-rose-100"><ShieldAlert className="w-3.5 h-3.5" /></div>
           </div>
-          <div className="text-2xl font-bold text-rose-400 font-mono tabular-nums tracking-tight">{high_critical_threats}</div>
+          <div className="text-2xl font-bold text-rose-600 font-mono tabular-nums tracking-tight">{high_critical_threats}</div>
           <div className="text-[10px] text-slate-500 font-mono">
             {total_analyzed_emails > 0 ? `${Math.round((high_critical_threats / total_analyzed_emails) * 100)}% Alert Ratio` : '0%'}
           </div>
         </div>
 
-        <div className="surface-card surface-card-hover p-4 space-y-1.5">
+        <div className="surface-card surface-card-hover p-4 space-y-1.5 border border-slate-200 shadow-sm">
           <div className="flex items-center justify-between text-slate-600 text-xs font-medium">
             <span>Active Case Incidents</span>
-            <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-400"><Briefcase className="w-3.5 h-3.5" /></div>
+            <div className="p-1.5 rounded-lg bg-purple-50 text-purple-600 border border-purple-100"><Briefcase className="w-3.5 h-3.5" /></div>
           </div>
-          <div className="text-2xl font-bold text-purple-400 font-mono tabular-nums tracking-tight">{active_cases}</div>
+          <div className="text-2xl font-bold text-purple-600 font-mono tabular-nums tracking-tight">{active_cases}</div>
           <div className="text-[10px] text-slate-500 font-mono">Multi-Email Correlation</div>
         </div>
 
-        <div className="surface-card surface-card-hover p-4 space-y-1.5">
+        <div className="surface-card surface-card-hover p-4 space-y-1.5 border border-slate-200 shadow-sm">
           <div className="flex items-center justify-between text-slate-600 text-xs font-medium">
             <span>Suspicious Domains</span>
-            <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400"><Globe className="w-3.5 h-3.5" /></div>
+            <div className="p-1.5 rounded-lg bg-amber-50 text-amber-600 border border-amber-100"><Globe className="w-3.5 h-3.5" /></div>
           </div>
-          <div className="text-2xl font-bold text-amber-400 font-mono tabular-nums tracking-tight">{suspicious_domains_count}</div>
+          <div className="text-2xl font-bold text-amber-600 font-mono tabular-nums tracking-tight">{suspicious_domains_count}</div>
           <div className="text-[10px] text-slate-500 font-mono">Lookalikes & Typo Squats</div>
         </div>
 
-        <div className="surface-card surface-card-hover p-4 space-y-1.5">
+        <div className="surface-card surface-card-hover p-4 space-y-1.5 border border-slate-200 shadow-sm">
           <div className="flex items-center justify-between text-slate-600 text-xs font-medium">
             <span>Flagged Transit IPs</span>
-            <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400"><Server className="w-3.5 h-3.5" /></div>
+            <div className="p-1.5 rounded-lg bg-cyan-50 text-cyan-700 border border-cyan-100"><Server className="w-3.5 h-3.5" /></div>
           </div>
-          <div className="text-2xl font-bold text-cyan-400 font-mono tabular-nums tracking-tight">{suspicious_ips_count}</div>
+          <div className="text-2xl font-bold text-cyan-700 font-mono tabular-nums tracking-tight">{suspicious_ips_count}</div>
           <div className="text-[10px] text-slate-500 font-mono">Observed Relay Nodes</div>
         </div>
       </div>
