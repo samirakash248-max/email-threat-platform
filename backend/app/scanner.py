@@ -14,6 +14,8 @@ from app.ip_intelligence import get_ip_intelligence
 from app.domain_intelligence import get_domain_intelligence
 
 from app.mitre_mapper import map_findings_to_mitre
+from app.assessment_engine import calculate_investigative_assessment
+from app.privacy import apply_privacy_masking
 from app.models import (
     AuthStatus,
     AuthResults,
@@ -694,21 +696,22 @@ def create_tamper_seal(analysis_id: str, payload_dict: Dict[str, Any], timestamp
         current_seal_hash=seal_hash
     )
 
-def scan_email(
-    raw_bytes: Optional[bytes] = None,
-    raw_text: Optional[str] = None,
-    subject: Optional[str] = None,
-    sender: Optional[str] = None,
-    recipient: Optional[str] = None,
-    headers_text: Optional[str] = None,
-    body_text: Optional[str] = None
-) -> FullAnalysisResult:
-    """Main scanning pipeline."""
-    analysis_id = str(hashlib.md5(f"{datetime.now()}{subject}{sender}".encode()).hexdigest())
-    timestamp = datetime.now(timezone.utc).isoformat()
 
+def generate_analysis_id(msg: EmailMessage, raw_bytes: Optional[bytes] = None, raw_text: Optional[str] = None, subject: Optional[str] = None, sender: Optional[str] = None, headers_text: Optional[str] = None, body_text: Optional[str] = None) -> str:
+    message_id = msg.get("Message-ID")
+    if message_id:
+        base_str = f"MSGID:{message_id.strip()}"
+    else:
+        raw_payload = raw_bytes if raw_bytes else (raw_text.encode('utf-8', errors='ignore') if raw_text else b"")
+        if not raw_payload:
+            base_str = f"FALLBACK:{subject}:{sender}:{headers_text}:{body_text}"
+        else:
+            base_str = f"RAW:{hashlib.sha256(raw_payload).hexdigest()}"
+    return hashlib.sha256(base_str.encode('utf-8')).hexdigest()
+
+def get_parsed_message(raw_bytes=None, raw_text=None, subject=None, sender=None, recipient=None, headers_text=None, body_text=None) -> EmailMessage:
     if raw_bytes or raw_text:
-        msg = parse_raw_message(raw_bytes=raw_bytes, raw_text=raw_text)
+        return parse_raw_message(raw_bytes=raw_bytes, raw_text=raw_text)
     else:
         msg = EmailMessage()
         if sender: msg["From"] = sender
@@ -720,6 +723,24 @@ def scan_email(
                     k, v = line.split(":", 1)
                     msg[k.strip()] = v.strip()
         msg.set_content(body_text or "")
+        return msg
+
+def scan_email(
+    raw_bytes: Optional[bytes] = None,
+    raw_text: Optional[str] = None,
+    subject: Optional[str] = None,
+    sender: Optional[str] = None,
+    recipient: Optional[str] = None,
+    headers_text: Optional[str] = None,
+    body_text: Optional[str] = None,
+    pre_parsed_msg: Optional[EmailMessage] = None,
+    force_id: Optional[str] = None
+) -> FullAnalysisResult:
+    """Main scanning pipeline."""
+    timestamp = datetime.now(timezone.utc).isoformat()
+    
+    msg = pre_parsed_msg if pre_parsed_msg else get_parsed_message(raw_bytes, raw_text, subject, sender, recipient, headers_text, body_text)
+    analysis_id = force_id if force_id else generate_analysis_id(msg, raw_bytes, raw_text, subject, sender, headers_text, body_text)
 
     metadata, received_headers, urls, attachments = extract_message_parts(msg)
     auth = parse_auth_headers(metadata.get("all_headers", {}))
@@ -743,6 +764,47 @@ def scan_email(
             "lookalike_target_brand": TYPOSQUAT_BRANDS.get(from_d)
         }
 
+    
+    class FakeParsedEmail:
+        pass
+    pe = FakeParsedEmail()
+    pe.sender = metadata.get("from_address", "")
+    pe.reply_to = metadata.get("reply_to", "")
+    
+    # Actually get the full IP and Domain intel for assessment
+    full_ip_intel = {}
+    for r in relays:
+        if r.ip_address and not r.is_private_ip:
+            try:
+                full_ip_intel[r.ip_address] = get_ip_intelligence(r.ip_address).model_dump()
+            except Exception:
+                pass
+                
+    full_domain_intel = {}
+    if from_d:
+        try:
+            full_domain_intel[from_d] = get_domain_intelligence(from_d).model_dump()
+        except Exception:
+            pass
+            
+    investigative_assessment = calculate_investigative_assessment(
+        auth_results=auth,
+        threat_score=threat_score,
+        ip_intel_dict=full_ip_intel,
+        domain_intel=full_domain_intel,
+        parsed_email=pe
+    )
+
+    # Add privacy-safe masked fields to metadata (non-destructively)
+    temp_result = {
+        "metadata": metadata,
+        "extracted_urls": [u.model_dump() for u in urls],
+        "relays": [r.model_dump() for r in relays],
+        "iocs": [i.model_dump() for i in iocs]
+    }
+    safe_data = apply_privacy_masking(temp_result, drop_raw=False)
+    metadata = safe_data["metadata"]
+
     return FullAnalysisResult(
         analysis_id=analysis_id,
         timestamp=timestamp,
@@ -754,6 +816,7 @@ def scan_email(
         url_forensics=[u.model_dump() for u in urls],
         ip_intelligence={h.ip_address: {"ip": h.ip_address, "country": h.country, "org": h.organization, "is_private": h.is_private_ip} for h in relays if h.ip_address},
         domain_intelligence=domain_intel,
+        investigative_assessment=investigative_assessment,
         attachments=attachments,
         detection_findings=findings,
         threat_score=threat_score,

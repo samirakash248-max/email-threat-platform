@@ -17,7 +17,7 @@ import {
   GlobalSearchModal,
   DemoTourModal,
   SampleEmailSelector,
-  AnalyticsView
+  AnalyticsView, BulkResultsView
 } from './components/Views';
 
 export default function App() {
@@ -86,7 +86,37 @@ export default function App() {
 
   const handleAnalyzeEmail = async () => {
     setError(null);
+    setBulkError(null);
     try {
+      if (intakeMode === 'bulk') {
+        if (uploadedBulkFiles.length === 0) throw new Error("Select files first.");
+        
+        let fileToUpload = uploadedBulkFiles[0];
+        const fd = new FormData();
+        fd.append('file', fileToUpload);
+
+        // using fetch directly since api wrapper might not have it
+        const response = await fetch('http://localhost:8000/api/analyze-bulk', {
+          method: 'POST',
+          body: fd
+        });
+        
+        if (!response.ok) {
+            const errBody = await response.json().catch(()=>({}));
+            throw new Error(errBody.detail || "Bulk import failed.");
+        }
+        
+        const data = await response.json();
+        
+        setBulkResults(data);
+        setIsIntakeOpen(false);
+        setUploadedBulkFiles([]);
+        setLoading(false);
+        setBulkError(null);
+        setCurrentView('bulk-results');
+        return;
+      }
+      
       let res;
       if (intakeMode === 'paste') {
         if (!rawPastedEmail.trim()) {
@@ -467,6 +497,20 @@ export default function App() {
 
       {/* Main App Body */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full">
+        
+        {currentView === 'bulk-results' && (
+          <BulkResultsView 
+            bulkResults={bulkResults} 
+            onImportAnother={() => {
+              setCurrentView('dashboard');
+              setIntakeMode('bulk');
+              setIsIntakeOpen(true);
+              setBulkResults(null);
+              setBulkError(null);
+            }} 
+          />
+        )}
+
         {currentView === 'dashboard' && (
           <DashboardView
             onSelectAnalysis={handleSelectAnalysis}

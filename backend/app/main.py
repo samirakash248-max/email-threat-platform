@@ -5,6 +5,51 @@ from datetime import datetime, timezone
 from contextlib import asynccontextmanager
 from typing import List, Optional
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Query
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+import hmac
+import zipfile
+import tempfile
+import shutil
+
+security = HTTPBearer(auto_error=False)
+
+def verify_ingestion_auth(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    configured_key = os.getenv("INGESTION_API_KEY")
+    if not configured_key:
+        return True
+    if not credentials or not credentials.credentials:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    if not hmac.compare_digest(credentials.credentials.encode(), configured_key.encode()):
+        raise HTTPException(status_code=403, detail="Invalid API Key")
+    return True
+
+AUTO_CASE_THRESHOLD = int(os.getenv("AUTO_CASE_THRESHOLD", "80"))
+
+def check_and_create_auto_case(result: FullAnalysisResult, db: Session) -> Optional[str]:
+    if result.threat_score.overall_score >= AUTO_CASE_THRESHOLD:
+        from app.correlator import correlate_case
+        case_id = str(uuid.uuid4())
+        c = CaseRecord(
+            id=case_id,
+            title=f"AUTO-INC: {result.threat_score.risk_level} Risk - {result.metadata.get('subject', 'No Subject')}"[:200],
+            description=f"Automatically escalated due to threat score {result.threat_score.overall_score} >= {AUTO_CASE_THRESHOLD}.",
+            status="NEW",
+            priority="HIGH" if result.threat_score.risk_level in ["High", "Critical"] else "MEDIUM",
+            attached_analysis_ids=[result.analysis_id],
+            notes_json=[{
+                "id": str(uuid.uuid4()),
+                "author": "System",
+                "content": f"Automatically created from machine ingestion.",
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }]
+        )
+        db.add(c)
+        db.commit()
+        # Graph generation isn't strictly imported directly in some scopes but build_graph_for_case is defined further down
+        # We can just call correlate_case
+        correlate_case(c, db)
+        return case_id
+    return None
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -35,7 +80,9 @@ from app.models import (
 )
 from app.mitre_mapper import MITRE_CATALOG
 from app.scanner import scan_email
-from app.blockchain import blockchain_service, blockchain_engine, MerkleTree
+from app.blockchain import blockchain_service
+from app.privacy import apply_privacy_masking
+from app.blockchain import blockchain_engine, MerkleTree
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -155,10 +202,21 @@ def save_analysis(result: FullAnalysisResult, db: Session):
         db.rollback()
 
 @app.post("/api/analyze-email", response_model=FullAnalysisResult)
-async def analyze_email_json(payload: EmailInput, db: Session = Depends(get_db)):
+async def analyze_email_json(payload: EmailInput, db: Session = Depends(get_db), auth: bool = Depends(verify_ingestion_auth)):
     if not (payload.raw_email or payload.headers or payload.body or payload.subject or payload.sender):
         raise HTTPException(status_code=400, detail="Provide raw email content or structured fields.")
+    
+    from app.scanner import get_parsed_message, generate_analysis_id
+    msg = get_parsed_message(raw_text=payload.raw_email, subject=payload.subject, sender=payload.sender, recipient=payload.recipient, headers_text=payload.headers, body_text=payload.body)
+    aid = generate_analysis_id(msg, raw_text=payload.raw_email, subject=payload.subject, sender=payload.sender, headers_text=payload.headers, body_text=payload.body)
+    
+    existing = db.query(EmailRecord).filter_by(id=aid).first()
+    if existing:
+        return existing.data_json
+
     result = scan_email(
+        pre_parsed_msg=msg,
+        force_id=aid,
         raw_text=payload.raw_email,
         subject=payload.subject,
         sender=payload.sender,
@@ -167,6 +225,7 @@ async def analyze_email_json(payload: EmailInput, db: Session = Depends(get_db))
         body_text=payload.body
     )
     save_analysis(result, db)
+    check_and_create_auto_case(result, db)
     return result
 
 MAX_FILE_SIZE_BYTES = int(os.getenv("MAX_UPLOAD_SIZE_BYTES", 15_728_640))
@@ -179,8 +238,18 @@ async def analyze_email_file(file: UploadFile = File(...), db: Session = Depends
             status_code=413,
             detail=f"File exceeds maximum allowed size of {MAX_FILE_SIZE_BYTES // (1024*1024)} MB."
         )
-    result = scan_email(raw_bytes=content)
+        
+    from app.scanner import get_parsed_message, generate_analysis_id
+    msg = get_parsed_message(raw_bytes=content)
+    aid = generate_analysis_id(msg, raw_bytes=content)
+    
+    existing = db.query(EmailRecord).filter_by(id=aid).first()
+    if existing:
+        return existing.data_json
+        
+    result = scan_email(pre_parsed_msg=msg, force_id=aid, raw_bytes=content)
     save_analysis(result, db)
+    check_and_create_auto_case(result, db)
     return result
 
 @app.get("/api/analysis/{analysis_id}", response_model=FullAnalysisResult)
@@ -488,30 +557,36 @@ def get_threat_intel_stats(db: Session = Depends(get_db)):
     }
 
 @app.get("/api/analysis/{analysis_id}/report")
-def export_report(analysis_id: str, db: Session = Depends(get_db)):
+def export_report(analysis_id: str, mode: str = "FULL_FORENSIC", db: Session = Depends(get_db)):
     record = db.query(EmailRecord).filter(EmailRecord.id == analysis_id).first()
     if not record:
         raise HTTPException(status_code=404, detail="Not found")
     
-    # Append REPORT_GENERATED lifecycle event to chain of custody
+    export_actor = "ThreatSentinel-Reporter"
+    export_summary = "TLP:AMBER forensic report exported by investigator."
+    
+    data = record.data_json
+    if mode == "PRIVACY_SAFE":
+        data = apply_privacy_masking(data, drop_raw=True)
+        export_summary = "TLP:GREEN privacy-safe report exported (PII masked, IOCs preserved)."
+        
     blockchain_service.append_custody_event(
         evidence_id=analysis_id,
         event_type="REPORT_GENERATED",
-        actor="ThreatSentinel-Reporter",
-        details={"summary": "TLP:AMBER forensic report exported by investigator.", "action_code": "REPORT_EXPORT"},
+        actor=export_actor,
+        details={"summary": export_summary, "action_code": "REPORT_EXPORT", "export_mode": mode},
         db=db
     )
     
-    data = record.data_json
     markdown = f"""# ThreatSentinel Forensic Report
-**ID**: `{analysis_id}` | **Classification**: `TLP:AMBER`
+**ID**: `{analysis_id}` | **Classification**: `{'TLP:GREEN (Privacy Safe)' if mode == 'PRIVACY_SAFE' else 'TLP:AMBER (Full Forensic)'}`
 **Subject**: {record.subject} | **Threat Score**: {record.threat_score}/100 ({record.risk_level})
 **Sender**: `{record.sender}`
 
 ## Summary
 {data.get('threat_score', {}).get('explanation')}
 """
-    return {"report_id": f"REP-{analysis_id[:8]}", "report_markdown": markdown, "report_json": data}
+    return {"report_id": f"REP-{analysis_id[:8]}", "export_mode": mode, "report_markdown": markdown, "report_json": data}
 
 # =========================================================================
 # CONTROLLED FORENSIC INTEGRITY DEMO MECHANISM (DEVELOPMENT / SIH DEMO ONLY)
@@ -742,16 +817,16 @@ def sync_case_mitre(case_id: str, db: Session):
                     tech_map[tid] = mapping
                 else:
                     tech_map[tid]["supporting_indicators"].extend(mapping["supporting_indicators"])
-                    if mapping["confidence"] == "HIGH":
+                    if mapping.get("confidence") == "HIGH":
                         tech_map[tid]["confidence"] = "HIGH"
                         
     for tid, mapping in tech_map.items():
         db.add(CaseAttackTechniqueRecord(
             case_id=case_id,
             technique_id=tid,
-            confidence=mapping["confidence"],
-            reason=mapping["reason"],
-            supporting_indicators=list(set(mapping["supporting_indicators"]))
+            confidence=mapping.get("confidence", "UNKNOWN"),
+            reason=mapping.get("reason", "No reason provided."),
+            supporting_indicators=list(set(mapping.get("supporting_indicators", [])))
         ))
     db.commit()
 
@@ -1140,7 +1215,7 @@ def get_campaign(camp_id: str, db: Session = Depends(get_db)):
 
 
 @app.get("/api/cases/{case_id}/export")
-def export_case(case_id: str, db: Session = Depends(get_db)):
+def export_case(case_id: str, mode: str = "FULL_FORENSIC", db: Session = Depends(get_db)):
     c = db.query(CaseRecord).filter(CaseRecord.id == case_id).first()
     if not c: raise HTTPException(status_code=404, detail="Case not found")
     
@@ -1157,11 +1232,15 @@ def export_case(case_id: str, db: Session = Depends(get_db)):
     for aid in (c.attached_analysis_ids or []):
         em = db.query(EmailRecord).filter_by(id=aid).first()
         if em:
+            em_data = em.data_json
+            if mode == "PRIVACY_SAFE":
+                em_data = apply_privacy_masking(em_data, drop_raw=True)
             emails_meta.append({
                 "id": em.id,
                 "subject": em.subject,
                 "threat_score": em.threat_score,
                 "risk_level": em.risk_level,
+                "data": em_data,
                 "triggered_rules": [f["rule_name"] for f in (em.data_json or {}).get("detection_findings", [])]
             })
 
@@ -1172,14 +1251,15 @@ def export_case(case_id: str, db: Session = Depends(get_db)):
         "priority": c.priority,
         "assigned_analyst": c.assigned_analyst,
         "created_at": c.created_at.isoformat() if c.created_at else None,
+        "export_mode": mode,
         "indicators": inds,
         "mitre_techniques": techs,
         "campaign_relationships": case_camps,
-        "emails": emails_meta,
+        "attached_emails": emails_meta,
         "analyst_notes": c.notes_json
     }
     
-    print("REPORT:", report); return report
+    return report
 
 # Static Files & SPA
 DIST_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist"))
@@ -1221,3 +1301,81 @@ if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PORT", 8000))
     uvicorn.run("app.main:app", host="0.0.0.0", port=port, reload=False)
+
+
+MAX_BULK_EMAILS = int(os.getenv("MAX_BULK_EMAILS", "1000"))
+MAX_BULK_ARCHIVE_MB = int(os.getenv("MAX_BULK_ARCHIVE_MB", "100"))
+MAX_SINGLE_EMAIL_MB = int(os.getenv("MAX_SINGLE_EMAIL_MB", "15"))
+
+@app.post("/api/analyze-bulk")
+async def analyze_bulk_emails(file: UploadFile = File(...), db: Session = Depends(get_db), auth: bool = Depends(verify_ingestion_auth)):
+    content = await file.read()
+    if len(content) > MAX_BULK_ARCHIVE_MB * 1024 * 1024:
+        raise HTTPException(413, "Archive exceeds maximum allowed size.")
+
+    results = []
+    stats = {"total": 0, "analyzed": 0, "duplicates": 0, "failed": 0, "critical": 0, "high": 0, "medium": 0, "low": 0, "automatically_escalated_cases": 0}
+    batch_id = str(uuid.uuid4())
+
+    def process_single(filename, payload_bytes):
+        if len(payload_bytes) > MAX_SINGLE_EMAIL_MB * 1024 * 1024:
+            stats["failed"] += 1
+            return {"filename": filename, "status": "FAILED", "error": "Exceeds single email size limit"}
+        try:
+            from app.scanner import get_parsed_message, generate_analysis_id, scan_email
+            msg = get_parsed_message(raw_bytes=payload_bytes)
+            aid = generate_analysis_id(msg, raw_bytes=payload_bytes)
+            
+            existing = db.query(EmailRecord).filter_by(id=aid).first()
+            if existing:
+                stats["duplicates"] += 1
+                return {"filename": filename, "status": "DUPLICATE", "analysis_id": aid, "threat_score": existing.threat_score, "threat_level": existing.risk_level}
+
+            stats["analyzed"] += 1
+            result = scan_email(pre_parsed_msg=msg, force_id=aid, raw_bytes=payload_bytes)
+            save_analysis(result, db)
+            case_id = check_and_create_auto_case(result, db)
+            
+            if case_id: stats["automatically_escalated_cases"] += 1
+            tl = result.threat_score.risk_level.lower()
+            if tl in stats: stats[tl] += 1
+
+            return {"filename": filename, "status": "ANALYZED", "analysis_id": aid, "threat_score": result.threat_score.overall_score, "threat_level": result.threat_score.risk_level, "case_id": case_id}
+        except Exception as e:
+            stats["failed"] += 1
+            return {"filename": filename, "status": "FAILED", "error": str(e)[:100]}
+
+    if file.filename.lower().endswith(".zip"):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            zip_path = os.path.join(tmpdir, "upload.zip")
+            with open(zip_path, "wb") as f:
+                f.write(content)
+            try:
+                with zipfile.ZipFile(zip_path, "r") as z:
+                    extracted_size = 0
+                    for info in z.infolist():
+                        if stats["total"] >= MAX_BULK_EMAILS:
+                            break
+                        if info.is_dir() or not info.filename.lower().endswith(".eml"):
+                            continue
+                        if info.filename.startswith("/") or ".." in info.filename:
+                            continue
+                        
+                        extracted_size += info.file_size
+                        if extracted_size > MAX_BULK_ARCHIVE_MB * 1024 * 1024 * 5:
+                            raise HTTPException(413, "Uncompressed size exceeds safety limits.")
+                        
+                        payload_bytes = z.read(info.filename)
+                        stats["total"] += 1
+                        res = process_single(os.path.basename(info.filename), payload_bytes)
+                        results.append(res)
+            except zipfile.BadZipFile:
+                raise HTTPException(400, "Invalid ZIP archive.")
+    elif file.filename.lower().endswith(".eml"):
+         stats["total"] = 1
+         res = process_single(file.filename, content)
+         results.append(res)
+    else:
+         raise HTTPException(400, "Must be .zip or .eml file.")
+
+    return {"batch_id": batch_id, "summary": stats, "results": results}

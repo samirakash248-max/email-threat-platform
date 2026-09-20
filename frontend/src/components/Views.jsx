@@ -2423,3 +2423,139 @@ export function AnalyticsView() {
     </div>
   );
 }
+
+
+export function BulkResultsView({ bulkResults, onImportAnother }) {
+  if (!bulkResults) return null;
+  const s = bulkResults.summary || {};
+  const results = bulkResults.results || [];
+
+  const getSafeErrorMessage = (errStr) => {
+    if (!errStr) return "Email could not be analysed";
+    const lower = String(errStr).toLowerCase();
+    if (lower.includes('size limit') || lower.includes('too large') || lower.includes('exceed')) {
+      return "Email exceeds the allowed size";
+    }
+    if (lower.includes('parse') || lower.includes('malformed')) {
+      return "Email could not be parsed";
+    }
+    if (lower.includes('unsupported') || lower.includes('format')) {
+      return "Unsupported email format";
+    }
+    if (lower.includes('invalid')) {
+      return "Invalid email format";
+    }
+    return "Email could not be analysed";
+  };
+
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-black text-slate-900 tracking-tight">Bulk Analysis Complete</h2>
+          <p className="text-sm text-slate-500">Batch ID: <span className="font-mono text-xs">{bulkResults.batch_id}</span></p>
+        </div>
+        <button
+          onClick={onImportAnother}
+          className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold shadow-md hover:bg-blue-700 transition-colors flex items-center gap-2"
+        >
+          <RefreshCw className="w-4 h-4" /> Import Another Batch
+        </button>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <BulkStatCard title="Total Emails" value={s.total || 0} icon={Mail} />
+        <BulkStatCard title="Analyzed" value={s.analyzed || 0} icon={CheckCircle2} />
+        <BulkStatCard title="Duplicates" value={s.duplicates || 0} icon={RefreshCw} />
+        <BulkStatCard title="Failed" value={s.failed || 0} icon={AlertTriangle} color="text-rose-600" />
+        <BulkStatCard title="Escalated Cases" value={s.automatically_escalated_cases || 0} icon={Briefcase} color="text-amber-600" />
+      </div>
+
+      <div className="grid grid-cols-4 gap-4">
+        <BulkStatCard title="Critical Risk" value={s.critical || 0} color="text-rose-600" />
+        <BulkStatCard title="High Risk" value={s.high || 0} color="text-amber-500" />
+        <BulkStatCard title="Medium Risk" value={s.medium || 0} color="text-blue-500" />
+        <BulkStatCard title="Low Risk" value={s.low || 0} color="text-emerald-500" />
+      </div>
+
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mt-6">
+        <div className="px-5 py-4 border-b border-slate-200 bg-slate-50/50">
+          <h3 className="font-bold text-slate-800 text-sm">Per-Email Results</h3>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold text-xs uppercase tracking-wider">
+                <th className="px-5 py-3">Filename</th>
+                <th className="px-5 py-3">Status</th>
+                <th className="px-5 py-3">Score</th>
+                <th className="px-5 py-3">Level</th>
+                <th className="px-5 py-3">Case</th>
+                <th className="px-5 py-3">Analysis ID</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {results.map((r, i) => (
+                <tr key={i} className="hover:bg-slate-50/50 transition-colors">
+                  <td className="px-5 py-3 font-medium text-slate-800 truncate max-w-[200px]" title={r.filename}>{r.filename || '�'}</td>
+                  <td className="px-5 py-3">
+                    <span className={`px-2 py-1 text-[10px] font-bold rounded-md uppercase ${
+                      r.status === 'ANALYZED' ? 'bg-emerald-100 text-emerald-800' :
+                      r.status === 'DUPLICATE' ? 'bg-slate-100 text-slate-700' :
+                      'bg-rose-100 text-rose-800'
+                    }`}>
+                      {r.status || '�'}
+                    </span>
+                    {r.error && (
+                      <div className="mt-1">
+                        <p className="text-[10px] text-rose-500 font-medium">Analysis failed for this email.</p>
+                        <p className="text-[10px] text-rose-400 truncate max-w-[150px]" title={getSafeErrorMessage(r.error)}>
+                          Reason: {getSafeErrorMessage(r.error)}
+                        </p>
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-5 py-3 font-mono text-slate-600">{r.threat_score ?? '�'}</td>
+                  <td className="px-5 py-3">
+                    {r.threat_level ? (
+                      <span className={`px-2 py-1 text-[10px] font-bold rounded-md uppercase ${
+                        r.threat_level === 'Critical' ? 'bg-rose-100 text-rose-800' :
+                        r.threat_level === 'High' ? 'bg-amber-100 text-amber-800' :
+                        r.threat_level === 'Medium' ? 'bg-blue-100 text-blue-800' :
+                        'bg-emerald-100 text-emerald-800'
+                      }`}>
+                        {r.threat_level}
+                      </span>
+                    ) : '�'}
+                  </td>
+                  <td className="px-5 py-3 font-mono text-xs text-slate-500">
+                    {r.case_id ? <span className="text-amber-600 font-bold" title={r.case_id}>AUTO-INC</span> : '�'}
+                  </td>
+                  <td className="px-5 py-3 font-mono text-[10px] text-slate-400 truncate max-w-[120px]" title={r.analysis_id}>{r.analysis_id || '�'}</td>
+                </tr>
+              ))}
+              {results.length === 0 && (
+                <tr>
+                  <td colSpan="6" className="px-5 py-8 text-center text-slate-500 text-sm">No detailed results available.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BulkStatCard({ title, value, icon: Icon, color }) {
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex items-center justify-between">
+      <div>
+        <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{title}</p>
+        <p className={`text-2xl font-black mt-1 ${color || 'text-slate-800'}`}>{value}</p>
+      </div>
+      {Icon && <Icon className={`w-8 h-8 ${color || 'text-slate-300'}`} />}
+    </div>
+  );
+}

@@ -34,3 +34,8 @@ Thumbs.db
 
 # Docker
 docker-compose.override.yml
+# Local ML model weights
+ml_model/
+
+# Temporary development scripts
+scratch/

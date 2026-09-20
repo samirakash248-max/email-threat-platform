@@ -4,6 +4,8 @@ import os
 from datetime import datetime, timezone
 from typing import Optional
 from pydantic import BaseModel, Field
+from app.models import ReputationResult
+from app.reputation_intelligence import check_ip_reputation
 
 class IPIntelligence(BaseModel):
     ip: str
@@ -26,6 +28,7 @@ class IPIntelligence(BaseModel):
     confidence: str = Field(default="Unknown", description="High, Medium, Low, Unknown")
     source: str = "Local Deterministic Fallback"
     timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    reputation: Optional[ReputationResult] = None
 
 # Small cached deterministic lists for major clouds and Tor (for testing/fallback)
 TOR_NODES = {"185.220.101.4", "185.220.101.5", "192.42.116.16", "109.70.100.22"}

@@ -157,6 +157,24 @@ class EmailInput(BaseModel):
     sender: Optional[str] = Field(None, max_length=500)
     recipient: Optional[str] = Field(None, max_length=500)
 
+
+class ReputationSourceResult(BaseModel):
+    provider: str
+    listed: bool
+    response: Optional[str] = None
+    status: str
+
+class ReputationResult(BaseModel):
+    indicator: str
+    indicator_type: str = "IP"
+    listed: bool
+    sources: List[str] = []
+    source_results: List[ReputationSourceResult] = []
+    confidence: int = 0
+    checked_at: str
+    provider_status: str
+    botnet_association: str = "UNKNOWN"
+
 class AuthStatus(BaseModel):
     status: str = "none"
     domain: Optional[str] = None
@@ -273,6 +291,14 @@ class MitreAttackMapping(BaseModel):
     reason: str
     supporting_indicators: List[str] = Field(default_factory=list)
     confidence: str
+
+class InvestigativeAssessment(BaseModel):
+    vector: str
+    confidence: int
+    reasons: List[str] = []
+    supporting_indicators: List[str] = []
+    evidence_basis: List[str] = []
+    assessment_type: str = "INVESTIGATIVE_ASSESSMENT"
 
 class FullAnalysisResult(BaseModel):
     analysis_id: str

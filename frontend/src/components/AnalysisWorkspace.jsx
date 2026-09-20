@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Shield, FileCode, Network, Globe, Link2, Key, ShieldAlert,
   Database, Clock, Download, CheckCircle, FileText, X, Share2,
@@ -193,6 +193,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
     investigation_summary = {},
     timeline = [],
     iocs = [],
+    investigative_assessment = null,
     ai_assessment = {},
     tamper_seal = {}
   } = analysis;
@@ -989,7 +990,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
             </div>
           </div>
         </div>
-      )activeTab === 'attachments' && (
+      )} {activeTab === 'attachments' && (
         <div className="surface-card p-6 space-y-5">
           <h3 className="font-bold text-sm text-slate-900">Extracted Attachments & Cryptographic Hashes</h3>
           {attachments.length === 0 ? (
