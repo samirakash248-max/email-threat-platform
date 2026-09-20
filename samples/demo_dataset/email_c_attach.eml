@@ -1,0 +1,18 @@
+From: "Vendor" <vendor@somewhere.com>
+To: employee@trusted-bank.com
+Subject: Invoice 12345
+Date: Tue, 19 Sep 2026 10:20:00 +0000
+Message-ID: <c1@somewhere.com>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="boundary-c"
+
+--boundary-c
+Content-Type: text/plain; charset="utf-8"
+
+Please see the attached invoice.
+--boundary-c
+Content-Type: application/x-msdownload; name="invoice.exe"
+Content-Disposition: attachment; filename="invoice.exe"
+
+MZ...
+--boundary-c--

@@ -1,0 +1,13 @@
+From: "CEO John Doe" <ceo@trustd-bank.com>
+To: employee@trusted-bank.com
+Reply-To: attacker@evil.com
+Subject: URGENT: Wire Transfer Authorization
+Date: Tue, 19 Sep 2026 10:00:00 +0000
+Message-ID: <a1@trustd-bank.com>
+MIME-Version: 1.0
+Content-Type: text/html; charset="utf-8"
+
+<p>Please process this wire transfer immediately!</p>
+<p>Log in here to authorize: <a href="http://192.168.1.100/login.zip">https://trusted-bank.com/secure-login</a></p>
+
+<p>Thanks,<br>John</p>

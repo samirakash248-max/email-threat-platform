@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime, timezone
 from typing import List, Dict, Optional, Any
 from pydantic import BaseModel, Field
-from sqlalchemy import create_engine, Column, String, Integer, DateTime, JSON, Text
+from sqlalchemy import create_engine, func, Column, String, Integer, DateTime, JSON, Text
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 # Database Setup - Fixed Absolute Path to ensure persistent data across restarts
@@ -43,8 +43,9 @@ class CaseRecord(Base):
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     title = Column(String, nullable=False)
     description = Column(Text, nullable=True)
-    status = Column(String, default="OPEN", index=True)
+    status = Column(String, default="NEW", index=True)
     priority = Column(String, default="HIGH", index=True)
+    assigned_analyst = Column(String, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     attached_analysis_ids = Column(JSON, default=list)
@@ -94,6 +95,50 @@ class ThreatIntelRecord(Base):
     observation_count = Column(Integer, default=1)
     details_json = Column(JSON, default=dict)
 
+class AttackTechniqueRecord(Base):
+    __tablename__ = "attack_techniques"
+    id = Column(String, primary_key=True)
+    name = Column(String, nullable=False)
+    tactic = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+
+class CaseAttackTechniqueRecord(Base):
+    __tablename__ = "case_attack_techniques"
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    case_id = Column(String, index=True)
+    technique_id = Column(String, index=True)
+    confidence = Column(String)
+    reason = Column(Text)
+    supporting_indicators = Column(JSON, default=list)
+
+class GraphEdgeRecord(Base):
+    __tablename__ = "graph_edges"
+    
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    source_type = Column(String, index=True) # "email", "case"
+    source_id = Column(String, index=True)
+    target_type = Column(String, index=True) # "ip", "domain", "url", "hash", "sender", "technique", "email", "case"
+    target_id = Column(String, index=True)
+    relation = Column(String, index=True) # "CONNECTS_TO", "REFERENCES", "CONTAINS_URL", "HAS_HASH", "MAPS_TO", "SENT_BY", "BELONGS_TO"
+
+
+class CampaignRecord(Base):
+    __tablename__ = "campaigns"
+    
+    id = Column(String, primary_key=True) # e.g. TS-CAMP-0001
+    name = Column(String)
+    status = Column(String, default="ACTIVE")
+    correlation_level = Column(String) # LOW, MEDIUM, HIGH
+    created_at = Column(DateTime(timezone=True), default=func.now())
+    updated_at = Column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
+    first_seen = Column(DateTime(timezone=True), default=func.now())
+    last_seen = Column(DateTime(timezone=True), default=func.now())
+    
+    related_cases = Column(JSON, default=list)
+    related_indicators = Column(JSON, default=list) # {"type": "ip", "value": "1.1.1.1"}
+    techniques = Column(JSON, default=list)
+    correlation_reasons = Column(JSON, default=list)
+
 Base.metadata.create_all(bind=engine)
 
 def get_db():
@@ -138,6 +183,11 @@ class RelayHop(BaseModel):
     delay_seconds: Optional[float] = None
     role: str = "transit MTA"
 
+class URLRiskSignal(BaseModel):
+    rule_name: str
+    description: str
+    score_contribution: int
+
 class ExtractedURL(BaseModel):
     url: str
     domain: str
@@ -145,6 +195,18 @@ class ExtractedURL(BaseModel):
     anchor_text: Optional[str] = None
     has_anchor_mismatch: bool = False
     source: str = "body"
+    
+    # URL Intelligence Enhanced Fields
+    normalized_url: Optional[str] = None
+    hostname: Optional[str] = None
+    scheme: Optional[str] = None
+    path: Optional[str] = None
+    query: Optional[str] = None
+    port: Optional[int] = None
+    risk_score: int = 0
+    risk_level: str = "Safe"
+    suspicious_features: List[str] = Field(default_factory=list)
+    triggered_rules: List[URLRiskSignal] = Field(default_factory=list)
 
 class AttachmentInfo(BaseModel):
     filename: str
@@ -204,6 +266,14 @@ class TamperSeal(BaseModel):
     blockchain_status: str = "CONFIRMED"
     blockchain_verified: bool = True
 
+class MitreAttackMapping(BaseModel):
+    technique_id: str
+    technique_name: str
+    tactic: str
+    reason: str
+    supporting_indicators: List[str] = Field(default_factory=list)
+    confidence: str
+
 class FullAnalysisResult(BaseModel):
     analysis_id: str
     timestamp: str
@@ -223,6 +293,7 @@ class FullAnalysisResult(BaseModel):
     iocs: List[IOCItem] = []
     ai_assessment: Optional[AIAssessment] = None
     tamper_seal: Optional[TamperSeal] = None
+    mitre_attack_mappings: List[MitreAttackMapping] = Field(default_factory=list)
 
 class CaseCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=256)
@@ -240,6 +311,7 @@ class CaseResponse(BaseModel):
     description: Optional[str] = None
     status: str = "OPEN"
     priority: str = "HIGH"
+    assigned_analyst: Optional[str] = None
     created_at: str
     updated_at: str
     attached_analyses: List[FullAnalysisResult] = []
@@ -249,6 +321,7 @@ class DashboardStats(BaseModel):
     total_analyzed_emails: int
     high_critical_threats: int
     active_cases: int
+    active_campaigns: Optional[int] = 0
     suspicious_domains_count: int
     suspicious_ips_count: int
     threat_distribution: Dict[str, int]

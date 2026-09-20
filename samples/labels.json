@@ -1,0 +1,52 @@
+[
+  {
+    "filename": "01_legitimate_newsletter.eml",
+    "is_malicious": false,
+    "categories": []
+  },
+  {
+    "filename": "02_phishing_account_suspension.eml",
+    "is_malicious": true,
+    "categories": ["Phishing", "Spoofing"]
+  },
+  {
+    "filename": "03_spoofed_sender_ceo_fraud.eml",
+    "is_malicious": true,
+    "categories": ["BEC", "Spoofing"]
+  },
+  {
+    "filename": "04_reply_to_mismatch.eml",
+    "is_malicious": true,
+    "categories": ["BEC"]
+  },
+  {
+    "filename": "05_spf_dkim_dmarc_fail.eml",
+    "is_malicious": true,
+    "categories": ["Spoofing"]
+  },
+  {
+    "filename": "06_suspicious_url_ip_mismatch.eml",
+    "is_malicious": true,
+    "categories": ["Phishing", "Malicious URL"]
+  },
+  {
+    "filename": "07_multi_hop_relays.eml",
+    "is_malicious": true,
+    "categories": ["Evasion"]
+  },
+  {
+    "filename": "08_dangerous_attachment_malware.eml",
+    "is_malicious": true,
+    "categories": ["Malicious attachment"]
+  },
+  {
+    "filename": "09_missing_headers.eml",
+    "is_malicious": true,
+    "categories": ["Evasion"]
+  },
+  {
+    "filename": "10_malformed_email.eml",
+    "is_malicious": true,
+    "categories": ["Evasion"]
+  }
+]

@@ -9,7 +9,11 @@ from urllib.parse import urlparse, parse_qs
 from datetime import datetime, timezone
 from typing import Tuple, List, Dict, Any, Optional
 from bs4 import BeautifulSoup
+from app.url_analyzer import analyze_url
+from app.ip_intelligence import get_ip_intelligence
+from app.domain_intelligence import get_domain_intelligence
 
+from app.mitre_mapper import map_findings_to_mitre
 from app.models import (
     AuthStatus,
     AuthResults,
@@ -262,7 +266,12 @@ def extract_message_parts(msg: EmailMessage) -> Tuple[Dict[str, Any], List[str],
         "body_html": body_html
     }
 
-    return metadata, received_headers, urls, attachments
+    # Enhance extracted URLs with URL Intelligence Engine
+    enhanced_urls = []
+    for u in urls:
+        enhanced_urls.append(analyze_url(u))
+
+    return metadata, received_headers, enhanced_urls, attachments
 
 def parse_auth_headers(headers: Dict[str, Any]) -> AuthResults:
     """Parses SPF, DKIM, and DMARC results from authentication headers."""
@@ -472,6 +481,31 @@ def evaluate_threat_rules(
             points=40,
             explanation="Link anchor text displays a trusted site, but destination points elsewhere",
             evidence=f"Displayed: {mismatched[0].anchor_text} -> Destination: {mismatched[0].url}"
+        ))
+
+    # Rule 13: URL Risk Intelligence Engine
+    critical_urls = [u for u in urls if getattr(u, 'risk_level', '') == "CRITICAL"]
+    high_urls = [u for u in urls if getattr(u, 'risk_level', '') == "HIGH"]
+    
+    if critical_urls:
+        findings.append(ThreatFinding(
+            rule_id="RULE-13",
+            rule_name="Critical URL Risk Intelligence",
+            category="URL_INTEGRITY",
+            severity="CRITICAL",
+            points=35,
+            explanation=f"URL Intelligence engine detected critical risks (Score {critical_urls[0].risk_score}/100)",
+            evidence=f"Critical URL: {critical_urls[0].url} | Signals: {', '.join(critical_urls[0].suspicious_features[:3])}"
+        ))
+    elif high_urls:
+        findings.append(ThreatFinding(
+            rule_id="RULE-13",
+            rule_name="High URL Risk Intelligence",
+            category="URL_INTEGRITY",
+            severity="HIGH",
+            points=20,
+            explanation=f"URL Intelligence engine detected high risks (Score {high_urls[0].risk_score}/100)",
+            evidence=f"High Risk URL: {high_urls[0].url} | Signals: {', '.join(high_urls[0].suspicious_features[:3])}"
         ))
 
     # Rule 09: Dangerous Attachments
@@ -727,5 +761,6 @@ def scan_email(
         timeline=[],
         iocs=iocs,
         ai_assessment=ai,
-        tamper_seal=seal
+        tamper_seal=seal,
+        mitre_attack_mappings=map_findings_to_mitre(findings)
     )

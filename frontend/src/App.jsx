@@ -11,12 +11,13 @@ import AnalysisWorkspace from './components/AnalysisWorkspace';
 import {
   DashboardView,
   CorrelationView,
-  CaseManager,
+  CaseManager, CampaignManager,
   BlockchainLedgerView,
   ThreatIntelView,
   GlobalSearchModal,
   DemoTourModal,
-  SampleEmailSelector
+  SampleEmailSelector,
+  AnalyticsView
 } from './components/Views';
 
 export default function App() {
@@ -201,7 +202,21 @@ export default function App() {
                 <Network className="w-3.5 h-3.5" /> Correlation
               </button>
 
-              <button
+                            <button
+                onClick={() => setCurrentView('campaigns')}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  currentView === 'campaigns' ? 'bg-white text-rose-600 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                }`}
+              >
+                <Activity className="w-3.5 h-3.5" /> Campaigns
+              </button>
+\n              <button 
+              onClick={() => setCurrentView('analytics')}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${currentView === 'analytics' ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
+            >
+              <Activity className="w-5 h-5" /> Analytics
+            </button>
+            <button
                 onClick={() => setCurrentView('cases')}
                 className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   currentView === 'cases'
@@ -473,7 +488,11 @@ export default function App() {
           />
         )}
 
-        {currentView === 'cases' && (
+        
+        {currentView === 'campaigns' && (
+          <CampaignManager />
+        )}
+\n        {currentView === 'cases' && (
           <CaseManager
             currentAnalysis={analysis}
             onSelectAnalysisFromCase={(analysisId) => handleSelectAnalysis(analysisId)}
