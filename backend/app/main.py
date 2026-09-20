@@ -1115,6 +1115,7 @@ def list_campaigns(db: Session = Depends(get_db)):
         "first_seen": c.first_seen.isoformat() if c.first_seen else None,
         "last_seen": c.last_seen.isoformat() if c.last_seen else None,
         "cases_count": len(c.related_cases or []),
+        "related_cases": c.related_cases or [],
         "indicators_count": len(c.related_indicators or []),
         "techniques_count": len(c.techniques or []),
         "correlation_reasons": c.correlation_reasons
