@@ -1,4 +1,4 @@
-import os
+﻿import os
 import json
 import uuid
 from datetime import datetime, timezone
@@ -10,6 +10,40 @@ import hmac
 import zipfile
 import tempfile
 import shutil
+
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from sqlalchemy.orm import Session
+
+from app.models import (
+    GraphEdgeRecord,
+    CampaignRecord,
+    get_db,
+    EmailRecord,
+    CaseRecord,
+    BlockRecord,
+    CustodyEventRecord,
+    ThreatIntelRecord,
+    AttackTechniqueRecord,
+    CaseAttackTechniqueRecord,
+    EmailInput,
+    FullAnalysisResult,
+    CaseCreate,
+    CaseNoteCreate,
+    CaseResponse,
+    DashboardStats,
+    CustodyEventInput,
+    CustodyVerificationResponse,
+    ThreatIndicatorCreate,
+    ThreatIndicatorItem,
+    ThreatIndicatorVerifyResponse
+)
+from app.mitre_mapper import MITRE_CATALOG
+from app.scanner import scan_email
+from app.blockchain import blockchain_service
+from app.privacy import apply_privacy_masking
+from app.blockchain import blockchain_engine, MerkleTree
 
 security = HTTPBearer(auto_error=False)
 
@@ -50,39 +84,7 @@ def check_and_create_auto_case(result: FullAnalysisResult, db: Session) -> Optio
         correlate_case(c, db)
         return case_id
     return None
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-from sqlalchemy.orm import Session
 
-from app.models import (
-    GraphEdgeRecord,
-    CampaignRecord,
-    get_db,
-    EmailRecord,
-    CaseRecord,
-    BlockRecord,
-    CustodyEventRecord,
-    ThreatIntelRecord,
-    AttackTechniqueRecord,
-    CaseAttackTechniqueRecord,
-    EmailInput,
-    FullAnalysisResult,
-    CaseCreate,
-    CaseNoteCreate,
-    CaseResponse,
-    DashboardStats,
-    CustodyEventInput,
-    CustodyVerificationResponse,
-    ThreatIndicatorCreate,
-    ThreatIndicatorItem,
-    ThreatIndicatorVerifyResponse
-)
-from app.mitre_mapper import MITRE_CATALOG
-from app.scanner import scan_email
-from app.blockchain import blockchain_service
-from app.privacy import apply_privacy_masking
-from app.blockchain import blockchain_engine, MerkleTree
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
