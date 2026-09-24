@@ -268,6 +268,14 @@ class AIAssessment(BaseModel):
     investigation_priority_score: int = 50
     priority_explanation: str = ""
 
+class MLThreatAssessment(BaseModel):
+    prediction: str
+    confidence: float
+    threat_probability: float
+    benign_probability: float
+    model: str = "threatsentinel-distilbert"
+    source: str = "local_ml_service"
+
 class TamperSeal(BaseModel):
     seal_id: str
     timestamp_utc: str
@@ -302,6 +310,7 @@ class InvestigativeAssessment(BaseModel):
 
 class FullAnalysisResult(BaseModel):
     analysis_id: str
+    originating_ip: Optional[str] = None
     timestamp: str
     metadata: Dict[str, Any]
     authentication: AuthResults
@@ -318,6 +327,7 @@ class FullAnalysisResult(BaseModel):
     timeline: List[Dict[str, Any]] = []
     iocs: List[IOCItem] = []
     ai_assessment: Optional[AIAssessment] = None
+    ml_assessment: Optional[MLThreatAssessment] = None
     tamper_seal: Optional[TamperSeal] = None
     mitre_attack_mappings: List[MitreAttackMapping] = Field(default_factory=list)
 
@@ -422,3 +432,5 @@ class ThreatIndicatorVerifyResponse(BaseModel):
     status: str  # VERIFIED_ON_CHAIN, CLEAN_OR_NOT_FOUND, BLOCKCHAIN_UNAVAILABLE
     verification_details: str
     contract_address: Optional[str] = None
+
+

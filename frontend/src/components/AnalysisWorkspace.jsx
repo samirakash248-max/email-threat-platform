@@ -294,6 +294,29 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
               {metadata.reply_to && <div>Reply-To: <span className="text-amber-700 font-medium">{metadata.reply_to}</span></div>}
               {metadata.return_path && <div>Return-Path: <span className="text-slate-600">{metadata.return_path}</span></div>}
             </div>
+            {origIp && (
+              <div className="flex items-center gap-2 mt-3 bg-blue-50/50 p-2.5 rounded-lg border border-blue-100">
+                <Network className="w-4 h-4 text-blue-600" />
+                <span className="text-blue-900 font-bold text-[11px] uppercase tracking-wider">Originating IP:</span>
+                <span className="font-mono font-bold text-slate-800 text-xs bg-white px-2 py-0.5 rounded shadow-sm border border-slate-200">{origIp}</span>
+                {origIpIntel && (
+                  <div className="flex items-center gap-1.5 ml-2">
+                    {(origIpIntel.is_vpn_proxy || origIpIntel.is_tor) && (
+                      <span className="px-1.5 py-0.5 bg-rose-100 text-rose-800 rounded text-[10px] font-bold">ANONYMIZED/PROXY</span>
+                    )}
+                    {origIpIntel.is_datacenter && (
+                      <span className="px-1.5 py-0.5 bg-purple-100 text-purple-800 rounded text-[10px] font-bold">DATACENTER</span>
+                    )}
+                    {origIpIntel.country && (
+                      <span className="px-1.5 py-0.5 bg-slate-100 text-slate-600 border border-slate-200 rounded text-[10px] font-semibold">{origIpIntel.country}</span>
+                    )}
+                    {origIpIntel.org && (
+                      <span className="px-1.5 py-0.5 bg-slate-100 text-slate-600 border border-slate-200 rounded text-[10px] font-semibold truncate max-w-[250px]" title={origIpIntel.org}>{origIpIntel.org}</span>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-4 flex-shrink-0">

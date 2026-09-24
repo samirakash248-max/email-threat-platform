@@ -16,6 +16,7 @@ from app.domain_intelligence import get_domain_intelligence
 from app.mitre_mapper import map_findings_to_mitre
 from app.assessment_engine import calculate_investigative_assessment
 from app.privacy import apply_privacy_masking
+from app.ml_classifier import classify_email
 from app.models import (
     AuthStatus,
     AuthResults,
@@ -750,6 +751,14 @@ def scan_email(
     iocs = extract_iocs(metadata, relays, urls, attachments)
     ai = generate_ai_assessment(findings, threat_score)
 
+    # Independent local ML signal. Failure-safe: forensic analysis
+    # continues normally if the ML service is unavailable.
+    ml_assessment = classify_email(
+        sender=metadata.get("from_address", ""),
+        subject=metadata.get("subject", ""),
+        body=metadata.get("body_plain", ""),
+    )
+
     payload_summary = {"id": analysis_id, "from": metadata.get("from_address"), "subject": metadata.get("subject"), "score": threat_score.overall_score}
     seal = create_tamper_seal(analysis_id, payload_summary, timestamp)
 
@@ -805,16 +814,23 @@ def scan_email(
     safe_data = apply_privacy_masking(temp_result, drop_raw=False)
     metadata = safe_data["metadata"]
 
+    originating_ip = None
+    for r in relays:
+        if r.ip_address and not r.is_private_ip:
+            originating_ip = r.ip_address
+            break
+
     return FullAnalysisResult(
         analysis_id=analysis_id,
         timestamp=timestamp,
+        originating_ip=originating_ip,
         metadata=metadata,
         authentication=auth,
         relays=relays,
         relay_graph={"nodes": [r.model_dump() for r in relays], "total_hops": len(relays)},
         extracted_urls=urls,
         url_forensics=[u.model_dump() for u in urls],
-        ip_intelligence={h.ip_address: {"ip": h.ip_address, "country": h.country, "org": h.organization, "is_private": h.is_private_ip} for h in relays if h.ip_address},
+        ip_intelligence=full_ip_intel,
         domain_intelligence=domain_intel,
         investigative_assessment=investigative_assessment,
         attachments=attachments,
@@ -824,6 +840,11 @@ def scan_email(
         timeline=[],
         iocs=iocs,
         ai_assessment=ai,
+        ml_assessment=ml_assessment,
         tamper_seal=seal,
         mitre_attack_mappings=map_findings_to_mitre(findings)
     )
+
+
+
+
