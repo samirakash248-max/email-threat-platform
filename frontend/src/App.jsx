@@ -298,10 +298,16 @@ export default function App() {
             </button>
 
             <button
+              onClick={() => { setIntakeMode('bulk'); setIsIntakeOpen(true); }}
+              className="btn-tactile bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md shadow-purple-500/25 cursor-pointer"
+            >
+              <UploadCloud className="w-4 h-4" /> Bulk Import
+            </button>
+            <button
               onClick={() => setIsIntakeOpen(true)}
               className="btn-tactile bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md shadow-blue-500/25 cursor-pointer"
             >
-              <Plus className="w-4 h-4" /> Ingest Email
+              <Plus className="w-4 h-4" /> Single Intake
             </button>
           </div>
         </div>

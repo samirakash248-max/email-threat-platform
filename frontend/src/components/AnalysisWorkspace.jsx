@@ -261,7 +261,44 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col xl:flex-row gap-6 items-start">
+      {/* Left Sidebar Navigation */}
+      <div className="w-full xl:w-64 flex-shrink-0 xl:sticky xl:top-24">
+        <div className="flex flex-col bg-slate-50/80 p-1.5 rounded-2xl border border-slate-200/60 gap-1 shadow-sm backdrop-blur-xl">
+          <div className="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center justify-between">
+            <span>Forensic Dossier</span>
+          </div>
+          {[
+            { id: 'synthesis', label: 'Executive Synthesis', icon: ShieldAlert },
+            { id: 'custody', label: `Chain of Custody (${custodyData?.events?.length || 4})`, icon: Lock },
+            { id: 'headers', label: 'Headers & Auth', icon: FileCode },
+            { id: 'relays', label: `Relay Forensics (${relays.length})`, icon: Server },
+            { id: 'intel', label: `URLs & Domains (${extracted_urls.length})`, icon: Globe },
+            { id: 'attachments', label: `Attachments (${attachments.length})`, icon: Database },
+            { id: 'detection', label: `Rules & Scoring (${detection_findings.length})`, icon: Key },
+            { id: 'copilot', label: 'SOC Copilot', icon: Bot },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all cursor-pointer whitespace-nowrap text-left border ${
+                  activeTab === tab.id
+                    ? 'bg-white text-blue-700 shadow-[0_1px_3px_rgba(0,0,0,0.05)] border-slate-200 font-bold'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border-transparent font-medium'
+                }`}
+              >
+                <Icon className={`w-4 h-4 ${activeTab === tab.id ? 'text-blue-600' : 'text-slate-400'}`} />
+                <span className="text-xs">{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Right Content */}
+      <div className="flex-1 space-y-6 min-w-0 w-full">
       {/* Top Dossier Header Card */}
       <div className="surface-card p-6 space-y-5">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[#E2E8F0] pb-5">
@@ -527,35 +564,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
         </div>
       </div>
 
-      {/* Navigation Sub-Tabs */}
-      <div className="flex bg-[#EFF6FF] p-1 rounded-xl border border-[#F1F5F9] gap-1 overflow-x-auto text-xs font-semibold shadow-inner-light">
-        {[
-          { id: 'synthesis', label: 'Executive Synthesis', icon: ShieldAlert },
-          { id: 'custody', label: `Chain of Custody (${custodyData?.events?.length || 4})`, icon: Lock },
-          { id: 'headers', label: 'Headers & Auth', icon: FileCode },
-          { id: 'relays', label: `Relay Forensics (${relays.length})`, icon: Server },
-          { id: 'intel', label: `URLs & Domains (${extracted_urls.length})`, icon: Globe },
-          { id: 'attachments', label: `Attachments (${attachments.length})`, icon: Database },
-          { id: 'detection', label: `Rules & Scoring (${detection_findings.length})`, icon: Key },
-          { id: 'copilot', label: 'SOC Copilot', icon: Bot },
-        ].map((tab) => {
-          const Icon = tab.icon;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
-                activeTab === tab.id
-                  ? 'bg-blue-600 text-white shadow-sm font-bold'
-                  : 'text-slate-600 hover:text-slate-800 hover:bg-[#F0F7FF]'
-              }`}
-            >
-              <Icon className="w-3.5 h-3.5" />
-              <span>{tab.label}</span>
-            </button>
-          );
-        })}
-      </div>
+
 
       {/* TAB: CHAIN OF CUSTODY LIFECYCLE */}
       {activeTab === 'custody' && (
@@ -1328,6 +1337,7 @@ export default function AnalysisWorkspace({ analysis, onNewIntake }) {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
